@@ -1,26 +1,48 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-primary: #F2A2B1;
+  --color-secondary: #BF88AC;
+  --color-tertiary: #9B9DBF;
+  --color-accent: #4982A6;
+  --color-background: #ffffff;
+  --color-foreground: #171717;
+  --color-error: #ef4444;
+  --color-success: #10b981;
+
+  --font-family-montserrat: var(--font-montserrat), sans-serif;
+  --font-family-lato: var(--font-lato), sans-serif;
+  --font-family-libre-baskerville: var(--font-libre-baskerville), serif;
+
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
+} */
+
+
+@layer utilities {
+  .font-montserrat {
+    font-family: var(--font-montserrat), sans-serif;
+  }
+  .font-lato {
+    font-family: var(--font-lato), sans-serif;
+  }
+  .font-libre-baskerville {
+    font-family: var(--font-libre-baskerville), serif;
+  }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-lato), var(--font-montserrat), var(--font-libre-baskerville), Arial, Helvetica, sans-serif;
 }
