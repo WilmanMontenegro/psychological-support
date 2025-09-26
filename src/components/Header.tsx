@@ -18,10 +18,10 @@ export default function Header() {
 
       {/* Navegación Desktop */}
       <nav className='hidden md:flex gap-6'>
-        <Link href="/" className="hover:text-secondary transition-colors font-medium">Inicio</Link>
-        <Link href="/acerca" className="hover:text-secondary transition-colors font-medium">Sobre Mi</Link>
-        <Link href="/blog" className="hover:text-secondary transition-colors font-medium">Blog</Link>
-        <Link href="/contacto" className="hover:text-secondary transition-colors font-medium">Contacto</Link>
+        <Link href="/" className="hover:text-secondary transition-colors font-medium text-lg">Inicio</Link>
+        <Link href="/acerca" className="hover:text-secondary transition-colors font-medium text-lg">Sobre Mi</Link>
+        <Link href="/blog" className="hover:text-secondary transition-colors font-medium text-lg">Blog</Link>
+        <Link href="/contacto" className="hover:text-secondary transition-colors font-medium text-lg">Contacto</Link>
       </nav>
 
       {/* Botón CTA */}

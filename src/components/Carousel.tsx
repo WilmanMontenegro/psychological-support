@@ -1,6 +1,7 @@
 "use client"
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 
 interface CarouselProps {
   images: {
@@ -8,6 +9,7 @@ interface CarouselProps {
     alt: string
     title?: string
     description?: string
+    objectPosition?: number // Porcentaje de 0 a 100 para posición Y (50 = centrado)
   }[]
   autoSlideInterval?: number
   showDots?: boolean
@@ -45,8 +47,7 @@ export default function Carousel({
   }
 
   return (
-    <div className="relative w-full h-[600px] overflow-hidden rounded-lg">
-      {/* Imágenes */}
+    <div className="relative w-full h-[700px] overflow-hidden rounded-lg">
       <div
         className="flex transition-transform duration-500 ease-in-out h-full"
         style={{ transform: `translateX(-${currentIndex * 100}%)` }}
@@ -58,20 +59,30 @@ export default function Carousel({
               alt={image.alt}
               fill
               className="object-cover"
+              style={{ objectPosition: `center ${image.objectPosition || 50}%` }}
               priority={index === 0}
             />
             {(image.title || image.description) && (
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6">
-                {image.title && (
-                  <h3 className="text-white text-xl font-montserrat font-semibold mb-2">
-                    {image.title}
-                  </h3>
-                )}
-                {image.description && (
-                  <p className="text-white/90 font-lato">
-                    {image.description}
-                  </p>
-                )}
+              <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                <div className="text-center">
+                  {image.title && (
+                    <h3 className="text-white text-5xl font-montserrat font-semibold mb-4">
+                      {image.title}
+                    </h3>
+                  )}
+                  {image.description && (
+                    <p className="text-white/90 font-lato text-2xl mb-6">
+                      {image.description}
+                    </p>
+                  )}
+                  <Link
+                    href="/agendar"
+                    className="inline-block px-4 py-2 rounded text-white font-medium transition"
+                    style={{ backgroundColor: 'var(--color-secondary)' }}
+                  >
+                    Hablemos
+                  </Link>
+                </div>
               </div>
             )}
           </div>
@@ -109,11 +120,10 @@ export default function Carousel({
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`w-3 h-3 rounded-full transition-colors ${
-                index === currentIndex
+              className={`w-3 h-3 rounded-full transition-colors ${index === currentIndex
                   ? 'bg-white'
                   : 'bg-white/50 hover:bg-white/70'
-              }`}
+                }`}
               aria-label={`Ir a imagen ${index + 1}`}
             />
           ))}

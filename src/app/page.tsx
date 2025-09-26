@@ -1,5 +1,7 @@
 
 import Carousel from '@/components/Carousel'
+import AboutMe from '@/components/AboutMe'
+import TherapyServices from '@/components/TherapyServices'
 
 const carouselImages = [
   {
@@ -12,10 +14,11 @@ const carouselImages = [
     src: "/images/carrusel_2.jpg",
     alt: "Apoyo emocional y comprensión",
     title: "Conexión y Comprensión",
-    description: "Te acompaño en tu proceso con empatía y profesionalismo"
+    description: "Te acompaño en tu proceso con empatía y profesionalismo",
+    objectPosition: 70
   },
   {
-    src: "/images/carrusel_3.jpg",
+    src: "/images/manejo-emociones.jpg",
     alt: "Bienestar y crecimiento personal",
     title: "Crecimiento Personal",
     description: "Juntos trabajamos hacia tu bienestar y desarrollo emocional"
@@ -36,18 +39,12 @@ export default function Home() {
           />
         </section>
 
-        {/* Contenido adicional */}
-        <section className="container mx-auto px-6 py-12">
-          <div className="text-center">
-            <h1 className="text-4xl font-libre-baskerville font-bold mb-6" style={{ color: 'var(--color-primary)' }}>
-              Bienvenido a tu espacio de bienestar
-            </h1>
-            <p className="text-lg font-lato text-gray-600 max-w-2xl mx-auto">
-              Te acompaño en tu proceso de crecimiento personal y sanación emocional
-              con un enfoque profesional, cálido y personalizado.
-            </p>
-          </div>
-        </section>
+        {/* Sección Sobre Mí */}
+        <AboutMe />
+
+        {/* Sección Terapias y Tratamientos */}
+        <TherapyServices />
+
       </main>
     </div>
   )
