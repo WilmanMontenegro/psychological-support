@@ -1,57 +1,39 @@
 "use client"
 import Link from 'next/link'
 import { useState } from 'react'
+import Navigation from './Navigation'
+import Logo from './Logo'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   return (
-    <header className="w-full flex items-center justify-evenly px-6 py-4 bg-background">
-      {/* Logo/Título */}
-      <div className='flex items-center gap-4'>
-        <img src="/images/logo.png" alt="Logo" width={100}/>
-        <div>
-          <h1 className="text-xl font-semibold font-libre-baskerville">Acompañamiento Psicológico</h1>
-          <p className="text-base font-montserrat">Con Marcela Polo</p>
+    <header className="w-full relative bg-background shadow-sm">
+      <div className="flex lg:grid lg:grid-cols-3 items-center justify-center lg:justify-normal px-4 md:px-6 py-4">
+        {/* Logo/Título */}
+        <Logo textAlign="center" />
+
+        {/* Navegación Desktop - Centrada */}
+        <div className="hidden lg:flex justify-center">
+          <Navigation className="" showCTA={false} />
+        </div>
+
+        {/* Botón CTA */}
+        <div className="flex justify-end">
+          <Link
+            href="/agendar"
+            className="hidden sm:block text-white px-2 sm:px-3 lg:px-4 py-2 rounded hover:opacity-80 transition-colors font-montserrat font-medium text-xs sm:text-sm lg:text-base"
+            style={{ backgroundColor: 'var(--color-secondary)' }}
+          >
+            <span className="lg:inline">Agendar </span>Cita
+          </Link>
         </div>
       </div>
 
-      {/* Navegación Desktop */}
-      <nav className='hidden md:flex gap-6'>
-        <Link href="/" className="hover:text-secondary transition-colors font-medium text-lg">Inicio</Link>
-        <Link href="/acerca" className="hover:text-secondary transition-colors font-medium text-lg">Sobre Mi</Link>
-        <Link href="/blog" className="hover:text-secondary transition-colors font-medium text-lg">Blog</Link>
-        <Link href="/contacto" className="hover:text-secondary transition-colors font-medium text-lg">Contacto</Link>
-      </nav>
-
-      {/* Botón CTA */}
-      <Link
-        href="/agendar"
-        className="text-white px-4 py-2 rounded hover:opacity-80 transition-colors font-montserrat font-medium"
-        style={{ backgroundColor: 'var(--color-secondary)' }}
-      >
-        Agendar Cita
-      </Link>
-
-      {/* Botón hamburger móvil */}
-      <button
-        className="md:hidden text-2xl"
-        onClick={() => setIsMenuOpen(!isMenuOpen)}>
-        ☰
-      </button>
-
-      {/* Menú móvil (se muestra/oculta) */}
-      {isMenuOpen && (
-        <div className="flex flex-col gap-4 px-6 pb-4 md:hidden absolute top-full left-0 w-full bg-white shadow">
-          <Link href="/">Inicio</Link>
-          <Link href="/acerca">Acerca de</Link>
-          <Link href="/blog">Blog</Link>
-          <Link href="/contacto">Contacto</Link>
-          <Link href="/agendar" className="text-white px-4 py-2 rounded hover:opacity-80 transition font-montserrat font-medium" style={{ backgroundColor: 'var(--color-secondary)' }}>
-            Agendar Cita
-          </Link>
-        </div>
-      )}
+      {/* Navegación móvil fija abajo */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-background border-t shadow-lg z-50 pb-safe">
+        <Navigation className="" showCTA={true} isMobile={true} />
+      </div>
     </header>
   )
 }

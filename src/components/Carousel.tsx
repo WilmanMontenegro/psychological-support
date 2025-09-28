@@ -47,7 +47,7 @@ export default function Carousel({
   }
 
   return (
-    <div className="relative w-full h-[700px] overflow-hidden rounded-lg">
+    <div className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[700px] overflow-hidden max-w-full">
       <div
         className="flex transition-transform duration-500 ease-in-out h-full"
         style={{ transform: `translateX(-${currentIndex * 100}%)` }}
@@ -66,18 +66,18 @@ export default function Carousel({
               <div className="absolute inset-0 flex items-center justify-center bg-black/40">
                 <div className="text-center">
                   {image.title && (
-                    <h3 className="text-white text-5xl font-montserrat font-semibold mb-4">
+                    <h3 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-montserrat font-semibold mb-2 sm:mb-4">
                       {image.title}
                     </h3>
                   )}
                   {image.description && (
-                    <p className="text-white/90 font-lato text-2xl mb-6">
+                    <p className="text-white/90 font-lato text-sm sm:text-lg md:text-xl lg:text-2xl mb-4 sm:mb-6 px-4">
                       {image.description}
                     </p>
                   )}
                   <Link
                     href="/agendar"
-                    className="inline-block px-4 py-2 rounded text-white font-medium transition"
+                    className="inline-block px-3 py-2 sm:px-4 sm:py-2 rounded text-white font-medium transition text-sm sm:text-base"
                     style={{ backgroundColor: 'var(--color-secondary)' }}
                   >
                     Hablemos
@@ -94,19 +94,19 @@ export default function Carousel({
         <>
           <button
             onClick={goToPrevious}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white p-2 rounded-full transition-colors"
+            className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white p-1 sm:p-2 rounded-full transition-colors"
             aria-label="Imagen anterior"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
           <button
             onClick={goToNext}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white p-2 rounded-full transition-colors"
+            className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white p-1 sm:p-2 rounded-full transition-colors"
             aria-label="Imagen siguiente"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </button>
