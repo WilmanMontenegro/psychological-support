@@ -2,6 +2,7 @@
 import Carousel from '@/components/Carousel'
 import AboutMe from '@/components/AboutMe'
 import TherapyServices from '@/components/TherapyServices'
+import FAQ from '@/components/FAQ'
 
 const carouselImages = [
   {
@@ -45,6 +46,8 @@ export default function Home() {
         {/* Sección Terapias y Tratamientos */}
         <TherapyServices />
 
+        {/* Sección Preguntas Frecuentes */}
+        <FAQ />
       </main>
     </div>
   )

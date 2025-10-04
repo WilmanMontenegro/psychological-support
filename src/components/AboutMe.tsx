@@ -1,34 +1,36 @@
 "use client"
 
-export default function AboutMe() {
+interface AboutMeProps {
+  showButton?: boolean
+  bgColor?: string
+}
+
+export default function AboutMe({ showButton = true, bgColor = 'bg-white' }: AboutMeProps) {
+  // Usar colores que contrasten según el fondo
+  const isLightBg = bgColor.includes('pastel-light') || bgColor.includes('tertiary-light')
+
   return (
-    <section className="w-full py-16 px-6 bg-white relative overflow-hidden">
-      {/* Bolitas decorativas de fondo - Bien distribuidas */}
-      <div className="absolute top-10 left-10 w-16 h-16 rounded-full opacity-30 bg-primary"></div>
-      <div className="absolute top-20 right-16 w-12 h-12 rounded-full opacity-40 bg-pastel"></div>
-      <div className="absolute top-1/3 left-1/4 w-8 h-8 rounded-full opacity-50 bg-secondary"></div>
-      <div className="absolute top-1/2 right-10 w-20 h-20 rounded-full opacity-20 bg-primary"></div>
-      <div className="absolute top-2/3 left-1/3 w-10 h-10 rounded-full opacity-45 bg-pastel"></div>
-      <div className="absolute bottom-20 right-1/4 w-14 h-14 rounded-full opacity-35 bg-secondary"></div>
-      <div className="absolute bottom-16 left-16 w-12 h-12 rounded-full opacity-40 bg-primary"></div>
-      <div className="absolute top-1/4 right-1/3 w-10 h-10 rounded-full opacity-50 bg-pastel"></div>
-      <div className="absolute bottom-32 left-1/2 w-8 h-8 rounded-full opacity-45 bg-secondary"></div>
+    <section className={`w-full py-16 px-6 ${bgColor} relative overflow-hidden`}>
+      {/* Bolitas decorativas de fondo - Detrás del contenido (z-0) */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        {/* Zona superior - más dispersas */}
+        <div className={`absolute top-8 left-12 w-20 h-20 rounded-full ${isLightBg ? 'opacity-35 bg-secondary' : 'opacity-20 bg-primary'}`}></div>
+        <div className={`absolute top-24 right-20 w-16 h-16 rounded-full ${isLightBg ? 'opacity-30 bg-tertiary' : 'opacity-25 bg-pastel'}`}></div>
+        <div className={`absolute top-40 left-[15%] w-14 h-14 rounded-full ${isLightBg ? 'opacity-28 bg-accent' : 'opacity-18 bg-secondary'}`}></div>
+        <div className={`absolute top-16 right-[35%] w-10 h-10 rounded-full ${isLightBg ? 'opacity-25 bg-tertiary' : 'opacity-20 bg-pastel'}`}></div>
 
-      {/* Bolitas adicionales para mayor distribución */}
-      <div className="absolute top-16 left-1/2 w-6 h-6 rounded-full opacity-55 bg-primary"></div>
-      <div className="absolute top-1/2 left-10 w-14 h-14 rounded-full opacity-25 bg-pastel"></div>
-      <div className="absolute top-3/4 right-20 w-12 h-12 rounded-full opacity-40 bg-secondary"></div>
-      <div className="absolute bottom-10 left-1/4 w-10 h-10 rounded-full opacity-50 bg-primary"></div>
-      <div className="absolute top-2/5 left-3/4 w-8 h-8 rounded-full opacity-45 bg-pastel"></div>
-      <div className="absolute bottom-1/3 right-1/2 w-16 h-16 rounded-full opacity-30 bg-secondary"></div>
-      <div className="absolute top-5/6 left-1/6 w-6 h-6 rounded-full opacity-60 bg-primary"></div>
+        {/* Zona lateral derecha - en los extremos */}
+        <div className={`absolute top-[45%] right-8 w-18 h-18 rounded-full ${isLightBg ? 'opacity-28 bg-tertiary' : 'opacity-18 bg-pastel'}`}></div>
+        <div className={`absolute top-[65%] right-24 w-12 h-12 rounded-full ${isLightBg ? 'opacity-30 bg-accent' : 'opacity-20 bg-secondary'}`}></div>
 
-      {/* Más bolitas para el lado derecho - Mejor distribuidas */}
-      <div className="absolute top-1/5 left-3/5 w-10 h-10 rounded-full opacity-45 bg-pastel"></div>
-      <div className="absolute top-2/5 left-4/5 w-12 h-12 rounded-full opacity-35 bg-secondary"></div>
-      <div className="absolute top-4/5 left-2/3 w-8 h-8 rounded-full opacity-50 bg-primary"></div>
-      <div className="absolute bottom-1/4 left-5/6 w-14 h-14 rounded-full opacity-30 bg-pastel"></div>
-      <div className="absolute top-3/5 left-3/4 w-6 h-6 rounded-full opacity-55 bg-secondary"></div>
+        {/* Zona lateral izquierda - en los extremos */}
+        <div className={`absolute top-[55%] left-6 w-16 h-16 rounded-full ${isLightBg ? 'opacity-25 bg-secondary' : 'opacity-20 bg-primary'}`}></div>
+
+        {/* Zona inferior - dispersas */}
+        <div className={`absolute bottom-24 right-[28%] w-24 h-24 rounded-full ${isLightBg ? 'opacity-25 bg-accent' : 'opacity-15 bg-secondary'}`}></div>
+        <div className={`absolute bottom-20 left-20 w-14 h-14 rounded-full ${isLightBg ? 'opacity-30 bg-secondary' : 'opacity-20 bg-primary'}`}></div>
+        <div className={`absolute bottom-36 right-16 w-12 h-12 rounded-full ${isLightBg ? 'opacity-28 bg-tertiary' : 'opacity-22 bg-pastel'}`}></div>
+      </div>
 
       <div className="max-w-6xl mx-auto relative z-10">
         <div className="flex flex-col md:grid md:grid-cols-2 gap-8 items-center">
@@ -44,7 +46,7 @@ export default function AboutMe() {
           <div className="flex justify-center order-2 md:order-2">
             <div className="relative">
               <img
-                src="/images/marcela.jpg"
+                src="/images/marcela4.jpg"
                 alt="Marcela Polo - Psicóloga"
                 className="rounded-lg shadow-lg w-[26rem] h-auto"
               />
@@ -75,14 +77,16 @@ export default function AboutMe() {
             </p>
 
             {/* Botón de contacto */}
-            <div className="pt-4 text-center">
-              <button
-                className="text-white px-8 py-3 rounded-lg font-montserrat font-medium text-lg hover:opacity-90 transition-all duration-300 shadow-md hover:shadow-lg"
-                style={{ backgroundColor: 'var(--color-secondary)' }}
-              >
-                Conoce más sobre mi enfoque
-              </button>
-            </div>
+            {showButton && (
+              <div className="pt-4 text-center">
+                <button
+                  className="text-white px-8 py-3 rounded-lg font-montserrat font-medium text-lg hover:opacity-90 transition-all duration-300 shadow-md hover:shadow-lg"
+                  style={{ backgroundColor: 'var(--color-secondary)' }}
+                >
+                  Conoce más sobre mi enfoque
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

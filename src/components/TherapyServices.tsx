@@ -44,11 +44,11 @@ export default function TherapyServices() {
           <h2 className="text-3xl md:text-4xl font-bold font-libre-baskerville text-accent mb-4">
             Terapias y Tratamientos
           </h2>
+          <div className="w-16 h-1 bg-secondary rounded-full mx-auto mb-6"></div>
           <p className="text-gray-600 font-lato max-w-2xl mx-auto">
             Ofrezco servicios especializados adaptados a tus necesidades específicas.
             Cada sesión está diseñada para brindarte las herramientas necesarias para tu bienestar.
           </p>
-          <div className="w-16 h-1 bg-secondary rounded-full mx-auto mt-6"></div>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">

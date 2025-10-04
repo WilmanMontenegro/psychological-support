@@ -46,7 +46,7 @@ export default function Footer() {
                 <FaInstagram className="text-white" />
               </Link>
               <Link
-                href="https://linkedin.com"
+                href="https://www.linkedin.com/in/marcela-polo/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-2xl transition-transform hover:scale-110 p-2"
