@@ -3,11 +3,10 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import toast from 'react-hot-toast';
 
-type ConsultMode = 'normal' | 'anonimo';
-type ProblemType = 'pareja' | 'ansiedad' | 'emociones' | 'no-se';
-type SessionType = 'videollamada' | 'chat';
-type Gender = 'masculino' | 'femenino' | 'otro' | 'prefiero-no-decir';
+type ProblemType = 'couple' | 'anxiety' | 'emotions' | 'unknown';
+type Modality = 'video' | 'chat';
 
 export default function AgendarCitaPage() {
   const router = useRouter();
@@ -17,12 +16,11 @@ export default function AgendarCitaPage() {
   const [success, setSuccess] = useState(false);
 
   const [formData, setFormData] = useState({
-    consultMode: 'normal' as ConsultMode,
-    name: '',
-    age: '',
-    gender: '' as Gender | '',
+    isAnonymous: false,
     problemType: '' as ProblemType | '',
-    sessionType: '' as SessionType | ''
+    modality: '' as Modality | '',
+    date: '',
+    time: ''
   });
 
   useEffect(() => {
@@ -42,28 +40,55 @@ export default function AgendarCitaPage() {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value, type } = e.target;
+
+    if (type === 'radio') {
+      setFormData({
+        ...formData,
+        isAnonymous: value === 'anonymous'
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value
+      });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
 
+    const loadingToast = toast.loading('Agendando tu cita...');
+
     try {
-      // Aquí guardarías la cita en Supabase
-      // Por ahora solo simulamos el éxito
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Guardar la cita en la base de datos
+      const { error: insertError } = await supabase
+        .from('appointments')
+        .insert({
+          patient_id: user.id,
+          is_anonymous: formData.isAnonymous,
+          problem_type: formData.problemType,
+          modality: formData.modality,
+          preferred_date: formData.date,
+          preferred_time: formData.time,
+          status: 'pending'
+        });
+
+      if (insertError) throw insertError;
+
+      toast.dismiss(loadingToast);
+      toast.success('¡Cita agendada exitosamente! Te contactaremos pronto');
 
       setSuccess(true);
 
-      // Redirigir después de 2 segundos
+      // Redirigir a mis citas después de 2 segundos
       setTimeout(() => {
-        router.push('/');
+        router.push('/mis-citas');
       }, 2000);
     } catch (error) {
+      toast.dismiss(loadingToast);
+      toast.error('Error al agendar la cita. Por favor intenta nuevamente');
       console.error('Error al agendar cita:', error);
     } finally {
       setSubmitting(false);
@@ -121,7 +146,7 @@ export default function AgendarCitaPage() {
                   type="radio"
                   name="consultMode"
                   value="normal"
-                  checked={formData.consultMode === 'normal'}
+                  checked={!formData.isAnonymous}
                   onChange={handleChange}
                   className="mr-2"
                   style={{ accentColor: 'var(--color-secondary)' }}
@@ -132,8 +157,8 @@ export default function AgendarCitaPage() {
                 <input
                   type="radio"
                   name="consultMode"
-                  value="anonimo"
-                  checked={formData.consultMode === 'anonimo'}
+                  value="anonymous"
+                  checked={formData.isAnonymous}
                   onChange={handleChange}
                   className="mr-2"
                   style={{ accentColor: 'var(--color-secondary)' }}
@@ -141,66 +166,12 @@ export default function AgendarCitaPage() {
                 <span>Anónimo</span>
               </label>
             </div>
+            <p className="text-xs text-gray-500 mt-2">
+              {formData.isAnonymous
+                ? 'Tu identidad será completamente anónima en esta consulta'
+                : 'Usaremos la información de tu perfil para esta consulta'}
+            </p>
           </div>
-
-          {/* Datos personales (solo si es modo normal) */}
-          {formData.consultMode === 'normal' && (
-            <>
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                  Nombre Completo
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  required
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
-                  placeholder="Tu nombre"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="age" className="block text-sm font-medium text-gray-700 mb-1">
-                  Edad
-                </label>
-                <input
-                  type="number"
-                  id="age"
-                  name="age"
-                  required
-                  min="1"
-                  max="120"
-                  value={formData.age}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
-                  placeholder="25"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-1">
-                  Género
-                </label>
-                <select
-                  id="gender"
-                  name="gender"
-                  required
-                  value={formData.gender}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
-                >
-                  <option value="">Selecciona una opción</option>
-                  <option value="masculino">Masculino</option>
-                  <option value="femenino">Femenino</option>
-                  <option value="otro">Otro</option>
-                  <option value="prefiero-no-decir">Prefiero no decir</option>
-                </select>
-              </div>
-            </>
-          )}
 
           {/* Tipo de Problema */}
           <div>
@@ -216,30 +187,64 @@ export default function AgendarCitaPage() {
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
             >
               <option value="">Selecciona una opción</option>
-              <option value="pareja">Problemas de Pareja</option>
-              <option value="ansiedad">Ansiedad</option>
-              <option value="emociones">Manejo de Emociones</option>
-              <option value="no-se">No sé qué tengo</option>
+              <option value="couple">Problemas de Pareja</option>
+              <option value="anxiety">Ansiedad</option>
+              <option value="emotions">Manejo de Emociones</option>
+              <option value="unknown">No sé qué tengo</option>
             </select>
           </div>
 
           {/* Tipo de Sesión */}
           <div>
-            <label htmlFor="sessionType" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="modality" className="block text-sm font-medium text-gray-700 mb-1">
               Modalidad de la Cita
             </label>
             <select
-              id="sessionType"
-              name="sessionType"
+              id="modality"
+              name="modality"
               required
-              value={formData.sessionType}
+              value={formData.modality}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
             >
               <option value="">Selecciona una opción</option>
-              <option value="videollamada">Videollamada</option>
+              <option value="video">Videollamada</option>
               <option value="chat">Chat</option>
             </select>
+          </div>
+
+          {/* Fecha y Hora */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
+                Fecha
+              </label>
+              <input
+                type="date"
+                id="date"
+                name="date"
+                required
+                value={formData.date}
+                onChange={handleChange}
+                min={new Date().toISOString().split('T')[0]}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="time" className="block text-sm font-medium text-gray-700 mb-1">
+                Hora
+              </label>
+              <input
+                type="time"
+                id="time"
+                name="time"
+                required
+                value={formData.time}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
+              />
+            </div>
           </div>
 
           {/* Botón de envío */}

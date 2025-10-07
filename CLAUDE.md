@@ -4,11 +4,25 @@ Una aplicación web de Next.js para servicios de apoyo psicológico y terapia.
 
 ## Filosofía del Proyecto
 
-**SIMPLICIDAD Y MINIMALISMO**
-- Todo debe ser fácil de hacer y entender
-- Sin complicaciones innecesarias
-- Código limpio y directo
-- Diseño minimalista y funcional
+**SIMPLICIDAD Y MINIMALISMO ANTE TODO**
+
+El proyecto se basa en principios de simplicidad extrema:
+
+- **Fácil de entender**: Código que cualquier desarrollador pueda leer y comprender rápidamente
+- **Mantenible**: Cambios y actualizaciones deben ser simples de implementar
+- **Sin complicaciones**: Evitar sobre-ingeniería, abstracciones innecesarias o patrones complejos
+- **Clean Code**: Código limpio, bien nombrado, con responsabilidades claras
+- **Sin redundancia**: DRY (Don't Repeat Yourself) - reutilizar en lugar de duplicar
+- **Compacto**: Preferir soluciones concisas sin sacrificar claridad
+- **Menos líneas, más valor**: Código que hace lo necesario sin verbosidad
+- **Buenas prácticas**: Seguir estándares de la industria de forma práctica, no dogmática
+- **Diseño minimalista**: UI/UX funcional sin elementos decorativos excesivos
+
+**IMPORTANTE**:
+- Si algo se puede hacer en 10 líneas en lugar de 50, hacerlo en 10
+- Si una solución simple funciona, no buscar una compleja
+- Si un componente hace una cosa bien, no hacerlo hacer más
+- Si puedes reutilizar, NO copies
 
 ## Stack Tecnológico
 
@@ -17,6 +31,11 @@ Una aplicación web de Next.js para servicios de apoyo psicológico y terapia.
 - **TypeScript**: Configuración estricta
 - **Estilos**: Tailwind CSS v4
 - **Iconos**: react-icons v5.5.0 (NO usar @heroicons)
+- **Base de datos**: Supabase (PostgreSQL)
+- **Autenticación**: Supabase Auth
+- **Notificaciones**: react-hot-toast
+- **Emails**: Resend (envío de emails de contacto)
+- **Edge Functions**: Supabase Edge Functions (backend serverless)
 
 ## Comandos Importantes
 
@@ -37,21 +56,18 @@ npm run start
 ## Convenciones de Código
 
 ### Componentes
-- Usar TypeScript para todos los componentes
-- Componentes en PascalCase: `FAQ.tsx`, `AboutMe.tsx`
-- Usar 'use client' cuando se necesite interactividad del lado del cliente
-- Preferir functional components con hooks
+- TypeScript obligatorio, PascalCase: `FAQ.tsx`, `AboutMe.tsx`
+- `'use client'` solo cuando sea necesario
+- Functional components con hooks
 
 ### Iconos
-- **USAR**: `react-icons` solamente
-- **NO USAR**: @heroicons, lucide-react para iconos nuevos
-- Importar desde familias específicas: `import { FaChevronDown } from 'react-icons/fa'`
+- **SOLO** `react-icons`: `import { FaChevronDown } from 'react-icons/fa'`
+- **NUNCA** @heroicons ni lucide-react
 
 ### Estilos
-- **USAR**: Tailwind CSS v4 exclusivamente con sus clases
-- **NO USAR**: Estilos en línea con `style={{}}` (solo para casos específicos con `var()`)
-- Responsive design: mobile-first
-- Colores consistentes con la paleta del proyecto
+- **SOLO** Tailwind CSS v4
+- **NUNCA** `style={{}}` (excepción: `var()` para colores CSS)
+- Mobile-first, paleta consistente
 
 ### Paleta de Colores (ver globals.css)
 ```
@@ -83,20 +99,59 @@ npm run start
 ```
 src/
 ├── app/              # App Router de Next.js
+│   ├── login/        # Página de inicio de sesión
+│   ├── registro/     # Página de registro
+│   ├── agendar-cita/ # Página para agendar citas (protegida)
+│   └── ...
 ├── components/       # Componentes reutilizables
+├── lib/              # Utilidades y configuraciones
+│   └── supabase.ts   # Cliente de Supabase
 └── ...
 ```
 
 ## Funcionalidades del Proyecto
 
+### Componentes Públicos
 - **Carousel**: Carrusel de imágenes con navegación
 - **AboutMe**: Sección sobre el profesional (parametrizable: showButton, bgColor)
 - **WhyChooseMe**: Sección "¿Por Qué Elegirme?" con 3 características
 - **TherapyServices**: Servicios terapéuticos con tarjetas
 - **PhotoGallery**: Galería de fotos con lightbox y navegación
 - **FAQ**: Preguntas frecuentes colapsables
+- **ContactForm**: Formulario de contacto reutilizable (parametrizable: showImage, variant)
 - **Footer**: Enlaces sociales y información de contacto
-- **Header/Navigation**: Navegación principal
+- **Header/Navigation**: Navegación principal con icono de usuario
+- **Toaster**: Sistema de notificaciones unificado con react-hot-toast
+
+### Sistema de Autenticación
+- **Registro** (`/registro`): Crear cuenta con nombre completo, email y contraseña
+- **Login** (`/login`): Iniciar sesión con email y contraseña
+- **Perfil progresivo**: Los datos del usuario se completan gradualmente en la primera cita
+- **Protección de rutas**: Páginas que requieren autenticación redirigen a login
+
+### Sistema de Citas
+- **Agendar Cita** (`/agendar-cita`): Formulario para agendar citas (requiere autenticación)
+  - **Modo Normal**: Solicita nombre, fecha de nacimiento, género (solo primera vez)
+  - **Modo Anónimo**: No solicita datos personales
+  - Tipo de problema: pareja, ansiedad, emociones, "no sé"
+  - Modalidad: videollamada o chat
+  - Fecha y hora de preferencia
+  - Duración: 20 minutos por consulta
+
+### Sistema de Contacto
+- **Formulario de contacto** (`/contactame`): Permite a visitantes enviar mensajes
+  - Campos: nombre, email, teléfono (opcional), mensaje
+  - Validación de campos obligatorios
+  - Envío de emails vía Resend usando Supabase Edge Functions
+  - Email del destinatario oculto (protegido en variables de entorno)
+  - Notificaciones toast de confirmación
+  - También disponible como sección en página principal
+- **Tecnología**:
+  - Frontend: React Hook Form en `ContactForm.tsx`
+  - API Route: `/api/send-contact` (Next.js API)
+  - Backend: Supabase Edge Function `send-contact-email`
+  - Envío: Resend API (100 emails/día gratis)
+  - Variables de entorno: `RESEND_API_KEY`, `CONTACT_EMAIL`
 
 ## Principios de Diseño
 
@@ -108,10 +163,66 @@ src/
 
 ## Idioma
 
-- **Contenido visible completamente en español**
-- Todos los textos, títulos y contenido que ve el usuario deben estar en español
-- Código (nombres de variables, clases, funciones, archivos) en inglés
-- URLs y rutas en español para mejor SEO (ej: `/sobre-mi`, `/servicios`)
+- **UI/UX**: 100% español (textos, títulos, contenido)
+- **Código**: Inglés (variables, funciones, archivos)
+- **URLs**: Español para SEO (`/sobre-mi`, `/servicios`)
+
+## Notificaciones
+
+### Sistema Unificado con react-hot-toast
+- **Componente**: `Toaster.tsx` en el layout principal
+- **Estilos personalizados** con la paleta de colores del proyecto
+- **Tipos de notificaciones**:
+  - ✅ **Success**: Fondo rosa pastel, borde morado secundario
+  - ❌ **Error**: Fondo rojo claro, borde rojo
+  - ⏳ **Loading**: Fondo lavanda claro, borde morado terciario
+- **Uso**: `import toast from 'react-hot-toast'`
+  - `toast.success('Mensaje de éxito')`
+  - `toast.error('Mensaje de error')`
+  - `toast.loading('Cargando...')`
+
+### Casos de Uso
+- Login/registro exitoso, verificación email
+- Validación de campos y contraseñas
+- Confirmación de citas agendadas
+- Errores en procesos
+
+## Supabase
+
+### Configuración
+- **Variables de entorno** (`.env.local`):
+  - `NEXT_PUBLIC_SUPABASE_URL`: URL del proyecto
+  - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Clave anónima pública
+- **Cliente**: `src/lib/supabase.ts`
+
+### Convenciones de Base de Datos
+- Snake_case para tablas y columnas: `user_profiles`, `created_at`
+- Nombres claros y descriptivos, singular preferido
+- Simplicidad ante over-engineering
+- Timestamps: `created_at`, `updated_at` siempre
+- Foreign keys claras: `user_id`, `appointment_id`
+- Enums para roles y estados
+
+### Autenticación
+- **user_metadata** almacena:
+  - `full_name`: Nombre completo del usuario
+  - `birthdate`: Fecha de nacimiento (se agrega en primera cita)
+  - `gender`: Género (se agrega en primera cita)
+
+### Sistema de Roles
+- **3 tipos de cuenta**:
+  - `admin`: Administrador con control total del sistema (creado manualmente en BD)
+  - `psychologist`: Psicólogo que gestiona citas y pacientes (creado manualmente en BD)
+  - `patient`: Paciente/usuario que agenda citas (se crea por registro público)
+- **Tabla `profiles`**: Extiende auth.users con información adicional y rol
+- **Registro público** (`/registro`): Solo crea cuentas de paciente (rol 'patient' por defecto)
+- **Admin y psicólogos**: Se crean manualmente actualizando el rol en la base de datos o desde futuro panel de administración
+
+### Gestión de Sesión
+- Header detecta automáticamente el estado de autenticación
+- Dropdown con nombre del usuario y opción de cerrar sesión
+- Redirección automática a login si no está autenticado
+- Protección de rutas según rol de usuario
 
 ## Mejores Prácticas
 
@@ -121,6 +232,26 @@ src/
 4. **Responsive**: Probar en móvil, tablet y desktop
 5. **TypeScript**: Definir interfaces para props complejas
 6. **Idioma**: Todo el contenido en español
+7. **Notificaciones**: Usar toast para feedback al usuario en todas las acciones importantes
+8. **Autenticación**: Verificar siempre el estado del usuario antes de operaciones sensibles
+
+## Git y Control de Versiones
+
+### Commits
+- **Formato**: Usar Conventional Commits en español (feat, fix, refactor, docs, style, etc.)
+- **Mensajes**: Título conciso + lista detallada de cambios en español
+- **NO incluir**: Firmas automáticas de herramientas de IA (Claude Code, Copilot, etc.)
+- **Idioma**: Todo en español
+
+### Ejemplo de commit:
+```bash
+feat: agregar formulario de contacto con integración de email
+
+- Agregar componente ContactForm con validación de campos
+- Crear página /contactame con título centrado
+- Integrar API de Resend para envío de emails
+- Configurar Edge Function en Supabase
+```
 
 ## Verificación
 

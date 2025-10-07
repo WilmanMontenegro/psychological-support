@@ -75,12 +75,13 @@ export default function WhyChooseMe() {
           <p className="text-lg text-gray-700 mb-6 max-w-2xl mx-auto">
             Mi compromiso es brindarte un espacio donde te sientas escuchado, comprendido y apoyado en tu camino hacia el bienestar emocional.
           </p>
-          <button
-            className="text-white px-8 py-3 rounded-lg font-montserrat font-medium text-lg hover:opacity-90 transition-all duration-300 shadow-md hover:shadow-lg"
+          <a
+            href="/agendar-cita"
+            className="inline-block text-white px-8 py-3 rounded-lg font-montserrat font-medium text-lg hover:opacity-90 transition-all duration-300 shadow-md hover:shadow-lg"
             style={{ backgroundColor: 'var(--color-secondary)' }}
           >
             Agenda tu Primera Consulta
-          </button>
+          </a>
         </div>
       </div>
     </section>

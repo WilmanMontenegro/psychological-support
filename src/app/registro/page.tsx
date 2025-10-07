@@ -4,19 +4,22 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
+import toast from 'react-hot-toast';
 
 export default function RegistroPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
     email: '',
-    username: '',
+    fullName: '',
+    birthdate: '',
+    gender: '',
     password: '',
     confirmPassword: ''
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
@@ -30,12 +33,14 @@ export default function RegistroPage() {
 
     // Validaciones
     if (formData.password !== formData.confirmPassword) {
+      toast.error('Las contraseñas no coinciden');
       setError('Las contraseñas no coinciden');
       setLoading(false);
       return;
     }
 
     if (formData.password.length < 6) {
+      toast.error('La contraseña debe tener al menos 6 caracteres');
       setError('La contraseña debe tener al menos 6 caracteres');
       setLoading(false);
       return;
@@ -48,16 +53,19 @@ export default function RegistroPage() {
         password: formData.password,
         options: {
           data: {
-            username: formData.username
+            full_name: formData.fullName,
+            birthdate: formData.birthdate,
+            gender: formData.gender
           }
         }
       });
 
       if (signUpError) throw signUpError;
 
-      // Redirigir a login
+      // Redirigir a login (la notificación se muestra allá)
       router.push('/login?registered=true');
     } catch (err: any) {
+      toast.error(err.message || 'Error al crear la cuenta');
       setError(err.message || 'Error al crear la cuenta');
     } finally {
       setLoading(false);
@@ -78,7 +86,23 @@ export default function RegistroPage() {
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm space-y-4">
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
+                Nombre Completo
+              </label>
+              <input
+                id="fullName"
+                name="fullName"
+                type="text"
+                required
+                value={formData.fullName}
+                onChange={handleChange}
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent"
+                placeholder="Juan Pérez"
+              />
+            </div>
+
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                 Correo Electrónico
@@ -96,19 +120,38 @@ export default function RegistroPage() {
             </div>
 
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
-                Nombre de Usuario
+              <label htmlFor="birthdate" className="block text-sm font-medium text-gray-700 mb-1">
+                Fecha de Nacimiento
               </label>
               <input
-                id="username"
-                name="username"
-                type="text"
+                id="birthdate"
+                name="birthdate"
+                type="date"
                 required
-                value={formData.username}
+                value={formData.birthdate}
                 onChange={handleChange}
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent"
-                placeholder="usuario123"
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent"
               />
+            </div>
+
+            <div>
+              <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-1">
+                Género
+              </label>
+              <select
+                id="gender"
+                name="gender"
+                required
+                value={formData.gender}
+                onChange={handleChange}
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent"
+              >
+                <option value="">Selecciona tu género</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
+                <option value="Otro">Otro</option>
+                <option value="Prefiero no decir">Prefiero no decir</option>
+              </select>
             </div>
 
             <div>

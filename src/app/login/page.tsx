@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
+import toast from 'react-hot-toast';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -15,12 +16,16 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+  const hasShownToast = useRef(false);
 
   useEffect(() => {
-    if (searchParams.get('registered') === 'true') {
-      setSuccess('¡Cuenta creada exitosamente! Ahora puedes iniciar sesión.');
+    if (searchParams.get('registered') === 'true' && !hasShownToast.current) {
+      hasShownToast.current = true;
+      toast.success('¡Cuenta creada exitosamente! Ahora puedes iniciar sesión.');
+      // Limpiar el parámetro de la URL para evitar mostrar el toast de nuevo
+      router.replace('/login');
     }
-  }, [searchParams]);
+  }, [searchParams, router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -43,9 +48,14 @@ export default function LoginPage() {
 
       if (signInError) throw signInError;
 
+      toast.success('¡Bienvenido! Sesión iniciada correctamente');
+
       // Redirigir a agendar cita
-      router.push('/agendar-cita');
+      setTimeout(() => {
+        router.push('/agendar-cita');
+      }, 500);
     } catch (err: any) {
+      toast.error(err.message || 'Error al iniciar sesión');
       setError(err.message || 'Error al iniciar sesión');
     } finally {
       setLoading(false);
@@ -53,20 +63,20 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-tertiary-light py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="flex-1 flex items-center justify-center bg-tertiary-light py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-6">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-libre-baskerville text-accent">
+          <h2 className="text-center text-3xl font-libre-baskerville text-accent">
             Iniciar Sesión
           </h2>
           <div className="w-16 h-1 bg-secondary rounded-full mx-auto mt-4"></div>
-          <p className="mt-6 text-center text-gray-600">
+          <p className="mt-4 text-center text-gray-600">
             Ingresa a tu cuenta para continuar
           </p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm space-y-4">
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          <div className="space-y-4">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                 Correo Electrónico
