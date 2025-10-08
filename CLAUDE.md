@@ -102,12 +102,24 @@ src/
 │   ├── login/        # Página de inicio de sesión
 │   ├── registro/     # Página de registro
 │   ├── agendar-cita/ # Página para agendar citas (protegida)
-│   └── ...
+│   ├── blog/         # Sistema de blog
+│   ├── contactame/   # Página de contacto
+│   └── api/          # API Routes de Next.js
 ├── components/       # Componentes reutilizables
 ├── lib/              # Utilidades y configuraciones
 │   └── supabase.ts   # Cliente de Supabase
 └── ...
+
+public/               # Archivos estáticos (TODOS los recursos van aquí)
+└── images/
+    ├── blog/
+    │   └── [slug]/   # Carpeta por artículo
+    │       └── portada.jpg
+    ├── carrusel_1.jpg
+    └── ...
 ```
+
+**IMPORTANTE**: TODOS los archivos estáticos (imágenes, PDFs, fonts) van en `public/`. Next.js sirve automáticamente estos archivos desde la raíz del dominio.
 
 ## Funcionalidades del Proyecto
 
@@ -118,6 +130,8 @@ src/
 - **TherapyServices**: Servicios terapéuticos con tarjetas
 - **PhotoGallery**: Galería de fotos con lightbox y navegación
 - **FAQ**: Preguntas frecuentes colapsables
+- **BlogCard**: Tarjeta de artículo de blog con imagen, categoría, fecha y excerpt
+- **BlogSection**: Sección de blog para página principal (muestra últimos artículos)
 - **ContactForm**: Formulario de contacto reutilizable (parametrizable: showImage, variant)
 - **Footer**: Enlaces sociales y información de contacto
 - **Header/Navigation**: Navegación principal con icono de usuario
@@ -152,6 +166,36 @@ src/
   - Backend: Supabase Edge Function `send-contact-email`
   - Envío: Resend API (100 emails/día gratis)
   - Variables de entorno: `RESEND_API_KEY`, `CONTACT_EMAIL`
+
+### Sistema de Blog
+- **Página de blog** (`/blog`): Lista todos los artículos publicados
+  - Grid responsive que se centra automáticamente según cantidad de artículos
+  - 1 artículo: centrado, 2 artículos: dos columnas centradas, 3+: grid completo
+- **Artículos individuales** (`/blog/[slug]`): Página completa del artículo
+  - Diseño limpio con tipografía legible
+  - Imagen de portada, categoría y fecha
+  - Call-to-action al final para agendar cita
+  - Botón "Volver al blog"
+- **Componentes**:
+  - `BlogCard`: Tarjeta con título completo (sin recortar), excerpt limitado a 3 líneas
+  - `BlogSection`: Muestra últimos artículos en página principal
+- **Estructura de archivos**:
+  ```
+  src/app/blog/
+  ├── page.tsx                    # Lista de artículos
+  └── [slug]/
+      └── page.tsx                # Artículo individual
+
+  public/images/blog/
+  └── [slug]/
+      ├── portada.jpg             # Imagen principal
+      └── imagen-*.jpg            # Imágenes adicionales (opcional)
+  ```
+- **Mejores prácticas**:
+  - Cada artículo tiene su propia carpeta de imágenes
+  - Slug del artículo = nombre de carpeta de código e imágenes
+  - Siempre usar `portada.jpg` como nombre de imagen principal
+  - Agregar artículos nuevos al array `blogPosts` en ambos archivos
 
 ## Principios de Diseño
 

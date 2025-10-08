@@ -3,6 +3,7 @@ import Carousel from '@/components/Carousel'
 import AboutMe from '@/components/AboutMe'
 import TherapyServices from '@/components/TherapyServices'
 import FAQ from '@/components/FAQ'
+import BlogSection from '@/components/BlogSection'
 import ContactForm from '@/components/ContactForm'
 
 const carouselImages = [
@@ -49,6 +50,9 @@ export default function Home() {
 
         {/* Sección Preguntas Frecuentes */}
         <FAQ />
+
+        {/* Sección Blog */}
+        <BlogSection />
 
         {/* Sección Contáctame */}
         <section className="bg-pastel-light">
