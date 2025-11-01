@@ -210,6 +210,7 @@ public/               # Archivos estáticos (TODOS los recursos van aquí)
 - **UI/UX**: 100% español (textos, títulos, contenido)
 - **Código**: Inglés (variables, funciones, archivos)
 - **URLs**: Español para SEO (`/sobre-mi`, `/servicios`)
+- **Mensajes de error y toasts**: Siempre en español. Usa `translateSupabaseError(error, fallback)` (`src/lib/errorMessages.ts`) para traducir respuestas de Supabase antes de mostrarlas al usuario.
 
 ## Notificaciones
 

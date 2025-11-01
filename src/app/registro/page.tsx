@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { translateSupabaseError } from '@/lib/errorMessages';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 
@@ -65,8 +66,9 @@ export default function RegistroPage() {
       // Redirigir a login (la notificación se muestra allá)
       router.push('/login?registered=true');
     } catch (err: any) {
-      toast.error(err.message || 'Error al crear la cuenta');
-      setError(err.message || 'Error al crear la cuenta');
+      const message = translateSupabaseError(err, 'Error al crear la cuenta');
+      toast.error(message);
+      setError(message);
     } finally {
       setLoading(false);
     }

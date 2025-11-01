@@ -55,7 +55,8 @@ export default function Home() {
         <BlogSection />
 
         {/* Sección Contáctame */}
-        <section className="bg-pastel-light">
+        <section className="relative overflow-hidden bg-gradient-to-b from-[#f8edf4] via-pastel-light to-tertiary-light">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(191,136,172,0.22),_transparent_55%)]" />
           <ContactForm showImage={true} variant="section" />
         </section>
       </main>

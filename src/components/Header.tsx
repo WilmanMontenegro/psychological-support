@@ -47,6 +47,8 @@ export default function Header() {
     setUser(user)
     if (user) {
       await getUserRole(user.id)
+    } else {
+      setUserRole(null)
     }
   }
 
@@ -68,9 +70,33 @@ export default function Header() {
     router.push('/')
   }
 
+  const mobileAuthItem = user
+    ? {
+        href: '/mi-perfil',
+        label: 'Mi Perfil',
+        icon: (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 5h12a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V7a2 2 0 012-2z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 11a2 2 0 104 0 2 2 0 00-4 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16h8" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 8h3" />
+          </svg>
+        )
+      }
+    : {
+        href: '/login',
+        label: 'Ingresar',
+        icon: (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 20H6a2 2 0 01-2-2V6a2 2 0 012-2h6" />
+          </svg>
+        )
+      }
+
   return (
-    <header className="w-full relative bg-background shadow-sm">
-      <div className="flex lg:grid lg:grid-cols-3 items-center justify-center lg:justify-normal px-4 md:px-6 py-4">
+    <header className="w-full relative bg-background shadow-sm border-b border-secondary/10">
+      <div className="flex lg:grid lg:grid-cols-3 items-center justify-center sm:justify-between lg:justify-normal px-4 md:px-6 py-3 md:py-4">
         {/* Logo/Título */}
         <Logo textAlign="center" />
 
@@ -94,7 +120,7 @@ export default function Header() {
 
           {/* Icono de Usuario */}
           {user ? (
-            <div className="relative user-dropdown">
+            <div className="relative hidden sm:flex user-dropdown">
               <button
                 onClick={() => setShowDropdown(!showDropdown)}
                 className="flex items-center justify-center w-9 h-9 rounded-full hover:opacity-80 transition-opacity"
@@ -211,7 +237,7 @@ export default function Header() {
 
       {/* Navegación móvil fija abajo */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-background border-t shadow-lg z-50 pb-safe">
-        <Navigation className="" showCTA={true} isMobile={true} />
+        <Navigation className="" showCTA={true} isMobile={true} authItem={mobileAuthItem} />
       </div>
     </header>
   )

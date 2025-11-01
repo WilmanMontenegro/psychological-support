@@ -1,12 +1,18 @@
 import Link from 'next/link'
+import type { ReactNode } from 'react'
 
 interface NavigationProps {
   className?: string
   showCTA?: boolean
   isMobile?: boolean
+  authItem?: {
+    href: string
+    label: string
+    icon: ReactNode
+  } | null
 }
 
-export default function Navigation({ className = '', showCTA = true, isMobile = false }: NavigationProps) {
+export default function Navigation({ className = '', showCTA = true, isMobile = false, authItem = null }: NavigationProps) {
   const navItems = [
     {
       href: "/",
@@ -22,7 +28,9 @@ export default function Navigation({ className = '', showCTA = true, isMobile = 
       label: "Sobre Mi",
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8h.01" />
+          <circle cx="12" cy="12" r="9" strokeWidth={2} />
         </svg>
       )
     },
@@ -55,6 +63,15 @@ export default function Navigation({ className = '', showCTA = true, isMobile = 
             <span className="text-xs font-medium">{item.label}</span>
           </Link>
         ))}
+        {authItem && (
+          <Link
+            href={authItem.href}
+            className="flex flex-col items-center py-1 px-1 min-w-0"
+          >
+            {authItem.icon}
+            <span className="text-xs font-medium">{authItem.label}</span>
+          </Link>
+        )}
         {showCTA && (
           <Link
             href="/agendar-cita"

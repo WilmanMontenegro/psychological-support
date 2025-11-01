@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { translateSupabaseError } from '@/lib/errorMessages';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 
@@ -16,6 +17,7 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+  const [resetting, setResetting] = useState(false);
   const hasShownToast = useRef(false);
 
   useEffect(() => {
@@ -32,6 +34,34 @@ export default function LoginPage() {
       ...formData,
       [e.target.name]: e.target.value
     });
+  };
+
+  const handleForgotPassword = async () => {
+    if (!formData.email) {
+      toast.error('Ingresa tu correo para enviarte el enlace de recuperación');
+      return;
+    }
+
+    try {
+      setResetting(true);
+      const redirectTo = typeof window !== 'undefined'
+        ? `${window.location.origin}/reset-password`
+        : undefined;
+
+      const { error } = await supabase.auth.resetPasswordForEmail(formData.email, {
+        redirectTo,
+      });
+
+      if (error) throw error;
+
+      toast.success('Revisa tu correo para restablecer tu contraseña');
+    } catch (err: any) {
+      console.error('Error al enviar enlace de recuperación:', err);
+      const message = translateSupabaseError(err, 'No se pudo enviar el correo de recuperación');
+      toast.error(message);
+    } finally {
+      setResetting(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -55,8 +85,9 @@ export default function LoginPage() {
         router.push('/agendar-cita');
       }, 500);
     } catch (err: any) {
-      toast.error(err.message || 'Error al iniciar sesión');
-      setError(err.message || 'Error al iniciar sesión');
+      const message = translateSupabaseError(err, 'Error al iniciar sesión');
+      toast.error(message);
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -140,6 +171,15 @@ export default function LoginPage() {
                 Regístrate aquí
               </Link>
             </p>
+            <button
+              type="button"
+              onClick={handleForgotPassword}
+              disabled={resetting}
+              className="mt-3 text-sm font-medium hover:underline disabled:opacity-50"
+              style={{ color: 'var(--color-secondary)' }}
+            >
+              {resetting ? 'Enviando enlace...' : '¿Olvidaste tu contraseña?'}
+            </button>
           </div>
         </form>
       </div>

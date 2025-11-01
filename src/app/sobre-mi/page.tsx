@@ -15,10 +15,6 @@ const galleryPhotos = [
     src: "/images/marcela3.jpg",
     alt: "Ana Marcela Polo Bastidas"
   },
-  {
-    src: "/images/marcela4.jpg",
-    alt: "Ana Marcela Polo Bastidas"
-  },
 ]
 
 export default function SobreMiPage() {

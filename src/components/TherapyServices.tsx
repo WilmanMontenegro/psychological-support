@@ -12,27 +12,27 @@ const services = [
   {
     icon: <FaHeart className="w-12 h-12 text-white" />,
     title: "Depresión",
-    description: "Acompañamiento profesional para superar episodios depresivos. Trabajamos juntos hacia tu bienestar emocional y mental."
+    description: "Acompañamiento empático y profesional para volver a conectar con la motivación, la esperanza y el sentido de vida."
   },
   {
     icon: <FaUsers className="w-12 h-12 text-white" />,
-    title: "Relaciones",
-    description: "Mejora tus vínculos interpersonales y comunicación. Fortalece tus relaciones familiares, de pareja y sociales."
+    title: "Ansiedad",
+    description: "Espacio para identificar y gestionar pensamientos, emociones y comportamientos asociados a la ansiedad, fortaleciendo la calma interior."
   },
   {
     icon: <FaEye className="w-12 h-12 text-white" />,
-    title: "Ansiedad",
-    description: "Estrategias para controlar la ansiedad y los pensamientos intrusivos. Recupera tu tranquilidad y confianza interior."
+    title: "Manejo de Emociones",
+    description: "Te ayudo a desarrollar tus habilidades para reconocer, comprender y expresar las emociones de forma saludable."
   },
   {
     icon: <FaUserTie className="w-12 h-12 text-white" />,
-    title: "Coaching Ejecutivo",
-    description: "Desarrollo de habilidades de liderazgo y gestión emocional en el ámbito profesional para alcanzar tus objetivos."
+    title: "Autoestima",
+    description: "Aquí el trabajo está enfocado en la autovaloración, el amor propio y la confianza personal."
   },
   {
     icon: <FaHandsHelping className="w-12 h-12 text-white" />,
-    title: "Grupos de Apoyo",
-    description: "Espacios seguros de crecimiento compartido. Conecta con otros en procesos similares y fortalece tu red de apoyo."
+    title: "Crecimiento Personal y Bienestar Integral",
+    description: "Buscamos las herramientas prácticas que fortalecen la resiliencia, la autocomprensión y la construcción para una vida más equilibrada.."
   }
 ]
 
