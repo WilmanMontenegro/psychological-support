@@ -18,13 +18,17 @@ export async function getUserProfile(): Promise<UserProfile | null> {
 
   if (!user) return null;
 
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('*')
     .eq('id', user.id)
-    .single();
+    .maybeSingle();
 
-  return profile;
+  if (profileError) {
+    throw profileError;
+  }
+
+  return profile ?? null;
 }
 
 export async function checkUserRole(allowedRoles: UserRole[]): Promise<boolean> {

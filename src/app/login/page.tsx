@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { getUserProfile } from '@/lib/auth';
 import { translateSupabaseError } from '@/lib/errorMessages';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
@@ -71,18 +72,34 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+      const { error: signInError } = await supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.password
       });
 
       if (signInError) throw signInError;
 
+      let redirectPath = '/mis-citas';
+
+      try {
+        const profile = await getUserProfile();
+
+        if (!profile) {
+          console.warn('Perfil no encontrado tras iniciar sesión. Se usará la ruta por defecto.');
+        } else if (profile.role === 'psychologist' || profile.role === 'admin') {
+          redirectPath = '/mis-citas';
+        } else if (profile.role === 'patient') {
+          redirectPath = '/mis-citas';
+        }
+      } catch (profileError) {
+        console.error('Error al obtener perfil tras iniciar sesión:', profileError);
+      }
+
       toast.success('¡Bienvenido! Sesión iniciada correctamente');
 
       // Redirigir a agendar cita
       setTimeout(() => {
-        router.push('/agendar-cita');
+        router.push(redirectPath);
       }, 500);
     } catch (err: any) {
       const message = translateSupabaseError(err, 'Error al iniciar sesión');

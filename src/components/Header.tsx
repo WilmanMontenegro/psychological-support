@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Navigation from './Navigation'
 import Logo from './Logo'
 import { supabase } from '@/lib/supabase'
+import { FaSignInAlt } from 'react-icons/fa'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -86,12 +87,7 @@ export default function Header() {
     : {
         href: '/login',
         label: 'Ingresar',
-        icon: (
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 20H6a2 2 0 01-2-2V6a2 2 0 012-2h6" />
-          </svg>
-        )
+        icon: <FaSignInAlt size={18} />
       }
 
   return (
@@ -111,7 +107,7 @@ export default function Header() {
           {(!user || userRole === 'patient') && (
             <Link
               href="/agendar-cita"
-              className="hidden sm:block text-white px-2 sm:px-3 lg:px-4 py-2 rounded hover:opacity-80 transition-colors font-montserrat font-medium text-xs sm:text-sm lg:text-base"
+              className="hidden sm:block text-white px-2 sm:px-3 lg:px-4 py-2 rounded hover:brightness-95 transition-all font-montserrat font-medium text-xs sm:text-sm lg:text-base shadow-md"
               style={{ backgroundColor: 'var(--color-secondary)' }}
             >
               <span className="lg:inline">Agendar </span>Cita
@@ -223,13 +219,16 @@ export default function Header() {
           ) : (
             <Link
               href="/login"
-              className="hidden sm:flex items-center justify-center w-9 h-9 rounded-full hover:opacity-80 transition-opacity"
-              style={{ backgroundColor: 'var(--color-tertiary)' }}
+              className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-montserrat font-medium border shadow-sm hover:shadow-md transition-all"
+              style={{
+                backgroundColor: '#fff',
+                color: 'var(--color-secondary)',
+                borderColor: 'var(--color-secondary)'
+              }}
               aria-label="Iniciar sesión"
             >
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
+              <FaSignInAlt size={18} className="text-current" />
+              <span className="text-current">Ingresar</span>
             </Link>
           )}
         </div>

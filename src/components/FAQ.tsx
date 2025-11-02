@@ -11,23 +11,23 @@ interface FAQItem {
 const faqData: FAQItem[] = [
   {
     question: "¿Cómo puedo agendar una cita?",
-    answer: "Puedes agendar una cita a través de nuestro formulario de contacto, llamando al teléfono proporcionado, o enviando un mensaje directo. Generalmente respondemos dentro de las primeras 24 horas para confirmar la disponibilidad."
+    answer: "Puedes agendar tu cita directamente a través del formulario disponible en esta página web. Solo debes ingresar tus datos y seleccionar el horario que mejor se ajuste a tu disponibilidad. Una vez enviada la solicitud, recibirás la confirmación con los detalles de tu sesión."
   },
   {
-    question: "¿Cuánto dura una sesión de terapia?",
-    answer: "Las sesiones individuales tienen una duración estándar de 50 minutos. Para terapia de pareja o familiar, las sesiones pueden extenderse a 80 minutos, dependiendo de las necesidades específicas del caso."
+    question: "¿Cuánto dura una sesión de acompañamiento psicológico?",
+    answer: "Las sesiones tienen una duración de entre 20 y 30 minutos, brindando un espacio de acompañamiento psicológico centrado en el bienestar emocional y personal. Cada encuentro se adapta a tus necesidades y ritmo, integrando herramientas prácticas para fortalecer la autoestima, la gestión emocional y el equilibrio interior."
   },
   {
-    question: "¿Ofrecen terapia online?",
-    answer: "Sí, ofrecemos sesiones de terapia online a través de plataformas seguras y confidenciales. Esta modalidad es ideal para personas que prefieren la comodidad de su hogar o que tienen dificultades para asistir presencialmente."
+    question: "¿Ofrecen acompañamiento psicológico presencial?",
+    answer: "No, en el momento las sesiones de acompañamiento psicológico se realizan de manera virtual, lo que te permite acceder al proceso desde cualquier lugar con comodidad y privacidad. Es un espacio seguro y confidencial, ideal para quienes buscan cuidar su bienestar desde su entorno personal."
   },
   {
     question: "¿Qué métodos de pago aceptan?",
-    answer: "Aceptamos efectivo, transferencias bancarias, y tarjetas de débito/crédito. También manejamos planes de pago flexibles para facilitar el acceso a nuestros servicios terapéuticos."
+    answer: "Aceptamos transferencias bancarias, y tarjetas de débito/crédito. También manejamos planes de pago flexibles para facilitar el acceso a nuestros servicios terapéuticos."
   },
   {
     question: "¿Es confidencial la información compartida?",
-    answer: "Absolutamente. Toda la información compartida durante las sesiones está protegida por el secreto profesional y las leyes de confidencialidad. Tu privacidad y confianza son fundamentales en el proceso terapéutico."
+    answer: "Sí, absolutamente. Toda la información compartida durante las sesiones es estrictamente confidencial. El acompañamiento se realiza bajo el principio ético del secreto profesional y en cumplimiento de las normas legales que protegen tu privacidad y bienestar."
   }
 ]
 

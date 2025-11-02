@@ -3,12 +3,15 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import type { UserProfile } from '@/lib/auth';
 import toast from 'react-hot-toast';
 
 export default function MiPerfilPage() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
   const [deleting, setDeleting] = useState(false);
@@ -18,7 +21,17 @@ export default function MiPerfilPage() {
   }, []);
 
   const checkUser = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
+    setError(null);
+
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+    if (authError) {
+      console.error('Error al obtener usuario:', authError);
+      toast.error('No se pudo cargar tu perfil');
+      setError('No se pudo cargar tu perfil.');
+      setLoading(false);
+      return;
+    }
 
     if (!user) {
       router.push('/login');
@@ -26,6 +39,24 @@ export default function MiPerfilPage() {
     }
 
     setUser(user);
+    try {
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (profileError) {
+        throw profileError;
+      }
+
+      setProfile(profileData ?? null);
+    } catch (profileError) {
+      console.error('Error al obtener perfil:', profileError);
+      toast.error('No fue posible cargar la información completa del perfil');
+      setError('No fue posible cargar la información completa del perfil.');
+    }
+
     setLoading(false);
   };
 
@@ -57,9 +88,13 @@ export default function MiPerfilPage() {
     }
   };
 
-  const formatDate = (dateString: string | null) => {
+  const formatDate = (dateString: string | null | undefined) => {
     if (!dateString) return 'No especificado';
-    return new Date(dateString).toLocaleDateString('es-ES', {
+
+    const parsedDate = new Date(dateString);
+    if (Number.isNaN(parsedDate.getTime())) return dateString;
+
+    return parsedDate.toLocaleDateString('es-ES', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -93,6 +128,11 @@ export default function MiPerfilPage() {
   return (
     <div className="min-h-screen bg-pastel-light py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
+        {error && (
+          <div className="mb-6 rounded-md bg-red-50 p-4 text-sm text-red-700">
+            {error}
+          </div>
+        )}
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-libre-baskerville text-accent mb-4">
@@ -109,7 +149,7 @@ export default function MiPerfilPage() {
             <div className="border-b border-gray-200 pb-3">
               <p className="text-sm text-gray-500">Nombre completo</p>
               <p className="text-lg font-medium text-gray-900">
-                {user?.user_metadata?.full_name || 'No especificado'}
+                {profile?.full_name || user?.user_metadata?.full_name || 'No especificado'}
               </p>
             </div>
 
@@ -121,14 +161,14 @@ export default function MiPerfilPage() {
             <div className="border-b border-gray-200 pb-3">
               <p className="text-sm text-gray-500">Fecha de nacimiento</p>
               <p className="text-lg font-medium text-gray-900">
-                {formatDate(user?.user_metadata?.birthdate)}
+                {formatDate(profile?.birthdate ?? user?.user_metadata?.birthdate)}
               </p>
             </div>
 
             <div className="pb-3">
               <p className="text-sm text-gray-500">Género</p>
               <p className="text-lg font-medium text-gray-900">
-                {getGenderText(user?.user_metadata?.gender)}
+                {getGenderText(profile?.gender ?? user?.user_metadata?.gender ?? null)}
               </p>
             </div>
           </div>
