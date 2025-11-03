@@ -44,7 +44,7 @@ BEGIN
     SELECT 1 FROM pg_policies
     WHERE schemaname = 'public' AND tablename = 'profiles' AND policyname = 'Users can view own profile'
   ) THEN
-    EXECUTE $$CREATE POLICY "Users can view own profile" ON public.profiles FOR SELECT USING (auth.uid() = id)$$;
+    EXECUTE 'CREATE POLICY "Users can view own profile" ON public.profiles FOR SELECT USING (auth.uid() = id)';
   END IF;
 END$$;
 
@@ -55,13 +55,13 @@ BEGIN
     SELECT 1 FROM pg_policies
     WHERE schemaname = 'public' AND tablename = 'profiles' AND policyname = 'Users can insert own profile'
   ) THEN
-    EXECUTE $$CREATE POLICY "Users can insert own profile" ON public.profiles FOR INSERT WITH CHECK (auth.uid() = id)$$;
+    EXECUTE 'CREATE POLICY "Users can insert own profile" ON public.profiles FOR INSERT WITH CHECK (auth.uid() = id)';
   END IF;
   IF NOT EXISTS (
     SELECT 1 FROM pg_policies
     WHERE schemaname = 'public' AND tablename = 'profiles' AND policyname = 'Users can update own profile'
   ) THEN
-    EXECUTE $$CREATE POLICY "Users can update own profile" ON public.profiles FOR UPDATE USING (auth.uid() = id) WITH CHECK (auth.uid() = id)$$;
+    EXECUTE 'CREATE POLICY "Users can update own profile" ON public.profiles FOR UPDATE USING (auth.uid() = id) WITH CHECK (auth.uid() = id)';
   END IF;
 END$$;
 
