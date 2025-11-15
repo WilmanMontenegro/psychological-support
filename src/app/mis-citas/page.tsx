@@ -27,12 +27,10 @@ type Cita = {
   status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
   patient?: {
     full_name: string | null;
-    email?: string | null;
     phone?: string | null;
   } | null;
   psychologist?: {
     full_name: string | null;
-    email?: string | null;
     phone?: string | null;
   } | null;
 };
@@ -63,13 +61,13 @@ export default function MisCitasPage() {
         profile.role === 'admin'
           ? `
               *,
-              patient:profiles!appointments_patient_id_fkey(full_name, email, phone),
-              psychologist:profiles!appointments_psychologist_id_fkey(full_name, email, phone)
+              patient:profiles!appointments_patient_id_fkey(full_name, phone),
+              psychologist:profiles!appointments_psychologist_id_fkey(full_name, phone)
             `
           : profile.role === 'psychologist'
           ? `
               *,
-              patient:profiles!appointments_patient_id_fkey(full_name, email, phone)
+              patient:profiles!appointments_patient_id_fkey(full_name, phone)
             `
           : `
               *,
@@ -99,17 +97,24 @@ export default function MisCitasPage() {
   }, []);
 
   const checkUserAndLoadCitas = useCallback(async () => {
-    const profile = await getUserProfile();
+    try {
+      const profile = await getUserProfile();
 
-    if (!profile) {
+      if (!profile) {
+        router.push('/login');
+        return;
+      }
+
+      setUserRole(profile.role);
+      setCurrentProfile(profile);
+      await loadCitas(profile);
+    } catch (error) {
+      console.error('Error al verificar usuario:', error);
+      toast.error('No se pudo cargar la información de tu cuenta. Intenta nuevamente.');
       router.push('/login');
-      return;
+    } finally {
+      setLoading(false);
     }
-
-    setUserRole(profile.role);
-    setCurrentProfile(profile);
-    await loadCitas(profile);
-    setLoading(false);
   }, [router, loadCitas]);
 
   useEffect(() => {
@@ -464,7 +469,7 @@ export default function MisCitasPage() {
         ) : (
           <div className="space-y-4">
             {citas.map((cita) => {
-              const contactDetails = [cita.patient?.email, cita.patient?.phone].filter(
+              const contactDetails = [cita.patient?.phone].filter(
                 (value): value is string => Boolean(value)
               );
 

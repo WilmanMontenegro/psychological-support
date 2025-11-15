@@ -1,5 +1,7 @@
 "use client"
 
+import Link from 'next/link'
+
 interface AboutMeProps {
   showButton?: boolean
   bgColor?: string
@@ -79,12 +81,13 @@ export default function AboutMe({ showButton = true, bgColor = 'bg-white' }: Abo
             {/* Botón de contacto */}
             {showButton && (
               <div className="pt-4 text-center">
-                <button
-                  className="text-white px-8 py-3 rounded-lg font-montserrat font-medium text-lg hover:opacity-90 transition-all duration-300 shadow-md hover:shadow-lg"
+                <Link
+                  href="/sobre-mi"
+                  className="inline-block text-white px-8 py-3 rounded-lg font-montserrat font-medium text-lg hover:opacity-90 transition-all duration-300 shadow-md hover:shadow-lg"
                   style={{ backgroundColor: 'var(--color-secondary)' }}
                 >
                   Conoce más sobre mi enfoque
-                </button>
+                </Link>
               </div>
             )}
           </div>
