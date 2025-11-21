@@ -6,10 +6,10 @@ import Navigation from './Navigation'
 import Logo from './Logo'
 import { supabase } from '@/lib/supabase'
 import { FaSignInAlt } from 'react-icons/fa'
+import type { User } from '@supabase/supabase-js'
 
 export default function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<User | null>(null)
   const [userRole, setUserRole] = useState<string | null>(null)
   const [showDropdown, setShowDropdown] = useState(false)
   const router = useRouter()

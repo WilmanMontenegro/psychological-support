@@ -43,8 +43,8 @@ export function translateSupabaseError(error: unknown, fallback: string): string
   const message =
     typeof error === 'string'
       ? error
-      : typeof error === 'object' && 'message' in error && typeof (error as any).message === 'string'
-        ? (error as any).message
+      : typeof error === 'object' && 'message' in error && typeof (error as Record<string, unknown>).message === 'string'
+        ? (error as Record<string, unknown>).message as string
         : '';
 
   if (!message) return fallback;

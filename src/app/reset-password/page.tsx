@@ -104,7 +104,7 @@ export default function ResetPasswordPage() {
       setTimeout(() => {
         router.push('/login');
       }, 1500);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error al actualizar contraseña:', error);
       toast.error(translateSupabaseError(error, 'No se pudo actualizar la contraseña.'));
       setStatus('ready');

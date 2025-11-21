@@ -46,7 +46,7 @@ export default function ContactForm({ showImage = true, variant = 'section' }: C
 
       toast.success('¡Mensaje enviado! Te contactaré pronto');
       setFormData({ name: '', email: '', phone: '', message: '' });
-    } catch (error) {
+    } catch {
       toast.error('Error al enviar el mensaje. Intenta nuevamente');
     } finally {
       setLoading(false);

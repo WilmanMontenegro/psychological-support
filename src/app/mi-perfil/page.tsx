@@ -5,10 +5,11 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import type { UserProfile } from '@/lib/auth';
 import toast from 'react-hot-toast';
+import type { User } from '@supabase/supabase-js';
 
 export default function MiPerfilPage() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -81,7 +82,7 @@ export default function MiPerfilPage() {
       setTimeout(() => {
         router.push('/');
       }, 1000);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error al eliminar cuenta:', error);
       toast.error('Error al eliminar la cuenta. Contacta con soporte.');
       setDeleting(false);

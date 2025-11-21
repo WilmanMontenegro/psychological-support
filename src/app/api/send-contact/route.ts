@@ -15,7 +15,7 @@ export async function POST(request: Request) {
 
     const supabase = createClient();
 
-    const { data, error } = await supabase.functions.invoke('send-contact-email', {
+    const { error } = await supabase.functions.invoke('send-contact-email', {
       body: { name, email, phone, message }
     });
 

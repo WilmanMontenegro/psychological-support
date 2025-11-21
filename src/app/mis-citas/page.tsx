@@ -89,7 +89,7 @@ export default function MisCitasPage() {
 
       if (error) throw error;
 
-      setCitas(data || []);
+      setCitas((data as unknown as Cita[]) || []);
     } catch (error) {
       console.error('Error al cargar citas:', error);
       toast.error('Error al cargar tus citas');

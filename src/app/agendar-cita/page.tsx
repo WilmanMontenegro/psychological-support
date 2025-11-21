@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
+import type { User } from '@supabase/supabase-js';
 
 type ProblemType = 'couple' | 'anxiety' | 'emotions' | 'unknown';
 type Modality = 'video' | 'chat';
@@ -168,7 +169,7 @@ const generateTimeOptionsForDate = (
 
 export default function AgendarCitaPage() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -450,7 +451,7 @@ export default function AgendarCitaPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.psychologistId || !formData.date || !formData.time) {
+    if (!formData.psychologistId || !formData.date || !formData.time || !user) {
       toast.error('Selecciona un horario disponible antes de agendar.');
       return;
     }

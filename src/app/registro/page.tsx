@@ -49,7 +49,7 @@ export default function RegistroPage() {
 
     try {
       // Crear usuario en Supabase Auth
-      const { data, error: signUpError } = await supabase.auth.signUp({
+      const { error: signUpError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
         options: {
@@ -65,7 +65,7 @@ export default function RegistroPage() {
 
       // Redirigir a login (la notificación se muestra allá)
       router.push('/login?registered=true');
-    } catch (err: any) {
+    } catch (err) {
       const message = translateSupabaseError(err, 'Error al crear la cuenta');
       toast.error(message);
       setError(message);

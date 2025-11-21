@@ -15,8 +15,9 @@ export interface UserProfile {
 
 function isAuthSessionMissingError(error: unknown): boolean {
   if (!error || typeof error !== 'object') return false;
-  const name = 'name' in error ? (error as any).name : undefined;
-  const message = 'message' in error ? (error as any).message : undefined;
+  const errorObj = error as Record<string, unknown>;
+  const name = 'name' in error ? errorObj.name : undefined;
+  const message = 'message' in error ? errorObj.message : undefined;
 
   if (typeof name === 'string' && name === 'AuthSessionMissingError') {
     return true;
@@ -40,9 +41,7 @@ export async function getUserProfile(): Promise<UserProfile | null> {
       return null;
     }
 
-    const error = new Error(sessionError.message ?? 'No se pudo verificar la sesión activa.');
-    (error as any).cause = sessionError;
-    throw error;
+    throw new Error(sessionError.message ?? 'No se pudo verificar la sesión activa.', { cause: sessionError });
   }
 
   let activeSession = session;
@@ -58,9 +57,7 @@ export async function getUserProfile(): Promise<UserProfile | null> {
         return null;
       }
 
-      const error = new Error(refreshError.message ?? 'No se pudo actualizar la sesión del usuario.');
-      (error as any).cause = refreshError;
-      throw error;
+      throw new Error(refreshError.message ?? 'No se pudo actualizar la sesión del usuario.', { cause: refreshError });
     }
 
     activeSession = refreshed.session ?? null;
@@ -77,9 +74,7 @@ export async function getUserProfile(): Promise<UserProfile | null> {
     .maybeSingle();
 
   if (profileError) {
-    const error = new Error(profileError.message ?? 'No se pudo recuperar el perfil del usuario.');
-    (error as any).cause = profileError;
-    throw error;
+    throw new Error(profileError.message ?? 'No se pudo recuperar el perfil del usuario.', { cause: profileError });
   }
 
   return profile ?? null;
