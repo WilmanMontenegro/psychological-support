@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Manejo de Emociones | Acompañamiento Psicológico",
     description: "Descubre técnicas de apoyo psicológico para manejar tus emociones correctamente",
-    image: `${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/images/blog/aprendamos-a-identificar-y-manejar-nuestras-emociones/portada.jpg`,
+    images: [`${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/images/blog/aprendamos-a-identificar-y-manejar-nuestras-emociones/portada.jpg`],
   },
 };
 
