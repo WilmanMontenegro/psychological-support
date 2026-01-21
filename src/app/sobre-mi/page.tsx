@@ -4,15 +4,15 @@ import PhotoGallery from '@/components/PhotoGallery'
 
 const galleryPhotos = [
   {
-    src: "/images/marcela1.jpg",
+    src: "/images/gallery/ana_2.png",
     alt: "Ana Marcela Polo Bastidas"
   },
   {
-    src: "/images/marcela2.jpg",
+    src: "/images/gallery/marcela2.jpg",
     alt: "Ana Marcela Polo Bastidas"
   },
   {
-    src: "/images/marcela3.jpg",
+    src: "/images/gallery/marcela4-Photoroom.png",
     alt: "Ana Marcela Polo Bastidas"
   },
 ]

@@ -48,8 +48,8 @@ export default function AboutMe({ showButton = true, bgColor = 'bg-white' }: Abo
           <div className="flex justify-center order-2 md:order-2">
             <div className="relative">
               <img
-                src="/images/marcela4.jpg"
-                alt="Marcela Polo - Psicóloga"
+                src="/images/ana_1.png"
+                alt="Ana Marcela Polo Bastidas - Psicóloga"
                 className="rounded-lg shadow-lg w-[26rem] h-auto"
               />
               <div className="absolute -bottom-8 -right-8 w-25 h-25 rounded-full opacity-20 bg-primary"></div>
