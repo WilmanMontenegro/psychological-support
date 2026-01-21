@@ -1,4 +1,19 @@
 import BlogCard from '@/components/BlogCard';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: "Blog de Terapia Individual y Coaching Emocional | Salud Mental",
+  description: "Artículos sobre terapia individual, coaching emocional, manejo de emociones, acompañamiento psicológico y bienestar mental. Consejos prácticos de salud mental.",
+  keywords: "terapia individual, coaching emocional, salud mental, manejo de emociones, bienestar emocional, acompañamiento psicológico, inteligencia emocional, crecimiento personal",
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  name: "Blog de Acompañamiento Psicológico",
+  description: "Artículos sobre salud mental, bienestar emocional y apoyo psicológico",
+  url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/blog`,
+};
 
 const blogPosts = [
   {
@@ -14,15 +29,20 @@ const blogPosts = [
 export default function BlogPage() {
   return (
     <div className="min-h-screen pt-20 pb-16 px-4 bg-pastel-light">
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="max-w-7xl mx-auto">
         {/* Título */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-libre-baskerville text-accent mb-4">
-            Blog
+            Blog de Apoyo Psicológico
           </h1>
           <div className="w-16 h-1 bg-secondary rounded-full mx-auto mb-6"></div>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-            Artículos y reflexiones sobre salud mental, bienestar emocional y crecimiento personal
+            Artículos, reflexiones y consejos prácticos sobre salud mental, bienestar emocional y acompañamiento psicológico. Descubre cómo mejorar tu apoyo emocional y crecimiento personal.
           </p>
         </div>
 

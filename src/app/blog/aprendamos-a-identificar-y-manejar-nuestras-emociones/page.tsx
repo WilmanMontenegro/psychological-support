@@ -1,9 +1,40 @@
 import Link from 'next/link';
 import { FaArrowLeft, FaCalendar, FaTag } from 'react-icons/fa';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: "Aprendamos a Identificar y Manejar nuestras Emociones | Apoyo Psicológico",
+  description: "Guía sobre el manejo de emociones y acompañamiento emocional. Aprende a reconocer, entender y controlar tus emociones para tu bienestar mental.",
+  keywords: "manejo de emociones, inteligencia emocional, apoyo emocional, bienestar mental, crecimiento personal, psicología emocional",
+  openGraph: {
+    title: "Manejo de Emociones | Acompañamiento Psicológico",
+    description: "Descubre técnicas de apoyo psicológico para manejar tus emociones correctamente",
+    image: `${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/images/blog/aprendamos-a-identificar-y-manejar-nuestras-emociones/portada.jpg`,
+  },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: "Aprendamos a identificar y sobre todo a manejar nuestras emociones",
+  description: "Guía completa sobre el manejo emocional y apoyo psicológico para tu bienestar mental",
+  image: `${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/images/blog/aprendamos-a-identificar-y-manejar-nuestras-emociones/portada.jpg`,
+  datePublished: "2025-01-15",
+  author: {
+    "@type": "Person",
+    name: "Tu Psico Ana",
+  },
+  keywords: "manejo de emociones, apoyo emocional, bienestar mental, inteligencia emocional",
+};
 
 export default function BlogPost() {
   return (
     <div className="min-h-screen pt-20 pb-16 px-4">
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <article className="max-w-4xl mx-auto">
         {/* Botón volver */}
         <Link href="/blog" className="inline-flex items-center gap-2 text-secondary hover:underline mb-8">
@@ -15,16 +46,16 @@ export default function BlogPost() {
           <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
             <span className="flex items-center gap-2">
               <FaCalendar style={{ color: 'var(--color-secondary)' }} />
-              7 de octubre, 2025
+              15 de enero, 2025
             </span>
             <span className="flex items-center gap-2">
               <FaTag style={{ color: 'var(--color-secondary)' }} />
-              Bienestar
+              Apoyo Emocional
             </span>
           </div>
 
           <h1 className="text-3xl md:text-5xl font-libre-baskerville text-accent mb-6">
-            Aprendamos a identificar y sobre todo a manejar nuestras emociones
+            Aprendamos a identificar y manejar nuestras emociones
           </h1>
           <div className="w-24 h-1 bg-secondary rounded-full mb-8"></div>
         </header>
