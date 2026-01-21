@@ -87,8 +87,8 @@ export default function ContactForm({ showImage = true, variant = 'section' }: C
             {showImage && (
               <div className="relative h-[400px] md:h-[500px] rounded-3xl overflow-hidden shadow-lg">
                 <img
-                  src="/images/preocupada2.jpg"
-                  alt="Contáctame"
+                  src="/images/contacto.jpg"
+                  alt="Contáctame - Apoyo emocional"
                   className="w-full h-full object-cover"
                 />
                 {/* Bolitas decorativas */}
