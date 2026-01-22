@@ -1,6 +1,6 @@
 # Apoyo Psicológico
 
-Aplicación web para servicios de apoyo psicológico y terapia online.
+Aplicación web para servicios de apoyo psicológico y acompañamiento online.
 
 ## Stack
 

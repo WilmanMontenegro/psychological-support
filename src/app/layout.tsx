@@ -32,19 +32,20 @@ const jsonLd = {
   name: "Tu Psico Ana",
   url: siteUrl,
   image: ogImage,
-  description: "Servicios de apoyo psicológico y terapia profesional en línea.",
+  description: "Servicios de apoyo psicológico y acompañamiento profesional en línea.",
   areaServed: "LatAm",
-  serviceType: "Apoyo psicológico y terapia",
+  serviceType: "Apoyo psicológico y acompañamiento",
 };
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Terapia Individual Online | Acompañamiento Psicológico | Tu Psico Ana",
-    template: "%s | Tu Psico Ana",
+    default: "Acompañamiento Psicológico Online | Apoyo Emocional | Tu Psico Ana",
+    template: "%s | Tu Psico Ana"
   },
-  description: "Terapia individual online. Acompañamiento psicológico profesional, coaching emocional y apoyo en manejo de emociones. Agenda tu sesión de terapia psicológica.",
-  keywords: ["terapia individual", "terapia psicológica", "psicólogo online", "acompañamiento psicológico", "coaching emocional", "apoyo emocional", "salud mental", "manejo de emociones", "psicólogo en línea", "consulta psicológica"],
+  description: "Acompañamiento psicológico online profesional, coaching emocional y apoyo en manejo de emociones. Agenda tu sesión de acompañamiento psicológico.",
+  keywords: ["acompañamiento psicológico", "apoyo psicológico", "psicólogo online", "coaching emocional", "apoyo emocional", "salud mental", "manejo de emociones", "psicólogo en línea", "consulta psicológica"],
+
   category: "health",
   applicationName: "Tu Psico Ana",
   openGraph: {
@@ -52,21 +53,21 @@ export const metadata: Metadata = {
     siteName: "Tu Psico Ana",
     locale: "es_ES",
     url: siteUrl,
-    title: "Terapia Individual Online | Acompañamiento Psicológico",
-    description: "Terapia individual, coaching emocional y apoyo psicológico profesional en línea",
+    title: "Acompañamiento Psicológico Online | Apoyo Emocional",
+    description: "Acompañamiento psicológico, coaching emocional y apoyo psicológico profesional en línea",
     images: [
       {
         url: ogImage,
         width: 1200,
         height: 630,
-        alt: "Terapia Individual y Acompañamiento Psicológico",
+        alt: "Acompañamiento Psicológico y Apoyo Emocional",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Terapia Individual Online | Tu Psico Ana",
-    description: "Acompañamiento psicológico profesional, terapia y coaching emocional",
+    title: "Acompañamiento Psicológico Online | Tu Psico Ana",
+    description: "Acompañamiento psicológico profesional y coaching emocional",
     images: [ogImage],
   },
   robots: {

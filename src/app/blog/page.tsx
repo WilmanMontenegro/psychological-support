@@ -2,9 +2,9 @@ import BlogCard from '@/components/BlogCard';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "Blog de Terapia Individual y Coaching Emocional | Salud Mental",
-  description: "Artículos sobre terapia individual, coaching emocional, manejo de emociones, acompañamiento psicológico y bienestar mental. Consejos prácticos de salud mental.",
-  keywords: "terapia individual, coaching emocional, salud mental, manejo de emociones, bienestar emocional, acompañamiento psicológico, inteligencia emocional, crecimiento personal",
+  title: "Blog de Acompañamiento Psicológico y Coaching Emocional | Salud Mental",
+  description: "Artículos sobre acompañamiento psicológico, coaching emocional, manejo de emociones, apoyo emocional y bienestar mental. Consejos prácticos de salud mental.",
+  keywords: "acompañamiento psicológico, coaching emocional, salud mental, manejo de emociones, bienestar emocional, apoyo emocional, inteligencia emocional, crecimiento personal",
 };
 
 const jsonLd = {

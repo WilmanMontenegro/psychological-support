@@ -1,6 +1,6 @@
 # Proyecto de Apoyo Psicológico
 
-Una aplicación web de Next.js para servicios de apoyo psicológico y terapia.
+Una aplicación web de Next.js para servicios de apoyo psicológico y acompañamiento.
 
 ## Filosofía del Proyecto
 
@@ -138,7 +138,7 @@ public/               # Archivos estáticos (TODOS los recursos van aquí)
 - **Carousel**: Carrusel de imágenes con navegación
 - **AboutMe**: Sección sobre el profesional (parametrizable: showButton, bgColor)
 - **WhyChooseMe**: Sección "¿Por Qué Elegirme?" con 3 características
-- **TherapyServices**: Servicios terapéuticos con tarjetas
+- **TherapyServices**: Servicios de acompañamiento con tarjetas
 - **PhotoGallery**: Galería de fotos con lightbox y navegación
 - **FAQ**: Preguntas frecuentes colapsables
 - **BlogCard**: Tarjeta de artículo de blog con imagen, categoría, fecha y excerpt

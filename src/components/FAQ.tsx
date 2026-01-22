@@ -23,7 +23,7 @@ const faqData: FAQItem[] = [
   },
   {
     question: "¿Qué métodos de pago aceptan?",
-    answer: "Aceptamos transferencias bancarias, y tarjetas de débito/crédito. También manejamos planes de pago flexibles para facilitar el acceso a nuestros servicios terapéuticos."
+    answer: "Aceptamos transferencias bancarias, y tarjetas de débito/crédito. También manejamos planes de pago flexibles para facilitar el acceso a nuestros servicios de acompañamiento."
   },
   {
     question: "¿Es confidencial la información compartida?",
@@ -56,7 +56,7 @@ export default function FAQ() {
           <div className="relative">
             <img
               src="/images/FAQ.jpg"
-              alt="Sesión de terapia profesional"
+              alt="Sesión de acompañamiento profesional"
               className="w-full h-auto rounded-lg shadow-lg object-cover"
             />
           </div>

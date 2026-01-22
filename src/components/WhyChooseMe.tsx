@@ -18,7 +18,7 @@ export default function WhyChooseMe() {
         </svg>
       ),
       title: "Consultas Accesibles",
-      description: "Las sesiones funcionan con donaciones voluntarias. Tú decides cuánto aportar según tus posibilidades y el valor que la terapia tuvo para ti."
+      description: "Las sesiones funcionan con donaciones voluntarias. Tú decides cuánto aportar según tus posibilidades y el valor que el acompañamiento tuvo para ti."
     },
     {
       icon: (

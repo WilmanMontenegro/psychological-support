@@ -42,7 +42,7 @@ export default function TherapyServices() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold font-libre-baskerville text-accent mb-4">
-            Terapias y Tratamientos
+            Servicios de Acompañamiento
           </h2>
           <div className="w-16 h-1 bg-secondary rounded-full mx-auto mb-6"></div>
           <p className="text-gray-600 font-lato max-w-2xl mx-auto">

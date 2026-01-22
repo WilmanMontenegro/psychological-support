@@ -2,16 +2,16 @@ import ContactForm from '@/components/ContactForm';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "Agendar Terapia Individual Online | Coaching Emocional",
-  description: "Agenda tu sesión de terapia individual, coaching emocional y acompañamiento psicológico. Contacta hoy para comenzar tu acompañamiento en línea.",
-  keywords: "agendar cita psicólogo, terapia individual online, coaching emocional, consulta psicológica, acompañamiento psicológico",
+  title: "Agendar Sesión de Acompañamiento Psicológico Online | Coaching Emocional",
+  description: "Agenda tu sesión de acompañamiento psicológico, coaching emocional y apoyo emocional. Contacta hoy para comenzar tu proceso de crecimiento en línea.",
+  keywords: "agendar cita psicólogo, acompañamiento psicológico online, coaching emocional, consulta psicológica, apoyo emocional",
 };
 
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "ContactPage",
   name: "Agendar Cita de Acompañamiento Psicológico",
-  description: "Solicita tu cita de terapia y apoyo psicológico profesional",
+  description: "Solicita tu cita de acompañamiento y apoyo psicológico profesional",
   url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/contactame`,
 };
 

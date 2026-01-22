@@ -8,12 +8,12 @@ import ContactForm from '@/components/ContactForm'
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Terapia Individual Online | Acompañamiento Psicológico y Coaching Emocional",
-  description: "Terapia individual online con enfoque en coaching emocional, apoyo psicológico y manejo de emociones. Acompañamiento profesional para tu bienestar y crecimiento personal.",
-  keywords: "terapia individual, terapia psicológica online, coaching emocional, acompañamiento psicológico, psicólogo, apoyo emocional, manejo de emociones, salud mental, psicólogo en línea, consulta psicológica",
+  title: "Acompañamiento Psicológico Online | Apoyo Emocional y Coaching",
+  description: "Acompañamiento psicológico online con enfoque en coaching emocional, apoyo psicológico y manejo de emociones. Acompañamiento profesional para tu bienestar y crecimiento personal.",
+  keywords: "acompañamiento psicológico, apoyo psicológico online, coaching emocional, psicólogo, apoyo emocional, manejo de emociones, salud mental, psicólogo en línea, consulta psicológica",
   openGraph: {
-    title: "Terapia Individual Online | Coaching Emocional",
-    description: "Sesiones de terapia individual, acompañamiento psicológico y coaching emocional. Agenda tu cita hoy.",
+    title: "Acompañamiento Psicológico Online | Coaching Emocional",
+    description: "Sesiones de acompañamiento psicológico y coaching emocional. Agenda tu cita hoy.",
   },
 };
 
@@ -21,20 +21,20 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": ["MedicalBusiness", "LocalBusiness"],
   name: "Tu Psico Ana",
-  description: "Terapia individual, coaching emocional y acompañamiento psicológico en línea",
+  description: "Acompañamiento psicológico, coaching emocional y apoyo emocional en línea",
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com",
   image: `${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/og-image.jpg`,
   areaServed: {
     "@type": "Place",
     name: "Latinoamérica"
   },
-  serviceType: ["Terapia Individual", "Acompañamiento Psicológico", "Coaching Emocional", "Manejo de Emociones"],
+  serviceType: ["Acompañamiento Psicológico", "Apoyo Emocional", "Coaching Emocional", "Manejo de Emociones"],
   priceRange: "$$$",
   availableService: [
     {
       "@type": "Service",
-      name: "Terapia Individual Online",
-      description: "Sesiones de terapia individual personalizada con acompañamiento psicológico profesional"
+      name: "Acompañamiento Psicológico Online",
+      description: "Sesiones de acompañamiento psicológico personalizado y profesional"
     },
     {
       "@type": "Service",
@@ -58,9 +58,9 @@ const carouselImages = [
   },
   {
     src: "/images/carrusel_2.jpg",
-    alt: "Terapia psicológica y conexión - Tu psicólogo de confianza",
+    alt: "Acompañamiento psicológico y conexión - Tu psicólogo de confianza",
     title: "Conexión y Comprensión",
-    description: "Te acompaño en tu proceso de terapia con empatía y profesionalismo",
+    description: "Te acompaño en tu proceso de crecimiento con empatía y profesionalismo",
     objectPosition: 70
   },
   {
@@ -82,7 +82,7 @@ export default function Home() {
       <main>
         {/* Hero Section con Carrusel */}
         <section className="w-full">
-          <h1 className="sr-only">Acompañamiento Psicológico Profesional - Terapia y Apoyo Emocional en Línea</h1>
+          <h1 className="sr-only">Acompañamiento Psicológico Profesional - Apoyo Emocional en Línea</h1>
           <Carousel
             images={carouselImages}
             autoSlideInterval={6000}
@@ -94,7 +94,7 @@ export default function Home() {
         {/* Sección Sobre Mí */}
         <AboutMe />
 
-        {/* Sección Terapias y Tratamientos */}
+        {/* Sección de Servicios de Acompañamiento */}
         <TherapyServices />
 
         {/* Sección Preguntas Frecuentes */}
