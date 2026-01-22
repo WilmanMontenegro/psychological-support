@@ -1,6 +1,6 @@
 "use client"
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Navigation from './Navigation'
 import Logo from './Logo'
@@ -14,10 +14,30 @@ export default function Header() {
   const [showDropdown, setShowDropdown] = useState(false)
   const router = useRouter()
 
+  const getUserRole = useCallback(async (userId: string) => {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', userId)
+      .single()
+
+    console.log('User role data:', data, 'Error:', error)
+    setUserRole(data?.role || 'patient')
+  }, [])
+
+  const checkUser = useCallback(async () => {
+    const { data: { user } } = await supabase.auth.getUser()
+    setUser(user)
+    if (user) {
+      await getUserRole(user.id)
+    } else {
+      setUserRole(null)
+    }
+  }, [getUserRole])
+
   useEffect(() => {
     checkUser()
 
-    // Escuchar cambios de autenticación
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
       if (session?.user) {
@@ -27,7 +47,6 @@ export default function Header() {
       }
     })
 
-    // Cerrar dropdown al hacer click fuera
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement
       if (showDropdown && !target.closest('.user-dropdown')) {
@@ -41,28 +60,7 @@ export default function Header() {
       subscription.unsubscribe()
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [showDropdown])
-
-  const checkUser = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    setUser(user)
-    if (user) {
-      await getUserRole(user.id)
-    } else {
-      setUserRole(null)
-    }
-  }
-
-  const getUserRole = async (userId: string) => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', userId)
-      .single()
-
-    console.log('User role data:', data, 'Error:', error)
-    setUserRole(data?.role || 'patient')
-  }
+  }, [checkUser, getUserRole, showDropdown])
 
   const handleLogout = async () => {
     await supabase.auth.signOut()

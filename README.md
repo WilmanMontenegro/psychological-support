@@ -53,7 +53,10 @@ src/
 
 - **Autenticación** - Registro/login con Supabase Auth
 - **Sistema de citas** - Agendar consultas con modalidad anónima opcional
-- **Blog** - Artículos sobre salud mental
+- **Blog** - Artículos sobre salud mental con imágenes optimizadas (next/image)
+  - Listado dinámico de posts ordenados por fecha
+  - Sección destacada en el index con los 3 posts más recientes
+  - Metadata y structured data (JSON-LD) para SEO
 - **Contacto** - Formulario con envío de emails vía Resend
 - **Roles** - Paciente, psicólogo y administrador
 

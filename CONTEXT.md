@@ -181,15 +181,17 @@ public/               # Archivos estáticos (TODOS los recursos van aquí)
 ### Sistema de Blog
 - **Página de blog** (`/blog`): Lista todos los artículos publicados
   - Grid responsive que se centra automáticamente según cantidad de artículos
+  - Muestra los 3 posts más recientes ordenados por fecha descendente
   - 1 artículo: centrado, 2 artículos: dos columnas centradas, 3+: grid completo
 - **Artículos individuales** (`/blog/[slug]`): Página completa del artículo
   - Diseño limpio con tipografía legible
-  - Imagen de portada, categoría y fecha
+  - Imagen de portada optimizada con next/image y responsive sizing
+  - Categoría, fecha y autor
   - Call-to-action al final para agendar cita
   - Botón "Volver al blog"
 - **Componentes**:
-  - `BlogCard`: Tarjeta con título completo (sin recortar), excerpt limitado a 3 líneas
-  - `BlogSection`: Muestra últimos artículos en página principal
+  - `BlogCard`: Tarjeta con título completo, excerpt limitado a 3 líneas, imagen optimizada
+  - `BlogSection`: Muestra últimos 3 posts en página principal (reutiliza BlogCard)
 - **Estructura de archivos**:
   ```
   src/app/blog/
@@ -199,14 +201,25 @@ public/               # Archivos estáticos (TODOS los recursos van aquí)
 
   public/images/blog/
   └── [slug]/
-      ├── portada.jpg             # Imagen principal
+      ├── amorpropio.jpeg         # Imagen principal (nombre descriptivo)
       └── imagen-*.jpg            # Imágenes adicionales (opcional)
   ```
 - **Mejores prácticas**:
   - Cada artículo tiene su propia carpeta de imágenes
   - Slug del artículo = nombre de carpeta de código e imágenes
-  - Siempre usar `portada.jpg` como nombre de imagen principal
-  - Agregar artículos nuevos al array `blogPosts` en ambos archivos
+  - Nombres de imagen descriptivos (ej: amorpropio.jpeg, no portada.jpg)
+  - Agregar artículos nuevos al array `blogPosts` en:
+    - `src/app/blog/page.tsx` (listado general)
+    - `src/components/BlogSection.tsx` (sección del index)
+  - Ambos archivos ordenan por fecha descendente automáticamente
+  - Metadata y JSON-LD para SEO en cada post
+- **Publicación de nuevo artículo**:
+  1. Crear carpeta: `public/images/blog/[slug]/`
+  2. Subir imagen descriptiva (ej: amorpropio.jpeg)
+  3. Crear archivo: `src/app/blog/[slug]/page.tsx`
+  4. Añadir entrada a `blogPosts` array (ambos archivos)
+  5. Incluir metadata y JSON-LD
+  6. Commit: `feat: agregar artículo de blog [título]`
 
 ## Principios de Diseño
 

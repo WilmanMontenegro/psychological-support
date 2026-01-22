@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { FaArrowLeft, FaCalendar, FaTag } from 'react-icons/fa';
 import type { Metadata } from 'next';
@@ -19,7 +20,7 @@ const jsonLd = {
   headline: "Aprendamos a identificar y sobre todo a manejar nuestras emociones",
   description: "Guía completa sobre el manejo emocional y apoyo psicológico para tu bienestar mental",
   image: `${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/images/blog/aprendamos-a-identificar-y-manejar-nuestras-emociones/portada.jpg`,
-  datePublished: "2025-01-15",
+  datePublished: "2025-10-17",
   author: {
     "@type": "Person",
     name: "Tu Psico Ana",
@@ -46,7 +47,7 @@ export default function BlogPost() {
           <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
             <span className="flex items-center gap-2">
               <FaCalendar style={{ color: 'var(--color-secondary)' }} />
-              15 de enero, 2025
+              17 de octubre, 2025
             </span>
             <span className="flex items-center gap-2">
               <FaTag style={{ color: 'var(--color-secondary)' }} />
@@ -68,10 +69,14 @@ export default function BlogPost() {
 
           {/* Imagen integrada en el texto */}
           <div className="float-right ml-6 mb-6 w-full md:w-1/2 rounded-2xl overflow-hidden shadow-lg">
-            <img
+            <Image
               src="/images/blog/aprendamos-a-identificar-y-manejar-nuestras-emociones/portada.jpg"
               alt="Manejo de emociones"
+              width={1200}
+              height={800}
               className="w-full h-auto"
+              sizes="(max-width: 768px) 100vw, 50vw"
+              priority
             />
           </div>
 

@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 interface LogoProps {
   size?: 'small' | 'medium' | 'large'
   textColor?: string
@@ -35,10 +37,14 @@ export default function Logo({
 
   return (
     <div className='flex items-center gap-2 md:gap-3 flex-shrink-0'>
-      <img
+      <Image
         src="/images/logo.png"
         alt="Logo"
-        className={sizeClasses[size].image}
+        width={200}
+        height={200}
+        className={`${sizeClasses[size].image} h-auto`}
+        sizes="(max-width: 768px) 48px, 80px"
+        priority
       />
       <div className="min-w-0">
         <h1 className={`${sizeClasses[size].title} font-libre-baskerville leading-tight ${getTextAlignClass()} ${textColor}`}>

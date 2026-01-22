@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import type { UserProfile } from '@/lib/auth';
@@ -17,11 +17,7 @@ export default function MiPerfilPage() {
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
   const [deleting, setDeleting] = useState(false);
 
-  useEffect(() => {
-    checkUser();
-  }, []);
-
-  const checkUser = async () => {
+  const checkUser = useCallback(async () => {
     setError(null);
 
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -59,7 +55,15 @@ export default function MiPerfilPage() {
     }
 
     setLoading(false);
-  };
+  }, [router]);
+
+  const hasChecked = useRef(false);
+
+  useEffect(() => {
+    if (hasChecked.current) return;
+    hasChecked.current = true;
+    void checkUser();
+  }, [checkUser]);
 
   const handleDeleteAccount = async () => {
     if (deleteConfirmText !== 'ELIMINAR') {

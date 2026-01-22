@@ -1,5 +1,6 @@
 "use client"
 
+import Image from 'next/image'
 import Link from 'next/link'
 
 interface AboutMeProps {
@@ -47,10 +48,14 @@ export default function AboutMe({ showButton = true, bgColor = 'bg-white' }: Abo
           {/* Imagen - móvil second */}
           <div className="flex justify-center order-2 md:order-2">
             <div className="relative">
-              <img
+              <Image
                 src="/images/ana_1.png"
                 alt="Ana Marcela Polo Bastidas - Psicóloga"
+                width={416}
+                height={520}
                 className="rounded-lg shadow-lg w-[26rem] h-auto"
+                sizes="(max-width: 768px) 100vw, 26rem"
+                priority
               />
               <div className="absolute -bottom-8 -right-8 w-25 h-25 rounded-full opacity-20 bg-primary"></div>
             </div>

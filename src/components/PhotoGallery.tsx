@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { FaTimes, FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 import dynamic from 'next/dynamic'
+import Image from 'next/image'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ReactPlayer = dynamic(() => import('react-player'), { ssr: false }) as any
@@ -76,10 +77,13 @@ export default function PhotoGallery({ photos }: PhotoGalleryProps) {
                   </div>
                 </div>
               ) : (
-                <img
+                <Image
                   src={photo.src}
                   alt={photo.alt}
+                  width={1200}
+                  height={800}
                   className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 />
               )}
               <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
@@ -127,10 +131,13 @@ export default function PhotoGallery({ photos }: PhotoGalleryProps) {
                 />
               </div>
             ) : (
-              <img
+              <Image
                 src={photos[selectedPhoto].src}
                 alt={photos[selectedPhoto].alt}
+                width={1600}
+                height={1067}
                 className="max-w-full max-h-[90vh] object-contain"
+                sizes="(max-width: 768px) 90vw, 80vw"
                 onClick={(e) => e.stopPropagation()}
               />
             )}

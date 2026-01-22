@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useState } from 'react'
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa'
 
@@ -54,10 +55,14 @@ export default function FAQ() {
         {/* Image Section */}
         <div className="order-1 lg:order-1">
           <div className="relative">
-            <img
+            <Image
               src="/images/FAQ.jpg"
               alt="Sesión de acompañamiento profesional"
+              width={960}
+              height={640}
               className="w-full h-auto rounded-lg shadow-lg object-cover"
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              priority
             />
           </div>
         </div>

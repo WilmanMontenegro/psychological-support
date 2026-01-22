@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { getUserProfile } from '@/lib/auth';
@@ -35,29 +35,7 @@ export default function MiDisponibilidadPage() {
   const [saving, setSaving] = useState(false);
   const [availability, setAvailability] = useState<DayAvailability[]>([]);
 
-  useEffect(() => {
-    checkUserAndLoadAvailability();
-  }, []);
-
-  const checkUserAndLoadAvailability = async () => {
-    const profile = await getUserProfile();
-
-    if (!profile) {
-      router.push('/login');
-      return;
-    }
-
-    if (profile.role !== 'psychologist' && profile.role !== 'admin') {
-      toast.error('No tienes permisos para acceder a esta página');
-      router.push('/');
-      return;
-    }
-
-    await loadAvailability(profile.id);
-    setLoading(false);
-  };
-
-  const loadAvailability = async (psychologistId: string) => {
+  const loadAvailability = useCallback(async (psychologistId: string) => {
     try {
       const { data, error } = await supabase
         .from('psychologist_availability')
@@ -91,7 +69,33 @@ export default function MiDisponibilidadPage() {
       console.error('Error al cargar disponibilidad:', error);
       toast.error('Error al cargar la disponibilidad');
     }
-  };
+  }, []);
+
+  const checkUserAndLoadAvailability = useCallback(async () => {
+    const profile = await getUserProfile();
+
+    if (!profile) {
+      router.push('/login');
+      return;
+    }
+
+    if (profile.role !== 'psychologist' && profile.role !== 'admin') {
+      toast.error('No tienes permisos para acceder a esta página');
+      router.push('/');
+      return;
+    }
+
+    await loadAvailability(profile.id);
+    setLoading(false);
+  }, [loadAvailability, router]);
+
+  const hasChecked = useRef(false);
+
+  useEffect(() => {
+    if (hasChecked.current) return;
+    hasChecked.current = true;
+    void checkUserAndLoadAvailability();
+  }, [checkUserAndLoadAvailability]);
 
   const handleToggleDay = (dayOfWeek: number) => {
     setAvailability(prev =>

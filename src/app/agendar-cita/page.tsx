@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
@@ -188,24 +188,7 @@ export default function AgendarCitaPage() {
     psychologistId: ''
   });
 
-  useEffect(() => {
-    checkUser();
-  }, []);
-
-  const checkUser = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-      router.push('/login');
-      return;
-    }
-
-    setUser(user);
-    await loadAvailability();
-    setLoading(false);
-  };
-
-  const loadAvailability = async () => {
+  const loadAvailability = useCallback(async () => {
     try {
       const schedulingWindow = getSchedulingWindow();
 
@@ -327,7 +310,28 @@ export default function AgendarCitaPage() {
       console.error('Error al cargar disponibilidad:', error);
       setAvailabilityError('No se pudo cargar la disponibilidad. Intenta nuevamente más tarde.');
     }
-  };
+  }, [formData.date, formData.psychologistId, formData.time]);
+
+  const checkUser = useCallback(async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+
+    setUser(user);
+    await loadAvailability();
+    setLoading(false);
+  }, [loadAvailability, router]);
+
+  const hasCheckedUser = useRef(false);
+
+  useEffect(() => {
+    if (hasCheckedUser.current) return;
+    hasCheckedUser.current = true;
+    void checkUser();
+  }, [checkUser]);
 
   const updateSelectionsForPsychologist = (psychologistId: string) => {
     if (!psychologistId) {

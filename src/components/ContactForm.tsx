@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useState } from 'react';
 import { FaPaperPlane } from 'react-icons/fa';
 import toast from 'react-hot-toast';
@@ -86,10 +87,13 @@ export default function ContactForm({ showImage = true, variant = 'section' }: C
           {/* Imagen */}
             {showImage && (
               <div className="relative h-[400px] md:h-[500px] rounded-3xl overflow-hidden shadow-lg">
-                <img
+                <Image
                   src="/images/contacto.jpg"
                   alt="Contáctame - Apoyo emocional"
-                  className="w-full h-full object-cover"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover"
+                  priority={variant === 'page'}
                 />
                 {/* Bolitas decorativas */}
                 <div className="absolute top-10 left-10 w-20 h-20 bg-primary opacity-20 rounded-full" />

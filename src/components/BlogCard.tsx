@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 
 interface BlogCardProps {
@@ -23,10 +24,13 @@ export default function BlogCard({ slug, title, excerpt, image, category, date }
       <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 border-2 border-secondary h-full flex flex-col">
         {/* Imagen */}
         <div className="relative h-48 overflow-hidden">
-          <img
+          <Image
             src={image}
             alt={title}
-            className="w-full h-full object-cover"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover"
+            priority={false}
           />
           {/* Categoría */}
           <div className="absolute top-4 left-4">
