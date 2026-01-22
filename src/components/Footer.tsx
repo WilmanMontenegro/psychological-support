@@ -28,7 +28,7 @@ export default function Footer() {
           <div className="flex flex-col items-center lg:items-end">
             <div className="flex gap-4">
               <Link
-                href="https://facebook.com"
+                href="https://www.facebook.com/anamarcelapobastidas"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-2xl transition-transform hover:scale-110 p-2"
@@ -37,7 +37,7 @@ export default function Footer() {
                 <FaFacebook className="text-white" />
               </Link>
               <Link
-                href="https://instagram.com"
+                href="https://www.instagram.com/ana_marcela.co"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-2xl transition-transform hover:scale-110 p-2"
