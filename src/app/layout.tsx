@@ -82,7 +82,7 @@ export const metadata: Metadata = {
     canonical: siteUrl,
   },
   icons: {
-    icon: "/favicon.ico",
+    icon: "/images/favicon-oscuro.png?v=20260121",
   },
 };
 
