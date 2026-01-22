@@ -47,7 +47,6 @@ export const metadata: Metadata = {
   keywords: ["terapia individual", "terapia psicológica", "psicólogo online", "acompañamiento psicológico", "coaching emocional", "apoyo emocional", "salud mental", "manejo de emociones", "psicólogo en línea", "consulta psicológica"],
   category: "health",
   applicationName: "Tu Psico Ana",
-  viewport: "width=device-width, initial-scale=1",
   openGraph: {
     type: "website",
     siteName: "Tu Psico Ana",
@@ -81,9 +80,11 @@ export const metadata: Metadata = {
   alternates: {
     canonical: siteUrl,
   },
-  icons: {
-    icon: "/images/favicon-oscuro.png?v=20260121",
-  },
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({
