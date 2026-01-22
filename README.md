@@ -57,6 +57,15 @@ src/
 - **Contacto** - Formulario con envío de emails vía Resend
 - **Roles** - Paciente, psicólogo y administrador
 
+## SEO e Indexación
+
+- **Dominio canónico**: `https://www.tupsicoana.com`
+- **robots.txt**: generado por `src/app/robots.ts`
+- **sitemap.xml**: generado por `src/app/sitemap.ts`
+- **Favicon**: `src/app/favicon.ico` (Next.js lo sirve automáticamente)
+- **Verificación Google**: meta‑tag en `src/app/layout.tsx`
+- **Viewport**: se define con `export const viewport` (recomendación Next.js)
+
 ## Comandos
 
 | Comando | Descripción |

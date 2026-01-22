@@ -37,6 +37,7 @@ El proyecto se basa en principios de simplicidad extrema:
 - **Emails**: Resend (envío de emails de contacto)
 - **Edge Functions**: Supabase Edge Functions (backend serverless)
 - **Analytics**: Google Tag Manager
+- **SEO**: Metadata App Router + robots/sitemap nativos
 
 ## Comandos Importantes
 
@@ -121,6 +122,15 @@ public/               # Archivos estáticos (TODOS los recursos van aquí)
 ```
 
 **IMPORTANTE**: TODOS los archivos estáticos (imágenes, PDFs, fonts) van en `public/`. Next.js sirve automáticamente estos archivos desde la raíz del dominio.
+
+## SEO e Indexación
+
+- **Dominio canónico**: `https://www.tupsicoana.com` (redirigir sin‑www → www)
+- **Favicon**: `src/app/favicon.ico` (Next.js lo sirve por convención)
+- **robots.txt**: `src/app/robots.ts`
+- **sitemap.xml**: `src/app/sitemap.ts`
+- **Verificación Google**: `metadata.verification` en `src/app/layout.tsx`
+- **Viewport**: usar `export const viewport`, no dentro de `metadata`
 
 ## Funcionalidades del Proyecto
 
