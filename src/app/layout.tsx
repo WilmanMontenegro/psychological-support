@@ -77,6 +77,9 @@ export const metadata: Metadata = {
       follow: true,
     },
   },
+  verification: {
+    google: "ujmZl8LTd5ljPAzptZKPQ0Ri8g6xL5-0T1FB0tk4rSY",
+  },
   alternates: {
     canonical: siteUrl,
   },
