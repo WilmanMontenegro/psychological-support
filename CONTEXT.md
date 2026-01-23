@@ -335,8 +335,12 @@ public/               # Archivos estáticos (TODOS los recursos van aquí)
 ### Configuración
 - **Variables de entorno** (`.env.local`):
   - `NEXT_PUBLIC_SUPABASE_URL`: URL del proyecto
-  - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Clave anónima pública
+  - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Clave anónima pública (para frontend)
+  - `SUPABASE_SERVICE_ROLE_KEY`: Clave de servicio (solo para scripts admin, NO commitear)
+  - `RESEND_API_KEY`: API key de Resend para emails
+  - `CONTACT_EMAIL`: Email destino para formulario de contacto
 - **Cliente**: `src/lib/supabase.ts`
+- **IMPORTANTE**: `.env.local` está en `.gitignore` por seguridad
 
 ### Convenciones de Base de Datos
 - Snake_case para tablas y columnas: `user_profiles`, `created_at`
@@ -346,6 +350,14 @@ public/               # Archivos estáticos (TODOS los recursos van aquí)
 - Foreign keys claras: `user_id`, `appointment_id`
 - Enums para roles y estados
 
+### Triggers y Automatización
+- **Creación automática de perfiles**: Trigger `on_auth_user_created` en `auth.users`
+  - Cuando se registra un usuario en auth, automáticamente se crea su perfil en `profiles`
+  - Rol por defecto: `patient`
+  - Extrae `full_name` de `raw_user_meta_data`
+  - SQL: `supabase/migrations/001_create_profiles_trigger.sql`
+- **Sincronización**: Si existen usuarios sin perfil, ejecutar PARTE 2 del SQL de migración
+
 ### Autenticación
 - **user_metadata** almacena:
   - `full_name`: Nombre completo del usuario
@@ -354,12 +366,15 @@ public/               # Archivos estáticos (TODOS los recursos van aquí)
 
 ### Sistema de Roles
 - **3 tipos de cuenta**:
-  - `admin`: Administrador con control total del sistema (creado manualmente en BD)
-  - `psychologist`: Psicólogo que gestiona citas y pacientes (creado manualmente en BD)
-  - `patient`: Paciente/usuario que agenda citas (se crea por registro público)
+  - `admin`: Administrador con control total del sistema (actualizar rol manualmente en BD)
+  - `psychologist`: Psicólogo que gestiona citas y pacientes (actualizar rol manualmente en BD)
+  - `patient`: Paciente/usuario que agenda citas (rol por defecto al registrarse)
 - **Tabla `profiles`**: Extiende auth.users con información adicional y rol
-- **Registro público** (`/registro`): Solo crea cuentas de paciente (rol 'patient' por defecto)
-- **Admin y psicólogos**: Se crean manualmente actualizando el rol en la base de datos o desde futuro panel de administración
+- **Registro público** (`/registro`):
+  - Crea usuario en `auth.users` con metadata (full_name, birthdate, gender)
+  - Trigger automático crea perfil en `profiles` con rol 'patient'
+  - No necesita código adicional para crear perfil
+- **Admin y psicólogos**: Crear usuario normal, luego actualizar `role` en tabla `profiles` vía SQL Editor
 
 ### Gestión de Sesión
 - Header detecta automáticamente el estado de autenticación
@@ -399,6 +414,18 @@ feat: agregar formulario de contacto con integración de email
 
 Antes de finalizar cualquier cambio:
 1. Ejecutar `npm run lint` para verificar código
-2. Ejecutar `npm run build` para verificar compilación
+2. Ejecutar `npm run build` para verificar compilación (toma tiempo, solo si es necesario)
 3. Probar responsive design
 4. Verificar accesibilidad básica
+
+## Debugging y Diagnóstico
+
+### Logs de Disponibilidad
+- La página `/agendar-cita` incluye logs en consola del navegador para diagnosticar problemas
+- Logs incluyen: datos de BD, ventana de agendamiento, fechas/horarios generados
+- Abrir DevTools (F12) → Console para ver información de debug
+
+### Scripts de Verificación (requiere SUPABASE_SERVICE_ROLE_KEY)
+- Scripts temporales pueden crearse para verificar estado de BD
+- Usar service_role key para bypasear RLS
+- Nunca commitear archivos con credenciales
