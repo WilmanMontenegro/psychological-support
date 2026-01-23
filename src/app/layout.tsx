@@ -24,7 +24,7 @@ const libreBaskerville = Libre_Baskerville({
   weight: ["400", "700"],
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.tupsicoana.com";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com";
 const ogImage = `${siteUrl}/og-image.jpg`;
 const jsonLd = {
   "@context": "https://schema.org",
