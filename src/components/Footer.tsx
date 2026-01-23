@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Navigation from './Navigation'
 import Logo from './Logo'
-import { FaFacebook, FaInstagram, FaLinkedin, FaWhatsapp } from 'react-icons/fa'
+import { FaFacebook, FaInstagram, FaLinkedin } from 'react-icons/fa'
 
 export default function Footer() {
   return (
@@ -53,15 +53,6 @@ export default function Footer() {
                 aria-label="LinkedIn"
               >
                 <FaLinkedin className="text-white" />
-              </Link>
-              <Link
-                href="https://whatsapp.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-2xl transition-transform hover:scale-110 p-2"
-                aria-label="WhatsApp"
-              >
-                <FaWhatsapp className="text-white" />
               </Link>
             </div>
           </div>
