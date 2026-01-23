@@ -63,16 +63,23 @@ const formatTimeLabel = (time24h: string) => {
 };
 
 const getSchedulingWindow = (userId?: string) => {
-  const ADMIN_UID = '59accd11-b0cf-411c-af8a-62a0d509fb03';
+  const ADMIN_UID = '6278a2a5-e099-4a3f-81dc-920590863372';
+
+  // Debug para verificar permisos
+  if (userId) {
+    console.log(`👤 ID Actual: ${userId} | ID Admin Esperado: ${ADMIN_UID}`);
+    console.log('👤 Estado:', userId === ADMIN_UID ? '✅ MODO ADMIN' : '🔒 MODO STANDARD');
+  }
+
   const now = new Date();
-  
+
   // Sin restricciones para el admin/owner
   if (userId === ADMIN_UID) {
     const earliest = new Date(now.getTime());
     const latest = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 días
     return { earliest, latest };
   }
-  
+
   const earliest = new Date(now.getTime() + MIN_HOURS_NOTICE * 60 * 60 * 1000);
   const latest = new Date(now.getTime() + MAX_DAYS_RANGE * 24 * 60 * 60 * 1000);
   return { earliest, latest };
@@ -140,10 +147,10 @@ const generateDateOptionsForAvailability = (
 
     const availableTimes = generateTimesFromSlots(slots);
     const validTimes = filterTimesWithinWindow(value, availableTimes, earliest, latest);
-    
+
     console.log(`     ✓ Horarios generados:`, availableTimes);
     console.log(`     ✓ Horarios válidos (después de filtro):`, validTimes);
-    
+
     if (validTimes.length === 0) continue;
 
     const label = capitalize(
@@ -206,9 +213,11 @@ export default function AgendarCitaPage() {
     psychologistId: ''
   });
 
-  const loadAvailability = useCallback(async () => {
+  const loadAvailability = useCallback(async (currentUser?: User | null) => {
     try {
-      const schedulingWindow = getSchedulingWindow(user?.id);
+      // Usar el usuario pasado explícitamente o el del estado (para evitar problemas de closure durante la carga inicial)
+      const targetUserId = currentUser !== undefined ? currentUser?.id : user?.id;
+      const schedulingWindow = getSchedulingWindow(targetUserId);
 
       const { data, error } = await supabase
         .from('psychologist_availability')
@@ -282,9 +291,9 @@ export default function AgendarCitaPage() {
         grouped[initialPsychologist],
         schedulingWindow
       );
-      
+
       console.log('📆 Fechas generadas:', initialDates);
-      
+
       setDateOptions(initialDates);
 
       if (initialDates.length === 0) {
@@ -307,9 +316,9 @@ export default function AgendarCitaPage() {
       const initialTimes = chosenDate
         ? generateTimeOptionsForDate(grouped[initialPsychologist], chosenDate, schedulingWindow)
         : [];
-      
+
       console.log('⏰ Horarios generados para', chosenDate, ':', initialTimes);
-      
+
       setTimeOptions(initialTimes);
 
       if (initialTimes.length === 0) {
@@ -351,7 +360,8 @@ export default function AgendarCitaPage() {
     }
 
     setUser(user);
-    await loadAvailability();
+    // Pasamos el usuario explícitamente para asegurar que se usen los permisos correctos
+    await loadAvailability(user);
     setLoading(false);
   }, [loadAvailability, router]);
 

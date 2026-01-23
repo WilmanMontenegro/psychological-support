@@ -10,17 +10,6 @@ const nextConfig: NextConfig = {
   },
   redirects: async () => [
     {
-      source: '/:path*',
-      has: [
-        {
-          type: 'host',
-          value: 'tupsicoana.com',
-        },
-      ],
-      destination: 'https://www.tupsicoana.com/:path*',
-      permanent: true,
-    },
-    {
       source: "/terapia",
       destination: "/agendar-cita",
       permanent: true,
