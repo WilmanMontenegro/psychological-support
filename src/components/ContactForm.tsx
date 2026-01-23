@@ -20,9 +20,16 @@ export default function ContactForm({ showImage = true, variant = 'section' }: C
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    let value = e.target.value;
+
+    // Solo permitir números en el campo de teléfono
+    if (e.target.name === 'phone') {
+      value = value.replace(/[^0-9+\-\s]/g, '');
+    }
+
     setFormData(prev => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [e.target.name]: value
     }));
   };
 
@@ -137,7 +144,7 @@ export default function ContactForm({ showImage = true, variant = 'section' }: C
 
                 <div>
                   <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 mb-2">
-                    Teléfono (opcional)
+                    Celular (opcional)
                   </label>
                   <input
                     type="tel"
