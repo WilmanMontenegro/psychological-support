@@ -1,0 +1,15 @@
+{
+    "redirects": [
+        {
+            "source": "/:path*",
+            "has": [
+                {
+                    "type": "host",
+                    "value": "tupsicoana.com"
+                }
+            ],
+            "destination": "https://www.tupsicoana.com/:path*",
+            "permanent": true
+        }
+    ]
+}
