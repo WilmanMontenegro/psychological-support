@@ -126,12 +126,48 @@ public/               # Archivos estáticos (TODOS los recursos van aquí)
 ## SEO e Indexación
 
 - **Dominio canónico**: `https://tupsicoana.com` (sin www, cubierto por Domain Property en GSC)
-- **Favicon**: `src/app/favicon.ico` (Next.js lo sirve por convención)
+- **Favicon**: `src/app/icon.png` y `src/app/favicon.ico` - Logo azul grisáceo (ψ, letra psi de psicología)
+  - Next.js genera automáticamente todos los tamaños necesarios (16x16, 32x32, etc.)
+  - El archivo `.png` tiene prioridad sobre `.ico` en navegadores modernos
 - **robots.txt**: `src/app/robots.ts` (generado dinámicamente, excluye `/api`, `/admin`, `/login`, `/registro`, `/reset-password`)
 - **sitemap.xml**: `src/app/sitemap.ts` (listado de URLs públicas para indexación)
 - **Verificación Google**: `metadata.verification` en `src/app/layout.tsx`
 - **Viewport**: usar `export const viewport`, no dentro de `metadata`
 - **Google Search Console**: Registrar como Domain Property (`tupsicoana.com`), verificar por DNS
+
+## Analytics y Seguimiento
+
+### Google Tag Manager (GTM)
+- **Contenedor**: `GTM-K9V937TH`
+- **Instalación**: En `src/app/layout.tsx`
+  - Script en `<head>` con `strategy="afterInteractive"`
+  - Noscript iframe en `<body>` para usuarios sin JavaScript
+- **Calidad**: Contenedor funcionando correctamente, enviando datos sin problemas
+- **Gestión**: [tagmanager.google.com](https://tagmanager.google.com)
+  - Todas las etiquetas y configuraciones se manejan desde la interfaz web de GTM
+  - No requiere cambios en el código para agregar nuevas etiquetas
+
+### Google Analytics 4 (GA4)
+- **ID de medición**: `G-18WMEJK6Z9`
+- **Implementación**: Vía Google Tag Manager (no código directo)
+- **Configuración en GTM**:
+  - Tipo de etiqueta: "Etiqueta de Google" (Google tag)
+  - Activador: "All Pages" (todas las páginas)
+  - Nombre de etiqueta: "GA4 - Configuración"
+- **Verificación**: Informes → Tiempo real en [analytics.google.com](https://analytics.google.com)
+- **Datos disponibles**:
+  - Usuarios en tiempo real y estadísticas de visitas
+  - Páginas más visitadas
+  - Ubicación geográfica (países, ciudades)
+  - Dispositivos y navegadores
+  - Tiempo de permanencia en el sitio
+
+### Beneficios de GTM
+- **Flexibilidad**: Agregar/modificar etiquetas sin redesplegar el sitio
+- **Centralización**: Todas las herramientas de marketing en un solo lugar
+- **Sin cambios de código**: Las actualizaciones se hacen desde la interfaz de GTM
+- **Vista previa**: Probar cambios antes de publicar
+- **Historial de versiones**: Rollback fácil si algo falla
 
 ## Funcionalidades del Proyecto
 

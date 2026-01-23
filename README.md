@@ -65,9 +65,16 @@ src/
 - **Dominio canónico**: `https://www.tupsicoana.com`
 - **robots.txt**: generado por `src/app/robots.ts`
 - **sitemap.xml**: generado por `src/app/sitemap.ts`
-- **Favicon**: `src/app/favicon.ico` (Next.js lo sirve automáticamente)
+- **Favicon**: `src/app/icon.png` y `src/app/favicon.ico` - Logo azul grisáceo (Next.js genera todos los tamaños automáticamente)
 - **Verificación Google**: meta‑tag en `src/app/layout.tsx`
 - **Viewport**: se define con `export const viewport` (recomendación Next.js)
+
+## Analytics y Seguimiento
+
+- **Google Tag Manager**: `GTM-K9V937TH` instalado en `src/app/layout.tsx`
+- **Google Analytics 4**: `G-18WMEJK6Z9` configurado vía GTM
+- **Implementación**: GTM script en `<head>` y noscript en `<body>`
+- **Verificación**: Calidad de contenedor excelente, enviando datos correctamente
 
 ## Comandos
 
