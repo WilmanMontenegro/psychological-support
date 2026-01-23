@@ -2,6 +2,12 @@ import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 
+type CookieSetOptions = {
+  name: string;
+  value: string;
+  options?: Record<string, unknown>;
+};
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -14,7 +20,7 @@ export async function GET(
       {
         cookies: {
           getAll: () => cookieStore.getAll(),
-          setAll: (cookiesToSet: Array<{ name: string; value: string; options?: any }>) => {
+          setAll: (cookiesToSet: CookieSetOptions[]) => {
             try {
               cookiesToSet.forEach(({ name, value, options }) =>
                 cookieStore.set(name, value, options)
@@ -99,7 +105,7 @@ export async function POST(
       {
         cookies: {
           getAll: () => cookieStore.getAll(),
-          setAll: (cookiesToSet: Array<{ name: string; value: string; options?: any }>) => {
+          setAll: (cookiesToSet: CookieSetOptions[]) => {
             try {
               cookiesToSet.forEach(({ name, value, options }) =>
                 cookieStore.set(name, value, options)

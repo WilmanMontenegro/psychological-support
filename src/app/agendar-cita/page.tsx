@@ -319,7 +319,7 @@ export default function AgendarCitaPage() {
       console.error('Error al cargar disponibilidad:', error);
       setAvailabilityError('No se pudo cargar la disponibilidad. Intenta nuevamente más tarde.');
     }
-  }, [formData.date, formData.psychologistId, formData.time]);
+  }, [formData.date, formData.psychologistId, formData.time, user?.id]);
 
   const checkUser = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser();
