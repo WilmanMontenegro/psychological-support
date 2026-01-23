@@ -106,7 +106,7 @@ export default function BlogPost() {
             Estoy aquí para acompañarte en tu proceso de crecimiento emocional
           </p>
           <Link
-            href="/agendar-cita"
+            href="https://tupsicoana.com/agendar-cita"
             className="inline-block px-8 py-3 text-white rounded-lg font-medium transition hover:opacity-90"
             style={{ backgroundColor: 'var(--color-secondary)' }}
           >
