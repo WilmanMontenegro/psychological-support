@@ -8,9 +8,31 @@ export type AppointmentMessage = {
   created_at: string;
 };
 
+async function canAccessAppointment(appointmentId: string, userId: string): Promise<boolean> {
+  const { data, error } = await supabase
+    .from('appointments')
+    .select('patient_id, psychologist_id')
+    .eq('id', appointmentId)
+    .single();
+
+  if (error || !data) {
+    console.error('Error al verificar acceso a cita:', error);
+    return false;
+  }
+
+  return data.patient_id === userId || data.psychologist_id === userId;
+}
+
 export async function fetchAppointmentMessages(
-  appointmentId: string
+  appointmentId: string,
+  userId: string
 ): Promise<AppointmentMessage[]> {
+  // Verificar permisos
+  const hasAccess = await canAccessAppointment(appointmentId, userId);
+  if (!hasAccess) {
+    throw new Error('No tienes permiso para acceder a esta cita');
+  }
+
   const { data, error } = await supabase
     .from('appointment_messages')
     .select('*')
@@ -29,13 +51,29 @@ export async function sendAppointmentMessage(
   senderId: string,
   message: string
 ): Promise<void> {
+  // Validación de input
+  if (!message || !message.trim()) {
+    throw new Error('El mensaje no puede estar vacío');
+  }
+
+  if (message.length > 500) {
+    throw new Error('El mensaje no puede exceder 500 caracteres');
+  }
+
+  // Verificar permisos
+  const hasAccess = await canAccessAppointment(appointmentId, senderId);
+  if (!hasAccess) {
+    throw new Error('No tienes permiso para enviar mensajes en esta cita');
+  }
+
   const { error } = await supabase.from('appointment_messages').insert({
     appointment_id: appointmentId,
     sender_id: senderId,
-    message,
+    message: message.trim(),
   });
 
   if (error) {
     throw error;
   }
 }
+

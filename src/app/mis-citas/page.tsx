@@ -1,18 +1,12 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
-import type { FormEvent } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { getUserProfile, type UserProfile } from '@/lib/auth';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import type { RealtimeChannel } from '@supabase/supabase-js';
-import {
-  fetchAppointmentMessages,
-  sendAppointmentMessage,
-  type AppointmentMessage,
-} from '@/lib/appointments';
+import AppointmentChat from '@/components/AppointmentChat';
 
 type Cita = {
   id: string;
@@ -25,6 +19,8 @@ type Cita = {
   preferred_date: string;
   preferred_time: string;
   status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
+  psychologist_feedback?: string | null;
+  completed_at?: string | null;
   patient?: {
     full_name: string | null;
     phone?: string | null;
@@ -43,17 +39,9 @@ export default function MisCitasPage() {
   const [loading, setLoading] = useState(true);
   const hasLoaded = useRef(false);
   const [activeChatAppointmentId, setActiveChatAppointmentId] = useState<string | null>(null);
-  const [chatMessages, setChatMessages] = useState<AppointmentMessage[]>([]);
-  const [chatLoading, setChatLoading] = useState(false);
-  const [chatInput, setChatInput] = useState('');
-  const [sendingMessage, setSendingMessage] = useState(false);
-  const chatBottomRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (chatBottomRef.current) {
-      chatBottomRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [chatMessages]);
+  const [feedbackModal, setFeedbackModal] = useState<{ open: boolean; citaId: string | null }>({ open: false, citaId: null });
+  const [feedbackText, setFeedbackText] = useState('');
+  const [savingFeedback, setSavingFeedback] = useState(false);
 
   const loadCitas = useCallback(async (profile: UserProfile) => {
     try {
@@ -217,6 +205,65 @@ export default function MisCitasPage() {
     }
   };
 
+  const marcarComoCompletada = async () => {
+    if (!feedbackModal.citaId || !feedbackText.trim()) {
+      toast.error('Por favor escribe una retroalimentación');
+      return;
+    }
+
+    setSavingFeedback(true);
+
+    try {
+      const { error } = await supabase
+        .from('appointments')
+        .update({
+          status: 'finalizada',
+          psychologist_feedback: feedbackText,
+          completed_at: new Date().toISOString()
+        })
+        .eq('id', feedbackModal.citaId);
+
+      if (error) throw error;
+
+      toast.success('Cita finalizada exitosamente');
+      setFeedbackModal({ open: false, citaId: null });
+      setFeedbackText('');
+      
+      if (currentProfile) {
+        await loadCitas(currentProfile);
+      }
+    } catch (error) {
+      console.error('Error al marcar cita como completada:', error);
+      toast.error('Error al finalizar la cita');
+    } finally {
+      setSavingFeedback(false);
+    }
+  };
+
+  const eliminarCita = async (citaId: string) => {
+    if (!confirm('¿Estás seguro de que deseas eliminar esta cita?')) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('appointments')
+        .delete()
+        .eq('id', citaId);
+
+      if (error) throw error;
+
+      toast.success('Cita eliminada');
+      
+      if (currentProfile) {
+        await loadCitas(currentProfile);
+      }
+    } catch (error) {
+      console.error('Error al eliminar cita:', error);
+      toast.error('Error al eliminar la cita');
+    }
+  };
+
   const getAppointmentDateTime = (cita: Cita) => {
     if (!cita.preferred_date || !cita.preferred_time) {
       return null;
@@ -257,114 +304,59 @@ export default function MisCitasPage() {
       return false;
     }
 
-    return now >= appointmentDateTime;
+    // Permitir acceso 15 minutos antes de la hora programada
+    const fifteenMinutesBefore = new Date(appointmentDateTime.getTime() - 15 * 60 * 1000);
+    return now >= fifteenMinutesBefore;
   };
 
   const handleJoinAppointment = (citaId: string) => {
     setActiveChatAppointmentId((current) =>
-      current === citaId ? current : citaId
+      current === citaId ? null : citaId
     );
   };
 
-  const handleCloseChat = () => {
-    setActiveChatAppointmentId(null);
-    setChatMessages([]);
+  const isAppointmentExpired = (cita: Cita) => {
+    if (cita.status !== 'confirmed') return false;
+    
+    const appointmentDateTime = getAppointmentDateTime(cita);
+    if (!appointmentDateTime) return false;
+    
+    const now = new Date();
+    // Considerar vencida si pasaron más de 2 horas desde la hora programada
+    const twoHoursAfter = new Date(appointmentDateTime.getTime() + 2 * 60 * 60 * 1000);
+    return now > twoHoursAfter;
   };
 
-  const handleSendMessage = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    const message = chatInput.trim();
-
-    if (!message || !activeChatAppointmentId || !currentProfile) {
-      return;
-    }
-
-    try {
-      setSendingMessage(true);
-      await sendAppointmentMessage(activeChatAppointmentId, currentProfile.id, message);
-      setChatInput('');
-    } catch (error) {
-      console.error('Error al enviar mensaje:', error);
-      toast.error('No se pudo enviar el mensaje');
-    } finally {
-      setSendingMessage(false);
-    }
+  const getAppointmentStatus = (cita: Cita) => {
+    if (isAppointmentExpired(cita)) return 'vencida';
+    return cita.status;
   };
 
-  useEffect(() => {
-    if (!activeChatAppointmentId) {
-      setChatLoading(false);
-      return;
+  const getStatusColor = (status: string, isExpired = false) => {
+    if (isExpired) {
+      return 'bg-red-50 text-red-700 border-red-300';
     }
-
-    let isMounted = true;
-    let channel: RealtimeChannel | null = null;
-
-    const loadMessages = async () => {
-      try {
-        setChatLoading(true);
-        const data = await fetchAppointmentMessages(activeChatAppointmentId);
-        if (isMounted) {
-          setChatMessages(data);
-        }
-      } catch (error) {
-        console.error('Error al cargar mensajes de la cita:', error);
-        if (isMounted) {
-          toast.error('No se pudieron cargar los mensajes');
-        }
-      } finally {
-        if (isMounted) {
-          setChatLoading(false);
-        }
-      }
-    };
-
-    loadMessages();
-
-    channel = supabase
-      .channel(`appointment-messages-${activeChatAppointmentId}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'appointment_messages',
-          filter: `appointment_id=eq.${activeChatAppointmentId}`,
-        },
-        (payload) => {
-          if (!isMounted) return;
-          const newMessage = payload.new as AppointmentMessage;
-          setChatMessages((prev) => [...prev, newMessage]);
-        }
-      );
-
-    channel.subscribe();
-
-    return () => {
-      isMounted = false;
-      if (channel) {
-        supabase.removeChannel(channel);
-      }
-    };
-  }, [activeChatAppointmentId]);
-
-  const getStatusColor = (status: string) => {
+    if (isExpired) {
+      return 'bg-red-50 text-red-700 border-red-300';
+    }
     switch (status) {
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-300';
+        return 'bg-pastel text-gray-700 border-gray-300';
       case 'confirmed':
-        return 'bg-green-100 text-green-800 border-green-300';
+        return 'bg-pastel-light text-accent border-secondary/30';
       case 'cancelled':
-        return 'bg-red-100 text-red-800 border-red-300';
-      case 'completed':
-        return 'bg-blue-100 text-blue-800 border-blue-300';
+        return 'bg-gray-100 text-gray-700 border-gray-300';
+      case 'finalizada':
+        return 'bg-pastel-light text-secondary border-secondary/30';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-300';
+        return 'bg-gray-100 text-gray-700 border-gray-300';
     }
   };
 
-  const getStatusText = (status: string) => {
+  const getStatusText = (status: string, isExpired = false) => {
+    if (isExpired) {
+      return 'Vencida';
+    }
     switch (status) {
       case 'pending':
         return 'Pendiente';
@@ -372,8 +364,8 @@ export default function MisCitasPage() {
         return 'Confirmada';
       case 'cancelled':
         return 'Cancelada';
-      case 'completed':
-        return 'Completada';
+      case 'finalizada':
+        return 'Finalizada';
       default:
         return status;
     }
@@ -473,6 +465,8 @@ export default function MisCitasPage() {
                 (value): value is string => Boolean(value)
               );
 
+              const isExpired = isAppointmentExpired(cita);
+
               return (
                 <div
                   key={cita.id}
@@ -487,10 +481,11 @@ export default function MisCitasPage() {
                         </h3>
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(
-                            cita.status
+                            cita.status,
+                            isExpired
                           )}`}
                         >
-                          {getStatusText(cita.status)}
+                          {getStatusText(cita.status, isExpired)}
                         </span>
                       </div>
 
@@ -566,6 +561,27 @@ export default function MisCitasPage() {
                         </div>
                       )}
 
+                      {isPsychologist && cita.status === 'confirmed' && !isExpired && (
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => setFeedbackModal({ open: true, citaId: cita.id })}
+                            className="px-4 py-2 text-sm text-white rounded-md transition"
+                            style={{ backgroundColor: 'var(--color-secondary)' }}
+                          >
+                            Finalizar cita
+                          </button>
+                        </div>
+                      )}
+
+                      {isPsychologist && getAppointmentStatus(cita) === 'vencida' && cita.status !== 'finalizada' && (
+                        <button
+                          onClick={() => eliminarCita(cita.id)}
+                          className="px-4 py-2 text-sm text-red-600 border border-red-600 rounded-md hover:bg-red-50 transition"
+                        >
+                          Eliminar
+                        </button>
+                      )}
+
                       {isPatient && cita.status === 'pending' && (
                         <button
                           onClick={() => cancelarCita(cita.id)}
@@ -586,81 +602,12 @@ export default function MisCitasPage() {
                       )}
                     </div>
                   </div>
-
                   {activeChatAppointmentId === cita.id && currentProfile && (
                     <div className="mt-6 border-t border-gray-200 pt-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <h4 className="text-base font-semibold text-accent">
-                          Chat de la cita
-                        </h4>
-                        <button
-                          onClick={handleCloseChat}
-                          className="text-sm text-gray-500 hover:text-gray-700 transition"
-                        >
-                          Cerrar chat
-                        </button>
-                      </div>
-
-                      <div className="bg-gray-50 rounded-lg border border-gray-200 p-4">
-                        <div className="max-h-64 overflow-y-auto space-y-3 pr-1">
-                          {chatLoading ? (
-                            <p className="text-sm text-gray-500">Cargando mensajes...</p>
-                          ) : chatMessages.length === 0 ? (
-                            <p className="text-sm text-gray-500">
-                              No hay mensajes todavía. ¡Empieza la conversación!
-                            </p>
-                          ) : (
-                            chatMessages.map((message) => {
-                              const isOwnMessage = message.sender_id === currentProfile.id;
-                              const messageDate = new Date(message.created_at);
-                              const formattedTime = messageDate.toLocaleTimeString('es-ES', {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                              });
-
-                              return (
-                                <div
-                                  key={message.id}
-                                  className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
-                                >
-                                  <div
-                                    className={`rounded-lg px-3 py-2 max-w-xs text-sm ${
-                                      isOwnMessage
-                                        ? 'bg-accent text-white'
-                                        : 'bg-white border border-gray-200 text-gray-800'
-                                    }`}
-                                  >
-                                    <p>{message.message}</p>
-                                    <span className="block mt-1 text-xs opacity-75 text-right">
-                                      {formattedTime}
-                                    </span>
-                                  </div>
-                                </div>
-                              );
-                            })
-                          )}
-                          <div ref={chatBottomRef} />
-                        </div>
-
-                        <form onSubmit={handleSendMessage} className="mt-4 flex gap-2">
-                          <input
-                            type="text"
-                            value={chatInput}
-                            onChange={(event) => setChatInput(event.target.value)}
-                            placeholder="Escribe un mensaje..."
-                            className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary"
-                            disabled={sendingMessage}
-                          />
-                          <button
-                            type="submit"
-                            disabled={sendingMessage || !chatInput.trim()}
-                            className="px-4 py-2 text-sm text-white rounded-md transition disabled:opacity-50"
-                            style={{ backgroundColor: 'var(--color-secondary)' }}
-                          >
-                            {sendingMessage ? 'Enviando...' : 'Enviar'}
-                          </button>
-                        </form>
-                      </div>
+                      <h4 className="text-base font-semibold text-accent mb-4">
+                        Mensajes de la Cita
+                      </h4>
+                      <AppointmentChat appointmentId={cita.id} userId={currentProfile.id} />
                     </div>
                   )}
                 </div>
@@ -669,6 +616,49 @@ export default function MisCitasPage() {
           </div>
         )}
       </div>
+
+      {/* Modal de Retroalimentación */}
+      {feedbackModal.open && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 sm:p-8">
+            <h3 className="text-xl font-libre-baskerville text-accent mb-2">Finalizar Cita</h3>
+            <div className="w-12 h-1 bg-secondary rounded-full mb-6"></div>
+            
+            <p className="text-sm text-gray-600 mb-4">
+              Comparte tus observaciones sobre cómo viste al paciente
+            </p>
+            
+            <textarea
+              value={feedbackText}
+              onChange={(e) => setFeedbackText(e.target.value)}
+              placeholder="Ej: Paciente presentó mejora en ansiedad, se recomienda continuar con técnicas de respiración..."
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent outline-none resize-none text-sm"
+              rows={5}
+            />
+            
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => {
+                  setFeedbackModal({ open: false, citaId: null });
+                  setFeedbackText('');
+                }}
+                disabled={savingFeedback}
+                className="flex-1 px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition disabled:opacity-50 font-medium text-sm"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={marcarComoCompletada}
+                disabled={savingFeedback || !feedbackText.trim()}
+                className="flex-1 px-4 py-2 text-white rounded-lg transition disabled:opacity-50 font-medium text-sm hover:opacity-90"
+                style={{ backgroundColor: 'var(--color-secondary)' }}
+              >
+                {savingFeedback ? 'Guardando...' : 'Finalizar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
