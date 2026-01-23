@@ -161,9 +161,10 @@ public/               # Archivos estáticos (TODOS los recursos van aquí)
 
 **IMPORTANTE**: TODOS los archivos estáticos (imágenes, PDFs, fonts) van en `public/`. Next.js sirve automáticamente estos archivos desde la raíz del dominio.
 
+
 ## SEO e Indexación
 
-- **Dominio canónico**: `https://tupsicoana.com` (sin www, cubierto por Domain Property en GSC)
+- **Dominio canónico**: `https://www.tupsicoana.com` (con www, configurado en Vercel)
 - **Favicon**: `src/app/icon.png` y `src/app/favicon.ico` - Logo azul grisáceo (ψ, letra psi de psicología)
   - Next.js genera automáticamente todos los tamaños necesarios (16x16, 32x32, etc.)
   - El archivo `.png` tiene prioridad sobre `.ico` en navegadores modernos
@@ -172,6 +173,19 @@ public/               # Archivos estáticos (TODOS los recursos van aquí)
 - **Verificación Google**: `metadata.verification` en `src/app/layout.tsx`
 - **Viewport**: usar `export const viewport`, no dentro de `metadata`
 - **Google Search Console**: Registrar como Domain Property (`tupsicoana.com`), verificar por DNS
+
+## Deployment y DNS
+
+- **Hosting**: Vercel (deploy automático desde GitHub main branch)
+- **Dominio**: `tupsicoana.com` (registrado en Namecheap)
+- **DNS**: Vercel DNS Nameservers
+  - `ns1.vercel-dns.com`
+  - `ns2.vercel-dns.com`
+- **SSL**: Certificados automáticos gestionados por Vercel
+- **Dominio principal**: `https://www.tupsicoana.com`
+- **Redirect**: `tupsicoana.com` → `www.tupsicoana.com` (configurado en `vercel.json`)
+- **Configuración**: Todo el DNS gestionado por Vercel (no usar Advanced DNS de Namecheap)
+
 
 ## Analytics y Seguimiento
 

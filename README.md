@@ -76,6 +76,15 @@ src/
 - **Implementación**: GTM script en `<head>` y noscript en `<body>`
 - **Verificación**: Calidad de contenedor excelente, enviando datos correctamente
 
+## Deployment y DNS
+
+- **Hosting**: Vercel (deploy automático desde GitHub)
+- **Dominio**: `tupsicoana.com` (registrado en Namecheap)
+- **DNS**: Vercel DNS (`ns1.vercel-dns.com`, `ns2.vercel-dns.com`)
+- **SSL**: Certificados automáticos vía Vercel
+- **Dominio principal**: `https://www.tupsicoana.com`
+- **Redirect**: `tupsicoana.com` → `www.tupsicoana.com` (configurado en `vercel.json`)
+
 ## Comandos
 
 | Comando | Descripción |
