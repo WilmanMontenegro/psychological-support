@@ -82,21 +82,8 @@ src/
 |---------|-------------|
 | `npm run dev` | Servidor de desarrollo |
 | `npm run build` | Build de producción |
-| `npm run lint` | Verificar código (ESLint + TypeScript) |
+| `npm run lint` | Verificar código |
 | `npm run start` | Ejecutar build |
-
-## Validación antes de Commit
-
-**Antes de hacer push, siempre ejecutar:**
-
-```bash
-npm run lint   # Verificar ESLint errors
-npm run build  # Verificar TypeScript compilation
-git add -A && git commit -m "mensaje"
-git push
-```
-
-Esto evita que Vercel rechace el deploy por errores de linting.
 
 ## Licencia
 
