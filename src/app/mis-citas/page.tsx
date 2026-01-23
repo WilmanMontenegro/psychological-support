@@ -53,11 +53,11 @@ export default function MisCitasPage() {
               psychologist:profiles!appointments_psychologist_id_fkey(full_name, phone)
             `
           : profile.role === 'psychologist'
-          ? `
+            ? `
               *,
               patient:profiles!appointments_patient_id_fkey(full_name, phone)
             `
-          : `
+            : `
               *,
               psychologist:profiles!appointments_psychologist_id_fkey(full_name)
             `;
@@ -226,7 +226,7 @@ export default function MisCitasPage() {
       toast.success('Cita finalizada exitosamente');
       setFeedbackModal({ open: false, citaId: null });
       setFeedbackText('');
-      
+
       if (currentProfile) {
         await loadCitas(currentProfile);
       }
@@ -252,7 +252,7 @@ export default function MisCitasPage() {
       if (error) throw error;
 
       toast.success('Cita eliminada');
-      
+
       if (currentProfile) {
         await loadCitas(currentProfile);
       }
@@ -282,29 +282,8 @@ export default function MisCitasPage() {
       cita.patient_id === currentProfile.id ||
       cita.psychologist_id === currentProfile.id;
 
-    if (!isParticipant || cita.status !== 'confirmed') {
-      return false;
-    }
-
-    const appointmentDateTime = getAppointmentDateTime(cita);
-    if (!appointmentDateTime) {
-      return false;
-    }
-
-    const now = new Date();
-
-    const isSameDay =
-      now.getFullYear() === appointmentDateTime.getFullYear() &&
-      now.getMonth() === appointmentDateTime.getMonth() &&
-      now.getDate() === appointmentDateTime.getDate();
-
-    if (!isSameDay) {
-      return false;
-    }
-
-    // Permitir acceso 15 minutos antes de la hora programada
-    const fifteenMinutesBefore = new Date(appointmentDateTime.getTime() - 15 * 60 * 1000);
-    return now >= fifteenMinutesBefore;
+    // TEMPORAL: Permitir acceso sin restricciones de tiempo para pruebas
+    return isParticipant && cita.status === 'confirmed';
   };
 
   const handleJoinAppointment = (citaId: string) => {
@@ -315,10 +294,10 @@ export default function MisCitasPage() {
 
   const isAppointmentExpired = (cita: Cita) => {
     if (cita.status !== 'confirmed') return false;
-    
+
     const appointmentDateTime = getAppointmentDateTime(cita);
     if (!appointmentDateTime) return false;
-    
+
     const now = new Date();
     // Considerar vencida si pasaron más de 2 horas desde la hora programada
     const twoHoursAfter = new Date(appointmentDateTime.getTime() + 2 * 60 * 60 * 1000);
@@ -391,8 +370,8 @@ export default function MisCitasPage() {
           {userRole === 'psychologist'
             ? 'Cargando citas asignadas...'
             : userRole === 'admin'
-            ? 'Cargando todas las citas...'
-            : 'Cargando tus citas...'}
+              ? 'Cargando todas las citas...'
+              : 'Cargando tus citas...'}
         </p>
       </div>
     );
@@ -405,14 +384,14 @@ export default function MisCitasPage() {
   const pageTitle = isPsychologist
     ? 'Citas Asignadas'
     : isAdmin
-    ? 'Todas las Citas'
-    : 'Mis Citas';
+      ? 'Todas las Citas'
+      : 'Mis Citas';
 
   const pageDescription = isPsychologist
     ? 'Revisa las citas que los pacientes han reservado contigo.'
     : isAdmin
-    ? 'Consulta el estado de todas las citas agendadas en la plataforma.'
-    : 'Aquí puedes ver y administrar todas tus citas agendadas';
+      ? 'Consulta el estado de todas las citas agendadas en la plataforma.'
+      : 'Aquí puedes ver y administrar todas tus citas agendadas';
 
   return (
     <div className="min-h-screen bg-pastel-light py-12 px-4 sm:px-6 lg:px-8">
@@ -444,8 +423,8 @@ export default function MisCitasPage() {
               {isPsychologist
                 ? 'Aún no tienes citas asignadas.'
                 : isAdmin
-                ? 'No hay citas registradas en este momento.'
-                : 'No tienes citas agendadas'}
+                  ? 'No hay citas registradas en este momento.'
+                  : 'No tienes citas agendadas'}
             </p>
             {isPatient && (
               <Link
@@ -488,22 +467,22 @@ export default function MisCitasPage() {
                       </div>
 
                       <div className="text-sm text-gray-600 space-y-1">
-                      <p>
-                        <strong>Fecha:</strong>{' '}
-                        {(() => {
-                          const [year, month, day] = (cita.preferred_date || '').split('-').map(Number);
-                          const displayDate = Number.isFinite(year) && Number.isFinite(month) && Number.isFinite(day)
-                            ? new Date(year, month - 1, day)
-                            : new Date(cita.preferred_date);
+                        <p>
+                          <strong>Fecha:</strong>{' '}
+                          {(() => {
+                            const [year, month, day] = (cita.preferred_date || '').split('-').map(Number);
+                            const displayDate = Number.isFinite(year) && Number.isFinite(month) && Number.isFinite(day)
+                              ? new Date(year, month - 1, day)
+                              : new Date(cita.preferred_date);
 
-                          return displayDate.toLocaleDateString('es-ES', {
-                            weekday: 'long',
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                          });
-                        })()}
-                      </p>
+                            return displayDate.toLocaleDateString('es-ES', {
+                              weekday: 'long',
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric',
+                            });
+                          })()}
+                        </p>
                         <p>
                           <strong>Hora:</strong> {cita.preferred_time}
                         </p>
@@ -621,11 +600,11 @@ export default function MisCitasPage() {
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 sm:p-8">
             <h3 className="text-xl font-libre-baskerville text-accent mb-2">Finalizar Cita</h3>
             <div className="w-12 h-1 bg-secondary rounded-full mb-6"></div>
-            
+
             <p className="text-sm text-gray-600 mb-4">
               Comparte tus observaciones sobre cómo viste al paciente
             </p>
-            
+
             <textarea
               value={feedbackText}
               onChange={(e) => setFeedbackText(e.target.value)}
@@ -633,7 +612,7 @@ export default function MisCitasPage() {
               className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent outline-none resize-none text-sm"
               rows={5}
             />
-            
+
             <div className="flex gap-3 mt-6">
               <button
                 onClick={() => {
