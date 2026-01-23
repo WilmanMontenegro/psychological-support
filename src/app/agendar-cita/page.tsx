@@ -123,6 +123,9 @@ const generateDateOptionsForAvailability = (
   const today = new Date();
   const { earliest, latest } = window ?? getSchedulingWindow();
 
+  console.log('🗓️ Generando fechas desde', today.toLocaleDateString('es-ES'));
+  console.log('📊 Disponibilidad por día:', availability);
+
   for (let offset = 0; offset <= MAX_DAYS_RANGE; offset++) {
     const date = new Date(today);
     date.setDate(today.getDate() + offset);
@@ -131,10 +134,16 @@ const generateDateOptionsForAvailability = (
     const dayOfWeek = date.getDay();
     const slots = availability[dayOfWeek];
 
+    console.log(`   Día ${offset} (${dayOfWeek}):`, value, 'Slots:', slots);
+
     if (!slots || slots.length === 0) continue;
 
     const availableTimes = generateTimesFromSlots(slots);
     const validTimes = filterTimesWithinWindow(value, availableTimes, earliest, latest);
+    
+    console.log(`     ✓ Horarios generados:`, availableTimes);
+    console.log(`     ✓ Horarios válidos (después de filtro):`, validTimes);
+    
     if (validTimes.length === 0) continue;
 
     const label = capitalize(
@@ -208,6 +217,12 @@ export default function AgendarCitaPage() {
 
       if (error) throw error;
 
+      console.log('🔍 Disponibilidad cargada de BD:', data);
+      console.log('📅 Ventana de agendamiento:', {
+        earliest: schedulingWindow.earliest.toLocaleString('es-ES'),
+        latest: schedulingWindow.latest.toLocaleString('es-ES')
+      });
+
       if (!data || data.length === 0) {
         setAvailabilityMap({});
         setPsychologists([]);
@@ -267,6 +282,9 @@ export default function AgendarCitaPage() {
         grouped[initialPsychologist],
         schedulingWindow
       );
+      
+      console.log('📆 Fechas generadas:', initialDates);
+      
       setDateOptions(initialDates);
 
       if (initialDates.length === 0) {
@@ -277,7 +295,7 @@ export default function AgendarCitaPage() {
           date: '',
           time: ''
         }));
-        setAvailabilityError('Por ahora no hay horarios disponibles dentro de la próxima semana.');
+        setAvailabilityError('No hay horarios disponibles. La disponibilidad debe agendarse con al menos 24 horas de anticipación.');
         return;
       }
 
@@ -289,6 +307,9 @@ export default function AgendarCitaPage() {
       const initialTimes = chosenDate
         ? generateTimeOptionsForDate(grouped[initialPsychologist], chosenDate, schedulingWindow)
         : [];
+      
+      console.log('⏰ Horarios generados para', chosenDate, ':', initialTimes);
+      
       setTimeOptions(initialTimes);
 
       if (initialTimes.length === 0) {
@@ -299,7 +320,7 @@ export default function AgendarCitaPage() {
           date: chosenDate,
           time: ''
         }));
-        setAvailabilityError('Por ahora no hay horarios disponibles dentro de la próxima semana.');
+        setAvailabilityError('No hay horarios disponibles para esta fecha.');
         return;
       }
 
