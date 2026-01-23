@@ -62,6 +62,44 @@ npm run start
 - `'use client'` solo cuando sea necesario
 - Functional components con hooks
 
+### TypeScript y ESLint
+
+**Reglas IMPORTANTES que Vercel valida:**
+
+1. **Sin `any` explícitos**:
+   ```tsx
+   ❌ Malo:
+   setAll: (cookies: any) => { ... }
+   
+   ✅ Bien:
+   type CookieSetOptions = { name: string; value: string; options?: Record<string, unknown> };
+   setAll: (cookies: CookieSetOptions[]) => { ... }
+   ```
+
+2. **Dependencias de hooks**:
+   ```tsx
+   ❌ Malo:
+   const handleClick = useCallback(() => {
+     console.log(user.id); // Usa user pero no está en deps
+   }, []); // Falta user en dependencias
+   
+   ✅ Bien:
+   const handleClick = useCallback(() => {
+     console.log(user?.id);
+   }, [user?.id]); // Incluida en dependencias
+   ```
+
+3. **Antes de hacer push/commit**:
+   ```bash
+   npm run lint   # Verifica errores ESLint
+   npm run build  # Verifica compilación TypeScript
+   ```
+
+**Si Vercel rechaza el build:**
+- Leer el error completo: qué archivo, qué línea
+- Fijar localmente primero con `npm run lint`
+- Commit y push una vez que `npm run build` pase exitosamente
+
 ### Iconos
 - **SOLO** `react-icons`: `import { FaChevronDown } from 'react-icons/fa'`
 - **NUNCA** @heroicons ni lucide-react
