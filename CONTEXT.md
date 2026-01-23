@@ -125,12 +125,13 @@ public/               # Archivos estáticos (TODOS los recursos van aquí)
 
 ## SEO e Indexación
 
-- **Dominio canónico**: `https://www.tupsicoana.com` (redirigir sin‑www → www)
+- **Dominio canónico**: `https://tupsicoana.com` (sin www, cubierto por Domain Property en GSC)
 - **Favicon**: `src/app/favicon.ico` (Next.js lo sirve por convención)
-- **robots.txt**: `src/app/robots.ts`
-- **sitemap.xml**: `src/app/sitemap.ts`
+- **robots.txt**: `src/app/robots.ts` (generado dinámicamente, excluye `/api`, `/admin`, `/login`, `/registro`, `/reset-password`)
+- **sitemap.xml**: `src/app/sitemap.ts` (listado de URLs públicas para indexación)
 - **Verificación Google**: `metadata.verification` en `src/app/layout.tsx`
 - **Viewport**: usar `export const viewport`, no dentro de `metadata`
+- **Google Search Console**: Registrar como Domain Property (`tupsicoana.com`), verificar por DNS
 
 ## Funcionalidades del Proyecto
 
@@ -140,7 +141,7 @@ public/               # Archivos estáticos (TODOS los recursos van aquí)
 - **WhyChooseMe**: Sección "¿Por Qué Elegirme?" con 3 características
 - **TherapyServices**: Servicios de acompañamiento con tarjetas
 - **PhotoGallery**: Galería de fotos con lightbox y navegación
-- **FAQ**: Preguntas frecuentes colapsables
+- **FAQ**: Preguntas frecuentes colapsables con animaciones suaves (700ms), fade in/out y rotación de ícono
 - **BlogCard**: Tarjeta de artículo de blog con imagen, categoría, fecha y excerpt
 - **BlogSection**: Sección de blog para página principal (muestra últimos artículos)
 - **ContactForm**: Formulario de contacto reutilizable (parametrizable: showImage, variant)
