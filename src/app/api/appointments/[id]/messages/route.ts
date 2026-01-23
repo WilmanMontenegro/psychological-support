@@ -10,7 +10,7 @@ type CookieSetOptions = {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const cookieStore = await cookies();
@@ -41,7 +41,8 @@ export async function GET(
       return NextResponse.json({ error: 'No autenticado' }, { status: 401 });
     }
 
-    const appointmentId = params.id;
+    const { id } = await params;
+    const appointmentId = id;
     const userId = user.id;
 
     // Verificar que el usuario tiene acceso a esta cita
@@ -95,7 +96,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const cookieStore = await cookies();
@@ -126,7 +127,8 @@ export async function POST(
       return NextResponse.json({ error: 'No autenticado' }, { status: 401 });
     }
 
-    const appointmentId = params.id;
+    const { id } = await params;
+    const appointmentId = id;
     const userId = user.id;
     const { message } = await request.json();
 

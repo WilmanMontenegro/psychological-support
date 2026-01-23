@@ -571,7 +571,7 @@ export default function MisCitasPage() {
                         </div>
                       )}
 
-                      {isPsychologist && getAppointmentStatus(cita) === 'vencida' && cita.status !== 'finalizada' && (
+                      {isPsychologist && getAppointmentStatus(cita) === 'vencida' && cita.status !== 'completed' && (
                         <button
                           onClick={() => eliminarCita(cita.id)}
                           className="px-4 py-2 text-sm text-red-600 border border-red-600 rounded-md hover:bg-red-50 transition"
