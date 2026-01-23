@@ -62,8 +62,17 @@ const formatTimeLabel = (time24h: string) => {
   return `${hour12.toString().padStart(2, '0')}:${minuteStr} ${suffix}`;
 };
 
-const getSchedulingWindow = () => {
+const getSchedulingWindow = (userId?: string) => {
+  const ADMIN_UID = '59accd11-b0cf-411c-af8a-62a0d509fb03';
   const now = new Date();
+  
+  // Sin restricciones para el admin/owner
+  if (userId === ADMIN_UID) {
+    const earliest = new Date(now.getTime());
+    const latest = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 días
+    return { earliest, latest };
+  }
+  
   const earliest = new Date(now.getTime() + MIN_HOURS_NOTICE * 60 * 60 * 1000);
   const latest = new Date(now.getTime() + MAX_DAYS_RANGE * 24 * 60 * 60 * 1000);
   return { earliest, latest };
@@ -190,7 +199,7 @@ export default function AgendarCitaPage() {
 
   const loadAvailability = useCallback(async () => {
     try {
-      const schedulingWindow = getSchedulingWindow();
+      const schedulingWindow = getSchedulingWindow(user?.id);
 
       const { data, error } = await supabase
         .from('psychologist_availability')
@@ -350,7 +359,7 @@ export default function AgendarCitaPage() {
       return;
     }
 
-    const schedulingWindow = getSchedulingWindow();
+    const schedulingWindow = getSchedulingWindow(user?.id);
 
     const dates = generateDateOptionsForAvailability(availability, schedulingWindow);
     setDateOptions(dates);
@@ -395,7 +404,7 @@ export default function AgendarCitaPage() {
       return;
     }
 
-    const schedulingWindow = getSchedulingWindow();
+    const schedulingWindow = getSchedulingWindow(user?.id);
     const times = generateTimeOptionsForDate(availability, dateValue, schedulingWindow);
     setTimeOptions(times);
 
@@ -460,7 +469,7 @@ export default function AgendarCitaPage() {
       return;
     }
 
-    const schedulingWindow = getSchedulingWindow();
+    const schedulingWindow = getSchedulingWindow(user?.id);
     if (
       !isWithinSchedulingWindow(
         formData.date,
@@ -536,7 +545,7 @@ export default function AgendarCitaPage() {
     );
   }
 
-  const schedulingWindowForRender = getSchedulingWindow();
+  const schedulingWindowForRender = getSchedulingWindow(user?.id);
   const selectionWithinWindow = isWithinSchedulingWindow(
     formData.date,
     formData.time,
