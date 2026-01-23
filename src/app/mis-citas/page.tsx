@@ -145,7 +145,6 @@ export default function MisCitasPage() {
       }
       if (activeChatAppointmentId === citaId) {
         setActiveChatAppointmentId(null);
-        setChatMessages([]);
       }
     } catch (error: unknown) {
       console.error('Error al cancelar cita:', error);
@@ -193,7 +192,6 @@ export default function MisCitasPage() {
 
       if (nuevoEstado !== 'confirmed' && activeChatAppointmentId === citaId) {
         setActiveChatAppointmentId(null);
-        setChatMessages([]);
       }
     } catch (error: unknown) {
       console.error('Error al actualizar la cita:', error);
