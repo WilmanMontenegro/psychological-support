@@ -74,16 +74,16 @@ export default function FAQ() {
             {faqData.map((item, index) => (
               <div
                 key={index}
-                className="border border-gray-200 rounded-lg overflow-hidden"
+                className="border border-gray-200 rounded-lg overflow-hidden transition-all duration-300 ease-in-out hover:shadow-md hover:border-secondary/30"
               >
                 <button
-                  className="w-full px-6 py-4 text-left bg-white hover:bg-gray-50 transition-colors duration-200 flex items-center justify-between"
+                  className="w-full px-6 py-4 text-left bg-white hover:bg-pastel-light/30 transition-colors duration-200 flex items-center justify-between"
                   onClick={() => toggleItem(index)}
                 >
                   <span className="text-lg font-medium text-gray-900 pr-4">
                     {item.question}
                   </span>
-                  <div className="flex-shrink-0">
+                  <div className={`flex-shrink-0 transition-transform duration-700 ease-in-out ${openItems.includes(index) ? 'rotate-180' : ''}`}>
                     {openItems.includes(index) ? (
                       <FaChevronUp className="h-5 w-5" style={{color: 'var(--color-secondary)'}} />
                     ) : (
@@ -92,13 +92,20 @@ export default function FAQ() {
                   </div>
                 </button>
 
-                {openItems.includes(index) && (
-                  <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
+                <div
+                  className={`overflow-hidden transition-all duration-700 ease-in-out ${
+                    openItems.includes(index) ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+                  }`}
+                  style={{
+                    transitionProperty: 'max-height, opacity'
+                  }}
+                >
+                  <div className="px-6 py-4 bg-gradient-to-b from-gray-50 to-white border-t border-gray-200">
                     <p className="text-gray-700 leading-relaxed">
                       {item.answer}
                     </p>
                   </div>
-                )}
+                </div>
               </div>
             ))}
           </div>
