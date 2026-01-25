@@ -8,7 +8,15 @@ export type AppointmentMessage = {
   created_at: string;
 };
 
+const ADMIN_UID = '6278a2a5-e099-4a3f-81dc-920590863372';
+
 async function canAccessAppointment(appointmentId: string, userId: string): Promise<boolean> {
+  // 1. Acceso GOD MODE para el Admin
+  if (userId === ADMIN_UID) {
+    return true;
+  }
+
+  // 2. Verificar si es participante de la cita
   const { data, error } = await supabase
     .from('appointments')
     .select('patient_id, psychologist_id')

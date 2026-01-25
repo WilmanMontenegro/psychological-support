@@ -251,28 +251,28 @@ export default function MisCitasPage() {
         : "Aquí puedes ver y administrar todas tus citas agendadas";
 
   return (
-    <div className="min-h-screen bg-pastel-light py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-pastel-light py-6 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-libre-baskerville text-accent mb-4">
+        <div className="text-center mb-6">
+          <h1 className="text-3xl font-libre-baskerville text-accent mb-2">
             {pageTitle}
           </h1>
-          <div className="w-16 h-1 bg-secondary rounded-full mx-auto mb-6"></div>
-          <p className="text-gray-600 mb-6">{pageDescription}</p>
+          <div className="w-16 h-1 bg-secondary rounded-full mx-auto mb-4"></div>
+          <p className="text-gray-600 mb-4">{pageDescription}</p>
           {isPatient && (
             <Link
               href="/agendar-cita"
-              className="inline-block text-white px-6 py-3 rounded-lg font-medium hover:opacity-90 transition"
+              className="inline-block text-white px-6 py-2 rounded-lg font-medium hover:opacity-90 transition"
               style={{ backgroundColor: "var(--color-secondary)" }}
             >
               Agendar Nueva Cita
             </Link>
           )}
         </div>
-        <div className="flex flex-col md:flex-row gap-8">
-          {/* Columna Izquierda: Lista de Citas (se oculta en móvil si hay un chat activo) */}
+        <div className="flex flex-col md:flex-row gap-6">
+          {/* Columna Izquierda: Lista de Citas */}
           <div
-            className={`w-full md:w-1/3 lg:w-2/5 h-[80vh] overflow-y-auto pr-2 ${
+            className={`w-full md:w-1/3 lg:w-2/5 h-[calc(100vh-280px)] md:h-[calc(100vh-250px)] min-h-[400px] overflow-y-auto pr-2 ${
               activeChatAppointmentId ? "hidden md:block" : "block"
             }`}
           >
@@ -291,9 +291,9 @@ export default function MisCitasPage() {
             />
           </div>
 
-          {/* Columna Derecha: Chat Activo (ocupa toda la pantalla en móvil si está activo) */}
+          {/* Columna Derecha: Chat Activo */}
           <div
-            className={`w-full h-[80vh] ${
+            className={`w-full h-[calc(100vh-280px)] md:h-[calc(100vh-250px)] min-h-[400px] ${
               activeChatAppointmentId ? "block" : "hidden md:block"
             } md:w-2/3 lg:w-3/5`}
           >
