@@ -380,7 +380,7 @@ export default function AppointmentList({
                         onClick={(e) => { e.stopPropagation(); onDeleteCita(cita.id); }}
                         className="px-3 py-1 text-xs text-red-600 border border-red-600 rounded-md hover:bg-red-50 transition"
                       >
-                        Eliminar (Admin)
+                        Eliminar
                       </button>
                     );
                   }
@@ -403,16 +403,16 @@ export default function AppointmentList({
                   return buttons;
                 })()}
 
-                {/* Botón de Chat (Común) */}
-                {canJoinAppointment(cita, currentProfile) && (
+                {/* Botón de Chat (Común) - Solo mostrar si NO está activo */}
+                {canJoinAppointment(cita, currentProfile) && !isActive && (
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       onSelectChat(cita.id);
                     }}
-                    className={`px-3 py-1 text-xs text-white rounded-md transition hover:opacity-90 ${isActive ? "bg-secondary" : "bg-accent"}`}
+                    className="px-3 py-1 text-xs text-white rounded-md transition hover:opacity-90 bg-accent"
                   >
-                    {isActive ? "Viendo Chat" : "Ir al Chat"}
+                    Ir al Chat
                   </button>
                 )}
               </div>
