@@ -1,22 +1,28 @@
-'use client';
+"use client";
 
-import { useRef, useEffect, FormEvent } from 'react';
-import { useAppointmentChat } from '@/lib/useAppointmentChat';
-import toast from 'react-hot-toast';
+import { useRef, useEffect, FormEvent } from "react";
+import { useAppointmentChat } from "@/lib/useAppointmentChat";
+import toast from "react-hot-toast";
 
 interface AppointmentChatProps {
   appointmentId: string;
   userId: string;
 }
 
-export default function AppointmentChat({ appointmentId, userId }: AppointmentChatProps) {
-  const { messages, loading, sending, sendMessage } = useAppointmentChat(appointmentId, userId);
+export default function AppointmentChat({
+  appointmentId,
+  userId,
+}: AppointmentChatProps) {
+  const { messages, loading, sending, sendMessage } = useAppointmentChat(
+    appointmentId,
+    userId,
+  );
   const chatInputRef = useRef<HTMLInputElement>(null);
   const chatBottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (chatBottomRef.current) {
-      chatBottomRef.current.scrollIntoView({ behavior: 'smooth' });
+      chatBottomRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
 
@@ -25,42 +31,55 @@ export default function AppointmentChat({ appointmentId, userId }: AppointmentCh
 
     const message = chatInputRef.current?.value?.trim();
     if (!message) {
-      toast.error('Escribe un mensaje');
+      toast.error("Escribe un mensaje");
       return;
     }
 
     try {
       await sendMessage(message);
       if (chatInputRef.current) {
-        chatInputRef.current.value = '';
+        chatInputRef.current.value = "";
       }
     } catch (error) {
-      console.error('Error al enviar mensaje:', error);
-      toast.error('No se pudo enviar el mensaje');
+      console.error("Error al enviar mensaje:", error);
+      toast.error("No se pudo enviar el mensaje");
     }
   };
 
   if (loading) {
-    return <p className="text-gray-600 text-sm">Cargando mensajes...</p>;
+    return (
+      <div className="flex items-center justify-center h-full">
+        <p className="text-gray-600 text-sm">Cargando mensajes...</p>
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-4">
+    <div className="flex flex-col h-full">
       {/* Área de mensajes */}
-      <div className="bg-white/50 rounded-lg p-4 max-h-64 overflow-y-auto space-y-3">
+      <div className="flex-1 p-4 overflow-y-auto space-y-3">
         {messages.length === 0 ? (
-          <p className="text-gray-500 text-sm text-center py-8">No hay mensajes aún</p>
+          <div className="flex items-center justify-center h-full">
+            <p className="text-gray-500 text-sm text-center">
+              No hay mensajes aún. <br />
+              ¡Sé el primero en saludar!
+            </p>
+          </div>
         ) : (
           messages.map((msg) => (
             <div
               key={msg.id}
-              className={`text-sm p-2 rounded ${
-                msg.sender_id === userId
-                  ? 'bg-secondary/10 text-gray-800 ml-8'
-                  : 'bg-gray-100 text-gray-800 mr-8'
-              }`}
+              className={`flex ${msg.sender_id === userId ? "justify-end" : "justify-start"}`}
             >
-              <p className="break-words">{msg.message}</p>
+              <div
+                className={`text-sm p-2 rounded-lg max-w-xs sm:max-w-md break-words ${
+                  msg.sender_id === userId
+                    ? "bg-secondary/20 text-gray-800"
+                    : "bg-gray-100 text-gray-800"
+                }`}
+              >
+                <p>{msg.message}</p>
+              </div>
             </div>
           ))
         )}
@@ -68,22 +87,25 @@ export default function AppointmentChat({ appointmentId, userId }: AppointmentCh
       </div>
 
       {/* Formulario de envío */}
-      <form onSubmit={handleSubmit} className="flex gap-2">
+      <form
+        onSubmit={handleSubmit}
+        className="flex gap-2 p-4 border-t border-gray-200 flex-shrink-0"
+      >
         <input
           ref={chatInputRef}
           type="text"
           placeholder="Escribe un mensaje..."
           maxLength={500}
           disabled={sending}
-          className="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none disabled:opacity-50"
+          className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none disabled:opacity-50 transition"
         />
         <button
           type="submit"
           disabled={sending}
-          className="px-4 py-2 text-sm text-white rounded-lg transition disabled:opacity-50 hover:opacity-90 font-medium"
-          style={{ backgroundColor: 'var(--color-secondary)' }}
+          className="px-6 py-2 text-sm text-white rounded-lg transition disabled:opacity-50 hover:opacity-90 font-medium"
+          style={{ backgroundColor: "var(--color-secondary)" }}
         >
-          {sending ? '...' : 'Enviar'}
+          {sending ? "..." : "Enviar"}
         </button>
       </form>
     </div>
