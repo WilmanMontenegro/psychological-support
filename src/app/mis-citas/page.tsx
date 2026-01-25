@@ -154,6 +154,28 @@ export default function MisCitasPage() {
     }
   };
 
+  const extenderCita = async (citaId: string) => {
+    try {
+      const cita = citas.find((c) => c.id === citaId);
+      if (!cita) return;
+
+      const currentExtension = cita.extension_minutes || 0;
+      const newExtension = currentExtension + 10;
+
+      const { error } = await supabase
+        .from("appointments")
+        .update({ extension_minutes: newExtension })
+        .eq("id", citaId);
+
+      if (error) throw error;
+      toast.success(`Tiempo extendido (+10 min)`);
+      await reloadCitas();
+    } catch (error: unknown) {
+      console.error("Error al extender cita:", error);
+      toast.error("No se pudo extender el tiempo");
+    }
+  };
+
   const marcarComoCompletada = async () => {
     if (!feedbackModal.citaId || !feedbackText.trim()) {
       toast.error("Por favor escribe una retroalimentación");
@@ -265,6 +287,7 @@ export default function MisCitasPage() {
                 setFeedbackModal({ open: true, citaId })
               }
               onDeleteCita={eliminarCita}
+              onExtendCita={extenderCita}
             />
           </div>
 

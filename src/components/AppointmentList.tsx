@@ -16,6 +16,7 @@ export type Cita = {
   preferred_date: string;
   preferred_time: string;
   status: "pending" | "confirmed" | "cancelled" | "completed" | "finalizada";
+  extension_minutes?: number; // Nueva propiedad
   psychologist_feedback?: string | null;
   completed_at?: string | null;
   patient?: {
@@ -40,15 +41,32 @@ const getAppointmentDateTime = (cita: Cita) => {
   return dateTime;
 };
 
-const hasAppointmentPassed = (cita: Cita) => {
+const getExtensionMinutes = (cita: Cita) => cita.extension_minutes || 0;
+
+const getWindowTimes = (cita: Cita) => {
   const appointmentDateTime = getAppointmentDateTime(cita);
-  if (!appointmentDateTime) return false;
-  const now = new Date();
-  // Consideramos pasada si ya ocurrió la hora exacta + 20 min (duración)
-  const endDateTime = new Date(
-    appointmentDateTime.getTime() + 20 * 60 * 1000,
-  );
-  return now > endDateTime;
+  if (!appointmentDateTime) return null;
+
+  const extension = getExtensionMinutes(cita);
+  
+  // Abre: 10 minutos antes
+  const openTime = new Date(appointmentDateTime.getTime() - 10 * 60 * 1000);
+  
+  // Cierra: 20 min duración + 20 min buffer + extensión
+  const totalDuration = 40 + extension;
+  const closeTime = new Date(appointmentDateTime.getTime() + totalDuration * 60 * 1000);
+
+  return { openTime, closeTime };
+};
+
+const hasAppointmentPassed = (cita: Cita) => {
+  const times = getWindowTimes(cita);
+  if (!times) return false;
+  
+  // Consideramos pasada visualmente si ya cerro la ventana base (sin extension)
+  // O podemos considerar si cerró la ventana extendida. 
+  // Para "Auto-Finalizada" visual, mejor usar la ventana REAL extendida.
+  return new Date() > times.closeTime;
 };
 
 // Lógica de Estado Visual
@@ -63,7 +81,6 @@ const getVisualStatus = (cita: Cita) => {
   }
 
   if (cita.status === "pending") {
-    // Si una cita pendiente ya pasó, en la práctica está cancelada/expirada
     return isPassed ? "Cancelada" : "Pendiente";
   }
 
@@ -77,7 +94,7 @@ const getStatusColor = (visualStatus: string) => {
     case "Confirmada":
       return "bg-pastel-light text-accent border-secondary/30";
     case "Finalizada":
-      return "bg-green-50 text-green-700 border-green-200"; // Color de éxito para finalizada
+      return "bg-green-50 text-green-700 border-green-200";
     case "Cancelada":
     case "No Realizada":
     case "Rechazada":
@@ -104,6 +121,9 @@ const getProblemTypeText = (type: string) => {
 
 const canJoinAppointment = (cita: Cita, currentProfile: UserProfile | null) => {
   if (!currentProfile) return false;
+
+  // Admin siempre puede entrar
+  if (currentProfile.role === "admin") return true;
   
   const isParticipant =
     cita.patient_id === currentProfile.id ||
@@ -111,20 +131,31 @@ const canJoinAppointment = (cita: Cita, currentProfile: UserProfile | null) => {
 
   if (!isParticipant || cita.status !== "confirmed") return false;
 
-  const appointmentDateTime = getAppointmentDateTime(cita);
-  if (!appointmentDateTime) return false;
+  // Si es psicólogo, permitimos entrar siempre a confirmadas para dar soporte/extender
+  if (currentProfile.role === "psychologist") return true;
+
+  const times = getWindowTimes(cita);
+  if (!times) return false;
 
   const now = new Date();
-  
-  // Ventana de chat:
-  // Abre: 10 minutos antes de la hora
-  const openTime = new Date(appointmentDateTime.getTime() - 10 * 60 * 1000);
-  
-  // Cierra: 20 minutos de duración + 20 minutos de buffer = 40 minutos después del inicio
-  const closeTime = new Date(appointmentDateTime.getTime() + 40 * 60 * 1000);
+  return now >= times.openTime && now <= times.closeTime;
+};
 
-  // Permitir acceso solo dentro de la ventana
-  return now >= openTime && now <= closeTime;
+const getRemainingTimeMsg = (cita: Cita) => {
+  const times = getWindowTimes(cita);
+  if (!times) return null;
+  
+  const now = new Date();
+  const diffMs = times.closeTime.getTime() - now.getTime();
+  const diffMins = Math.ceil(diffMs / (1000 * 60));
+
+  if (diffMins <= 10 && diffMins > 0) {
+    return { type: 'warning', text: `Cierra en ${diffMins} min` };
+  }
+  if (diffMins <= 0) {
+    return { type: 'expired', text: 'Tiempo agotado' };
+  }
+  return null;
 };
 
 interface AppointmentListProps {
@@ -136,6 +167,7 @@ interface AppointmentListProps {
   onUpdateCitaStatus: (id: string, status: Cita["status"]) => void;
   onOpenFeedbackModal: (id: string) => void;
   onDeleteCita: (id: string) => void;
+  onExtendCita?: (id: string) => void; // Nueva prop opcional
 }
 
 export default function AppointmentList({
@@ -147,6 +179,7 @@ export default function AppointmentList({
   onUpdateCitaStatus,
   onOpenFeedbackModal,
   onDeleteCita,
+  onExtendCita,
 }: AppointmentListProps) {
   const isPatient = currentProfile?.role === "patient";
   const isPsychologist = currentProfile?.role === "psychologist";
@@ -180,6 +213,7 @@ export default function AppointmentList({
         const isPassed = hasAppointmentPassed(cita);
         const isActive = cita.id === activeChatAppointmentId;
         const visualStatus = getVisualStatus(cita);
+        const warning = getRemainingTimeMsg(cita);
 
         return (
           <div
@@ -200,6 +234,13 @@ export default function AppointmentList({
                   >
                     {visualStatus}
                   </span>
+                  
+                  {/* Warning de tiempo solo si está confirmada y activa */}
+                  {cita.status === "confirmed" && warning && warning.type === 'warning' && (
+                     <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200 animate-pulse">
+                       {warning.text}
+                     </span>
+                  )}
                 </div>
                 <div className="text-sm text-gray-600 space-y-1">
                   <p>
@@ -222,6 +263,12 @@ export default function AppointmentList({
                         ? "Reserva anónima"
                         : cita.patient?.full_name || "N/A"}
                     </p>
+                  )}
+                  {/* Mostrar extensión si existe */}
+                  {getExtensionMinutes(cita) > 0 && (
+                     <p className="text-xs text-green-600 font-medium">
+                       + {getExtensionMinutes(cita)} min extra
+                     </p>
                   )}
                 </div>
               </div>
@@ -258,24 +305,37 @@ export default function AppointmentList({
                       );
                     }
 
-                    // Cita Confirmada Futura: Finalizar (Manual)
+                    // Cita Confirmada: Finalizar, Extender
                     if (cita.status === "confirmed" && !isPassed) {
                       return (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onOpenFeedbackModal(cita.id);
-                          }}
-                          className="px-3 py-1 text-xs text-white rounded-md transition"
-                          style={{ backgroundColor: "var(--color-secondary)" }}
-                        >
-                          Finalizar cita
-                        </button>
+                        <div className="flex gap-2">
+                           {onExtendCita && (
+                             <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onExtendCita(cita.id);
+                              }}
+                              className="px-3 py-1 text-xs text-secondary border border-secondary rounded-md hover:bg-purple-50 transition"
+                              title="Añadir 10 minutos más al chat"
+                            >
+                              Extender (+10m)
+                            </button>
+                           )}
+                           <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onOpenFeedbackModal(cita.id);
+                            }}
+                            className="px-3 py-1 text-xs text-white rounded-md transition"
+                            style={{ backgroundColor: "var(--color-secondary)" }}
+                          >
+                            Finalizar cita
+                          </button>
+                        </div>
                       );
                     }
 
                     // Cita Auto-Finalizada (Pasada) o Ya Finalizada: Feedback y No Realizada
-                    // Se muestra si es "confirmed" y pasó, O si ya es "finalizada"/"completed"
                     if (
                       (cita.status === "confirmed" && isPassed) ||
                       cita.status === "finalizada" ||
