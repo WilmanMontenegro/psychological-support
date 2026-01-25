@@ -207,7 +207,7 @@ export default function AgendarCitaPage() {
   const [formData, setFormData] = useState({
     isAnonymous: false,
     problemType: '' as ProblemType | '',
-    modality: '' as Modality | '',
+    modality: 'chat' as Modality,
     date: '',
     time: '',
     psychologistId: ''
@@ -586,7 +586,6 @@ export default function AgendarCitaPage() {
 
   const canSubmit = Boolean(
     formData.problemType &&
-    formData.modality &&
     formData.date &&
     formData.time &&
     formData.psychologistId &&
@@ -704,25 +703,6 @@ export default function AgendarCitaPage() {
               <option value="anxiety">Ansiedad</option>
               <option value="emotions">Manejo de Emociones</option>
               <option value="unknown">No sé qué tengo</option>
-            </select>
-          </div>
-
-          {/* Tipo de Sesión */}
-          <div>
-            <label htmlFor="modality" className="block text-sm font-medium text-gray-700 mb-1">
-              Modalidad de la Cita
-            </label>
-            <select
-              id="modality"
-              name="modality"
-              required
-              value={formData.modality}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
-            >
-              <option value="">Selecciona una opción</option>
-              <option value="video">Videollamada</option>
-              <option value="chat">Chat</option>
             </select>
           </div>
 
