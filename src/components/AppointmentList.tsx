@@ -122,8 +122,10 @@ const getProblemTypeText = (type: string) => {
 const canJoinAppointment = (cita: Cita, currentProfile: UserProfile | null) => {
   if (!currentProfile) return false;
 
-  // Admin siempre puede entrar
-  if (currentProfile.role === "admin") return true;
+  const ADMIN_UID = '6278a2a5-e099-4a3f-81dc-920590863372';
+
+  // Admin siempre puede entrar (por rol O por UID)
+  if (currentProfile.role === "admin" || currentProfile.id === ADMIN_UID) return true;
   
   const isParticipant =
     cita.patient_id === currentProfile.id ||
@@ -276,27 +278,23 @@ export default function AppointmentList({
               {/* Botones de Acción */}
               <div className="flex flex-col gap-2 items-end self-center sm:self-end">
                 {(() => {
-                  // --- Lógica de Botones para Psicólogo ---
+                  const buttons = [];
+
+                  // --- Lógica para Psicólogo ---
                   if (isPsychologist) {
-                    // Cita Pendiente Futura: Aceptar / Rechazar
+                    // 1. Acciones de Cita Pendiente
                     if (cita.status === "pending" && !isPassed) {
-                      return (
-                        <div className="flex gap-2">
+                      buttons.push(
+                        <div key="pending-actions" className="flex gap-2">
                           <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onUpdateCitaStatus(cita.id, "confirmed");
-                            }}
+                            onClick={(e) => { e.stopPropagation(); onUpdateCitaStatus(cita.id, "confirmed"); }}
                             className="px-3 py-1 text-xs text-white rounded-md transition"
                             style={{ backgroundColor: "var(--color-secondary)" }}
                           >
                             Aceptar
                           </button>
                           <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onUpdateCitaStatus(cita.id, "cancelled");
-                            }}
+                            onClick={(e) => { e.stopPropagation(); onUpdateCitaStatus(cita.id, "cancelled"); }}
                             className="px-3 py-1 text-xs text-red-600 border border-red-600 rounded-md hover:bg-red-50 transition"
                           >
                             Rechazar
@@ -305,27 +303,20 @@ export default function AppointmentList({
                       );
                     }
 
-                    // Cita Confirmada: Finalizar, Extender
+                    // 2. Acciones de Cita Confirmada (Futura)
                     if (cita.status === "confirmed" && !isPassed) {
-                      return (
-                        <div className="flex gap-2">
-                           {onExtendCita && (
-                             <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onExtendCita(cita.id);
-                              }}
+                      buttons.push(
+                        <div key="confirmed-actions" className="flex gap-2">
+                          {onExtendCita && (
+                            <button
+                              onClick={(e) => { e.stopPropagation(); onExtendCita(cita.id); }}
                               className="px-3 py-1 text-xs text-secondary border border-secondary rounded-md hover:bg-purple-50 transition"
-                              title="Añadir 10 minutos más al chat"
                             >
                               Extender (+10m)
                             </button>
-                           )}
-                           <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onOpenFeedbackModal(cita.id);
-                            }}
+                          )}
+                          <button
+                            onClick={(e) => { e.stopPropagation(); onOpenFeedbackModal(cita.id); }}
                             className="px-3 py-1 text-xs text-white rounded-md transition"
                             style={{ backgroundColor: "var(--color-secondary)" }}
                           >
@@ -335,19 +326,13 @@ export default function AppointmentList({
                       );
                     }
 
-                    // Cita Auto-Finalizada (Pasada) o Ya Finalizada: Feedback y No Realizada
-                    if (
-                      (cita.status === "confirmed" && isPassed) ||
-                      cita.status === "finalizada" ||
-                      cita.status === "completed"
-                    ) {
-                      return (
-                        <div className="flex flex-col gap-2 items-end">
-                           <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onOpenFeedbackModal(cita.id);
-                            }}
+                    // 3. Acciones de Cita Terminada (Finalizada o Confirmada-Pasada)
+                    const isEffectivelyFinalized = cita.status === "finalizada" || cita.status === "completed" || (cita.status === "confirmed" && isPassed);
+                    if (isEffectivelyFinalized) {
+                      buttons.push(
+                        <div key="finalized-actions" className="flex flex-col gap-2 items-end">
+                          <button
+                            onClick={(e) => { e.stopPropagation(); onOpenFeedbackModal(cita.id); }}
                             className="px-3 py-1 text-xs text-white rounded-md transition hover:opacity-90"
                             style={{ backgroundColor: "var(--color-secondary)" }}
                           >
@@ -368,14 +353,14 @@ export default function AppointmentList({
                       );
                     }
 
-                    // Cita Cancelada o Pendiente Expirada: Eliminar
-                    if (cita.status === "cancelled" || (cita.status === "pending" && isPassed)) {
-                      return (
-                         <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onDeleteCita(cita.id);
-                          }}
+                    // 4. Acción de ELIMINAR (Para cualquier estado que permita limpiar la lista)
+                    // Permitimos eliminar si está Cancelada, si expiró sin aceptarse, o si YA fue finalizada
+                    const canDelete = cita.status === "cancelled" || (cita.status === "pending" && isPassed) || cita.status === "finalizada" || cita.status === "completed";
+                    if (canDelete) {
+                      buttons.push(
+                        <button
+                          key="delete-action"
+                          onClick={(e) => { e.stopPropagation(); onDeleteCita(cita.id); }}
                           className="px-3 py-1 text-xs text-red-600 border border-red-600 rounded-md hover:bg-red-50 transition"
                         >
                           Eliminar
@@ -384,15 +369,29 @@ export default function AppointmentList({
                     }
                   }
 
-                  // --- Lógica de Botones para Paciente ---
+                  // --- Lógica para Admin ---
+                  const ADMIN_UID = '6278a2a5-e099-4a3f-81dc-920590863372';
+                  const isSuperAdmin = isAdmin || currentProfile?.id === ADMIN_UID;
+
+                  if (isSuperAdmin) {
+                    buttons.push(
+                      <button
+                        key="admin-delete"
+                        onClick={(e) => { e.stopPropagation(); onDeleteCita(cita.id); }}
+                        className="px-3 py-1 text-xs text-red-600 border border-red-600 rounded-md hover:bg-red-50 transition"
+                      >
+                        Eliminar (Admin)
+                      </button>
+                    );
+                  }
+
+                  // --- Lógica para Paciente ---
                   if (isPatient) {
                     if (cita.status === "pending" && !isPassed) {
-                      return (
+                      buttons.push(
                         <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onCancelCita(cita.id);
-                          }}
+                          key="patient-cancel"
+                          onClick={(e) => { e.stopPropagation(); onCancelCita(cita.id); }}
                           className="px-3 py-1 text-xs text-red-600 border border-red-600 rounded-md hover:bg-red-50 transition"
                         >
                           Cancelar
@@ -401,7 +400,7 @@ export default function AppointmentList({
                     }
                   }
 
-                  return null;
+                  return buttons;
                 })()}
 
                 {/* Botón de Chat (Común) */}
