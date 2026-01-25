@@ -104,12 +104,27 @@ const getProblemTypeText = (type: string) => {
 
 const canJoinAppointment = (cita: Cita, currentProfile: UserProfile | null) => {
   if (!currentProfile) return false;
+  
   const isParticipant =
     cita.patient_id === currentProfile.id ||
     cita.psychologist_id === currentProfile.id;
-  // Permitir entrar al chat si está confirmada o si está "auto-finalizada" (para seguimiento)
-  // Pero visualmente debe estar confirmada en BD.
-  return isParticipant && cita.status === "confirmed";
+
+  if (!isParticipant || cita.status !== "confirmed") return false;
+
+  const appointmentDateTime = getAppointmentDateTime(cita);
+  if (!appointmentDateTime) return false;
+
+  const now = new Date();
+  
+  // Ventana de chat:
+  // Abre: 10 minutos antes de la hora
+  const openTime = new Date(appointmentDateTime.getTime() - 10 * 60 * 1000);
+  
+  // Cierra: 20 minutos de duración + 20 minutos de buffer = 40 minutos después del inicio
+  const closeTime = new Date(appointmentDateTime.getTime() + 40 * 60 * 1000);
+
+  // Permitir acceso solo dentro de la ventana
+  return now >= openTime && now <= closeTime;
 };
 
 interface AppointmentListProps {
