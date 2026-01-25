@@ -1,85 +1,84 @@
 # Proyecto de Apoyo Psicológico
 
-Una aplicación web de Next.js para servicios de apoyo psicológico y acompañamiento.
+Una aplicación web minimalista para servicios de apoyo psicológico y acompañamiento.
 
 ## Filosofía del Proyecto
 
 **SIMPLICIDAD Y MINIMALISMO ANTE TODO**
 
-El proyecto se basa en principios de simplicidad extrema:
-
-- **Fácil de entender**: Código que cualquier desarrollador pueda leer y comprender rápidamente
-- **Mantenible**: Cambios y actualizaciones deben ser simples de implementar
-- **Sin complicaciones**: Evitar sobre-ingeniería, abstracciones innecesarias o patrones complejos
-- **Clean Code**: Código limpio, bien nombrado, con responsabilidades claras
-- **Sin redundancia**: DRY (Don't Repeat Yourself) - reutilizar en lugar de duplicar
-- **Compacto**: Preferir soluciones concisas sin sacrificar claridad
-- **Menos líneas, más valor**: Código que hace lo necesario sin verbosidad
-- **Buenas prácticas**: Seguir estándares de la industria de forma práctica, no dogmática
-- **Diseño minimalista**: UI/UX funcional sin elementos decorativos excesivos
+- **Código Limpio**: Fácil de leer, mantener y extender.
+- **Sin Redundancia**: DRY (Don't Repeat Yourself).
+- **Menos es Más**: Interfaces limpias, sin distracciones.
+- **Eficiencia**: Si algo se puede hacer en 10 líneas, no usar 50.
 
 ## Stack Tecnológico
 
-- **Framework**: Next.js 15.5.3 con App Router
-- **React**: 19.1.0
-- **TypeScript**: Configuración estricta
+- **Framework**: Next.js 15 (App Router)
+- **Lenguaje**: TypeScript (Estricto)
 - **Estilos**: Tailwind CSS v4
-- **Iconos**: react-icons v5.5.0
-- **Base de datos**: Supabase (PostgreSQL)
-- **Autenticación**: Supabase Auth
+- **Base de Datos**: Supabase (PostgreSQL)
+- **Auth**: Supabase Auth
 - **Notificaciones**: react-hot-toast
-- **Emails**: Resend (envío de emails de contacto)
+- **Emails**: Resend
 
-## Convenciones de Código
+## Funcionalidades Clave
 
-### Componentes y Estilos
-- TypeScript obligatorio
-- Tailwind CSS v4 para todo el estilizado
-- Paleta de colores definida en `globals.css` (primary, secondary, tertiary, accent, pastel)
+### 1. Sistema de Citas Simplificado
+- **Estados**: 
+  - `Pendiente`: Solicitada por el usuario.
+  - `Confirmada`: Aceptada por el psicólogo.
+  - `Cancelada`: Rechazada o anulada.
+  - `Finalizada`: Concluida (automáticamente tras la hora o manualmente).
+- **Modalidad**: Chat único (sin videollamada).
+- **Anonimato**: Opción visual para pacientes que prefieren discreción.
 
-## Funcionalidades del Proyecto
+### 2. Chat Seguro y Restringido
+- **Ventana de Tiempo**: 
+  - Abre 10 min antes de la cita.
+  - Cierra 40 min después del inicio (20 min sesión + 20 min margen).
+- **Extensión**: El psicólogo puede añadir +10 min extra si es necesario.
+- **Admin God Mode**: El administrador tiene acceso ilimitado a todos los chats y funciones de eliminación.
 
-### Sistema de Citas Simplificado
+### 3. Interfaz Adaptativa
+- **Diseño Mobile-First**: Alturas calculadas (`calc(100vh - X)`) para evitar scroll innecesario en móviles.
+- **Minimalismo**: Botones y acciones contextuales que solo aparecen cuando son necesarios.
 
-El flujo de citas se ha optimizado para reducir la fricción:
+## Estructura de Directorios
 
-1.  **Agendamiento**:
-    - **Modalidad Única**: Solo **Chat**. Se eliminó la opción de videollamada.
-    - **Anónimo**: Opción para ocultar el nombre del paciente al psicólogo (aunque requiere login por seguridad).
-    - **Duración**: 20 minutos por sesión.
+```
+src/
+├── app/              # Rutas (App Router)
+│   ├── agendar-cita/ # Formulario
+│   ├── mis-citas/    # Panel principal
+│   └── ...
+├── components/       # Componentes reutilizables
+│   ├── AppointmentList.tsx # Lógica de estados
+│   ├── AppointmentChat.tsx # Chat tiempo real
+│   └── ...
+└── lib/              # Utilidades (Supabase, Auth)
+```
 
-2.  **Estados de la Cita**:
-    - **Pendiente**: Solicitada por el paciente, requiere aceptación.
-    - **Confirmada**: Aceptada por el psicólogo.
-    - **Cancelada**: Rechazada por el psicólogo, cancelada por el paciente, o marcada como "No realizada".
-    - **Finalizada**:
-        - **Manual**: El psicólogo la finaliza tras el chat.
-        - **Automática**: Si pasa la hora de la cita (+20 min), el sistema la muestra como finalizada visualmente.
+## Flujo de Trabajo Git
 
-3.  **Ventana de Chat (Restricción de Tiempo)**:
-    - **Apertura**: 10 minutos antes de la hora programada.
-    - **Cierre**: 40 minutos después de la hora de inicio (20 min de sesión + 20 min de margen).
-    - **Extensión**: El psicólogo puede extender el tiempo si es necesario.
-    - **Admin**: El administrador tiene acceso ilimitado a todos los chats.
+**Principios**: Historial claro, commits atómicos en español.
 
-4.  **Gestión Post-Cita**:
-    - **Feedback**: El psicólogo puede agregar/editar notas clínicas en citas finalizadas.
-    - **No Realizada**: El psicólogo puede marcar una cita confirmada como "No realizada" (pasa a Cancelada) si el paciente no asistió.
+### Convención de Commits
+Formato: `<tipo>: <mensaje corto en imperativo>`
 
-### Roles de Usuario
+- `feat`: Nueva funcionalidad
+- `fix`: Corrección de errores
+- `refactor`: Cambios de código sin cambiar comportamiento
+- `docs`: Documentación
+- `style`: Estilos y formato
+- `chore`: Mantenimiento
 
-- **Patient**: Puede agendar y chatear en su ventana de tiempo.
-- **Psychologist**: Gestiona citas, chatea, da feedback y extiende tiempo.
-- **Admin**: Control total, puede ver todos los chats y citas sin restricciones de tiempo.
+**Ejemplo**: `feat: agregar botón de extensión de tiempo`
 
-## Estructura de Archivos (Clave)
-
-- `src/app/agendar-cita/`: Formulario de solicitud.
-- `src/app/mis-citas/`: Panel principal para pacientes y psicólogos.
-- `src/components/AppointmentList.tsx`: Lógica central de estados y botones de acción.
-- `src/components/AppointmentChat.tsx`: Componente de chat en tiempo real.
+### Ramas vs Main
+- **Main**: Para cambios pequeños, ajustes visuales o documentación.
+- **Ramas**: Para funcionalidades grandes o refactors riesgosos.
 
 ## Despliegue
 
-- **Vercel**: Deploy automático desde rama `main`.
+- **Hosting**: Vercel (Automático desde `main`)
 - **Dominio**: `www.tupsicoana.com`
