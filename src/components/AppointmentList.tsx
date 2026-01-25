@@ -51,11 +51,6 @@ const isAppointmentExpired = (cita: Cita) => {
   return now > twoHoursAfter;
 };
 
-const getAppointmentStatus = (cita: Cita) => {
-  if (isAppointmentExpired(cita)) return "vencida";
-  return cita.status;
-};
-
 const getStatusColor = (status: string, isExpired = false) => {
   if (isExpired) {
     return "bg-red-50 text-red-700 border-red-300";
@@ -165,7 +160,6 @@ export default function AppointmentList({
       {citas.map((cita) => {
         const isExpired = isAppointmentExpired(cita);
         const isActive = cita.id === activeChatAppointmentId;
-        const calculatedStatus = getAppointmentStatus(cita);
 
         return (
           <div
@@ -215,77 +209,95 @@ export default function AppointmentList({
                 </div>
               </div>
               <div className="flex flex-col gap-2 items-end self-center sm:self-end">
-                {isPsychologist && cita.status === "pending" && !isExpired && (
-                  <div className="flex gap-2">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onUpdateCitaStatus(cita.id, "confirmed");
-                      }}
-                      className="px-3 py-1 text-xs text-white rounded-md transition"
-                      style={{ backgroundColor: "var(--color-secondary)" }}
-                    >
-                      Aceptar
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onUpdateCitaStatus(cita.id, "cancelled");
-                      }}
-                      className="px-3 py-1 text-xs text-red-600 border border-red-600 rounded-md hover:bg-red-50 transition"
-                    >
-                      Rechazar
-                    </button>
-                  </div>
-                )}
-                {isPsychologist &&
-                  cita.status === "confirmed" &&
-                  !isExpired && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onOpenFeedbackModal(cita.id);
-                      }}
-                      className="px-3 py-1 text-xs text-white rounded-md transition"
-                      style={{ backgroundColor: "var(--color-secondary)" }}
-                    >
-                      Finalizar cita
-                    </button>
-                  )}
-                {isPsychologist &&
-                  calculatedStatus === "vencida" && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onDeleteCita(cita.id);
-                      }}
-                      className="px-3 py-1 text-xs text-red-600 border border-red-600 rounded-md hover:bg-red-50 transition"
-                    >
-                      Eliminar
-                    </button>
-                  )}
-                {isPatient && cita.status === "pending" && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onCancelCita(cita.id);
-                    }}
-                    className="px-3 py-1 text-xs text-red-600 border border-red-600 rounded-md hover:bg-red-50 transition"
-                  >
-                    Cancelar
-                  </button>
-                )}
-                {canJoinAppointment(cita, currentProfile) && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onSelectChat(cita.id);
-                    }}
-                    className={`px-3 py-1 text-xs text-white rounded-md transition hover:opacity-90 ${isActive ? "bg-secondary" : "bg-accent"}`}
-                  >
-                    {isActive ? "Viendo Chat" : "Ir al Chat"}
-                  </button>
-                )}
+                {(() => {
+                  const showAcceptReject =
+                    isPsychologist && cita.status === "pending" && !isExpired;
+                  const showFinalize =
+                    isPsychologist && cita.status === "confirmed" && !isExpired;
+                  const showDelete =
+                    isPsychologist && (isExpired || cita.status === "cancelled");
+                  const showCancel = isPatient && cita.status === "pending";
+                  const showChatButton = canJoinAppointment(cita, currentProfile);
+
+                  return (
+                    <>
+                      {showAcceptReject && (
+                        <div className="flex gap-2">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onUpdateCitaStatus(cita.id, "confirmed");
+                            }}
+                            className="px-3 py-1 text-xs text-white rounded-md transition"
+                            style={{
+                              backgroundColor: "var(--color-secondary)",
+                            }}
+                          >
+                            Aceptar
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onUpdateCitaStatus(cita.id, "cancelled");
+                            }}
+                            className="px-3 py-1 text-xs text-red-600 border border-red-600 rounded-md hover:bg-red-50 transition"
+                          >
+                            Rechazar
+                          </button>
+                        </div>
+                      )}
+
+                      {showFinalize && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onOpenFeedbackModal(cita.id);
+                          }}
+                          className="px-3 py-1 text-xs text-white rounded-md transition"
+                          style={{ backgroundColor: "var(--color-secondary)" }}
+                        >
+                          Finalizar cita
+                        </button>
+                      )}
+
+                      {showDelete && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onDeleteCita(cita.id);
+                          }}
+                          className="px-3 py-1 text-xs text-red-600 border border-red-600 rounded-md hover:bg-red-50 transition"
+                        >
+                          Eliminar
+                        </button>
+                      )}
+
+                      {showCancel && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onCancelCita(cita.id);
+                          }}
+                          className="px-3 py-1 text-xs text-red-600 border border-red-600 rounded-md hover:bg-red-50 transition"
+                        >
+                          Cancelar
+                        </button>
+                      )}
+
+                      {showChatButton && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onSelectChat(cita.id);
+                          }}
+                          className={`px-3 py-1 text-xs text-white rounded-md transition hover:opacity-90 ${isActive ? "bg-secondary" : "bg-accent"}`}
+                        >
+                          {isActive ? "Viendo Chat" : "Ir al Chat"}
+                        </button>
+                      )}
+                    </>
+                  );
+                })()}
               </div>
             </div>
           </div>
