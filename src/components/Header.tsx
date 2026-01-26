@@ -21,7 +21,7 @@ export default function Header() {
       .eq('id', userId)
       .single()
 
-    console.log('User role data:', data, 'Error:', error)
+
     setUserRole(data?.role || 'patient')
   }, [])
 
@@ -71,22 +71,22 @@ export default function Header() {
 
   const mobileAuthItem = user
     ? {
-        href: '/mi-perfil',
-        label: 'Mi Perfil',
-        icon: (
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 5h12a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V7a2 2 0 012-2z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 11a2 2 0 104 0 2 2 0 00-4 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16h8" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 8h3" />
-          </svg>
-        )
-      }
+      href: '/mi-perfil',
+      label: 'Mi Perfil',
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 5h12a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V7a2 2 0 012-2z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 11a2 2 0 104 0 2 2 0 00-4 0z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16h8" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 8h3" />
+        </svg>
+      )
+    }
     : {
-        href: '/login',
-        label: 'Ingresar',
-        icon: <FaSignInAlt size={18} />
-      }
+      href: '/login',
+      label: 'Ingresar',
+      icon: <FaSignInAlt size={18} />
+    }
 
   return (
     <header className="w-full relative bg-background shadow-sm border-b border-secondary/10">
