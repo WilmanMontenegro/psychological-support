@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { FaArrowLeft, FaCalendar, FaTag } from 'react-icons/fa';
+import { FaArrowLeft, FaCalendar, FaTag } from 'react-icons/fa6';
+import ShareButtons from '@/components/ShareButtons';
+import SharePopover from '@/components/SharePopover';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -44,15 +46,19 @@ export default function BlogPost() {
 
         {/* Encabezado */}
         <header className="mb-8">
-          <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
-            <span className="flex items-center gap-2">
-              <FaCalendar style={{ color: 'var(--color-secondary)' }} />
-              22 de enero, 2026
-            </span>
-            <span className="flex items-center gap-2">
-              <FaTag style={{ color: 'var(--color-secondary)' }} />
-              Autoestima
-            </span>
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+            <div className="flex items-center gap-4 text-sm text-gray-600">
+              <span className="flex items-center gap-2">
+                <FaCalendar style={{ color: 'var(--color-secondary)' }} />
+                22 de enero, 2026
+              </span>
+              <span className="flex items-center gap-2">
+                <FaTag style={{ color: 'var(--color-secondary)' }} />
+                Autoestima
+              </span>
+            </div>
+
+            <SharePopover title="Cómo construir el amor propio en nuestra vida cotidiana" />
           </div>
 
           <h1 className="text-3xl md:text-5xl font-libre-baskerville text-accent mb-6">
@@ -104,6 +110,10 @@ export default function BlogPost() {
             Si sientes que necesitas ayuda o un espacio para hablar y ser escuchada, y sobre todo conectar contigo, te acompaño en tu proceso. No serás juzgada y ese espacio será únicamente para ti.
           </p>
         </div>
+
+        <ShareButtons 
+          title="Cómo construir el amor propio en nuestra vida cotidiana" 
+        />
 
         {/* Call to action */}
         <div className="mt-12 p-8 bg-pastel-light rounded-2xl text-center">

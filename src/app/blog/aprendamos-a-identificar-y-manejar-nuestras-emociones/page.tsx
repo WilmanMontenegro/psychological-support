@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { FaArrowLeft, FaCalendar, FaTag } from 'react-icons/fa';
+import { FaArrowLeft, FaCalendar, FaTag } from 'react-icons/fa6';
+import ShareButtons from '@/components/ShareButtons';
+import SharePopover from '@/components/SharePopover';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -44,15 +46,19 @@ export default function BlogPost() {
 
         {/* Encabezado */}
         <header className="mb-8">
-          <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
-            <span className="flex items-center gap-2">
-              <FaCalendar style={{ color: 'var(--color-secondary)' }} />
-              17 de octubre, 2025
-            </span>
-            <span className="flex items-center gap-2">
-              <FaTag style={{ color: 'var(--color-secondary)' }} />
-              Apoyo Emocional
-            </span>
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+            <div className="flex items-center gap-4 text-sm text-gray-600">
+              <span className="flex items-center gap-2">
+                <FaCalendar style={{ color: 'var(--color-secondary)' }} />
+                17 de octubre, 2025
+              </span>
+              <span className="flex items-center gap-2">
+                <FaTag style={{ color: 'var(--color-secondary)' }} />
+                Apoyo Emocional
+              </span>
+            </div>
+            
+            <SharePopover title="Aprendamos a identificar y manejar nuestras emociones" />
           </div>
 
           <h1 className="text-3xl md:text-5xl font-libre-baskerville text-accent mb-6">
@@ -96,6 +102,10 @@ export default function BlogPost() {
             Recuerden que saber manejar las emociones nos da crecimiento personal y mental. Anímate para que aprendas a manejar esas emociones que te cuestan identificar.
           </p>
         </div>
+
+        <ShareButtons 
+          title="Aprendamos a identificar y manejar nuestras emociones" 
+        />
 
         {/* Call to action */}
         <div className="mt-12 p-8 bg-pastel-light rounded-2xl text-center">
