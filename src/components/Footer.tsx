@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Navigation from './Navigation'
 import Logo from './Logo'
-import { FaFacebook, FaInstagram, FaLinkedin } from 'react-icons/fa'
+import { FaFacebook, FaInstagram, FaLinkedin, FaTiktok } from 'react-icons/fa'
 
 export default function Footer() {
   return (
@@ -53,6 +53,15 @@ export default function Footer() {
                 aria-label="LinkedIn"
               >
                 <FaLinkedin className="text-white" />
+              </Link>
+              <Link
+                href="https://www.tiktok.com/@tupsicoana.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-2xl transition-transform hover:scale-110 p-2"
+                aria-label="TikTok"
+              >
+                <FaTiktok className="text-white" />
               </Link>
             </div>
           </div>

@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { 
-  FaWhatsapp, 
-  FaFacebookF, 
-  FaLinkedinIn, 
-  FaLink, 
-  FaXTwitter 
+import {
+  FaWhatsapp,
+  FaFacebookF,
+  FaLinkedinIn,
+  FaLink,
+  FaXTwitter,
+  FaTiktok
 } from 'react-icons/fa6';
 import toast from 'react-hot-toast';
 
@@ -59,6 +60,12 @@ export default function ShareButtons({ title, variant = 'default' }: ShareButton
       icon: FaLinkedinIn,
       href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
       color: 'bg-[#0A66C2] hover:bg-[#0958a8]',
+    },
+    {
+      name: 'TikTok',
+      icon: FaTiktok,
+      href: 'https://www.tiktok.com/@tupsicoana.com',
+      color: 'bg-[#000000] hover:bg-[#333333]',
     },
   ];
 
