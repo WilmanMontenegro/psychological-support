@@ -6,7 +6,8 @@ interface NavigationProps {
   showCTA?: boolean
   isMobile?: boolean
   authItem?: {
-    href: string
+    href?: string
+    onClick?: () => void
     label: string
     icon: ReactNode
   } | null
@@ -64,13 +65,23 @@ export default function Navigation({ className = '', showCTA = true, isMobile = 
           </Link>
         ))}
         {authItem && (
-          <Link
-            href={authItem.href}
-            className="flex flex-col items-center py-1 px-1 min-w-0"
-          >
-            {authItem.icon}
-            <span className="text-xs font-medium">{authItem.label}</span>
-          </Link>
+          authItem.onClick ? (
+            <button
+              onClick={authItem.onClick}
+              className="flex flex-col items-center py-1 px-1 min-w-0"
+            >
+              {authItem.icon}
+              <span className="text-xs font-medium">{authItem.label}</span>
+            </button>
+          ) : (
+            <Link
+              href={authItem.href!}
+              className="flex flex-col items-center py-1 px-1 min-w-0"
+            >
+              {authItem.icon}
+              <span className="text-xs font-medium">{authItem.label}</span>
+            </Link>
+          )
         )}
         {showCTA && (
           <Link

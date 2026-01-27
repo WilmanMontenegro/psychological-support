@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Navigation from './Navigation'
 import Logo from './Logo'
+import BottomSheet from './BottomSheet'
 import { supabase } from '@/lib/supabase'
 import { FaSignInAlt } from 'react-icons/fa'
 import type { User } from '@supabase/supabase-js'
@@ -12,6 +13,7 @@ export default function Header() {
   const [user, setUser] = useState<User | null>(null)
   const [userRole, setUserRole] = useState<string | null>(null)
   const [showDropdown, setShowDropdown] = useState(false)
+  const [showMobileMenu, setShowMobileMenu] = useState(false)
   const router = useRouter()
 
   const getUserRole = useCallback(async (userId: string) => {
@@ -71,14 +73,11 @@ export default function Header() {
 
   const mobileAuthItem = user
     ? {
-      href: '/mi-perfil',
-      label: 'Mi Perfil',
+      onClick: () => setShowMobileMenu(true),
+      label: 'Menú',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 5h12a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V7a2 2 0 012-2z" />
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 11a2 2 0 104 0 2 2 0 00-4 0z" />
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16h8" />
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 8h3" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
         </svg>
       )
     }
@@ -236,6 +235,119 @@ export default function Header() {
       <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-background border-t shadow-lg z-50 pb-safe">
         <Navigation className="" showCTA={true} isMobile={true} authItem={mobileAuthItem} />
       </div>
+
+      {/* Menú móvil */}
+      <BottomSheet
+        isOpen={showMobileMenu}
+        onClose={() => setShowMobileMenu(false)}
+        title={user?.user_metadata?.full_name || 'Mi Cuenta'}
+      >
+        <div className="space-y-1">
+          {/* Mi Perfil */}
+          <Link
+            href="/mi-perfil"
+            onClick={() => setShowMobileMenu(false)}
+            className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-pastel-light/50 transition-colors"
+          >
+            <svg className="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            <span className="font-medium">Mi Perfil</span>
+          </Link>
+
+          {/* Opciones para pacientes */}
+          {userRole === 'patient' && (
+            <>
+              <Link
+                href="/mis-citas"
+                onClick={() => setShowMobileMenu(false)}
+                className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-pastel-light/50 transition-colors"
+              >
+                <svg className="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span className="font-medium">Mis Citas</span>
+              </Link>
+              <Link
+                href="/agendar-cita"
+                onClick={() => setShowMobileMenu(false)}
+                className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-pastel-light/50 transition-colors"
+              >
+                <svg className="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                <span className="font-medium">Agendar Cita</span>
+              </Link>
+            </>
+          )}
+
+          {/* Opciones para psicólogos */}
+          {userRole === 'psychologist' && (
+            <>
+              <Link
+                href="/mis-citas"
+                onClick={() => setShowMobileMenu(false)}
+                className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-pastel-light/50 transition-colors"
+              >
+                <svg className="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span className="font-medium">Citas Asignadas</span>
+              </Link>
+              <Link
+                href="/mi-disponibilidad"
+                onClick={() => setShowMobileMenu(false)}
+                className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-pastel-light/50 transition-colors"
+              >
+                <svg className="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span className="font-medium">Mi Disponibilidad</span>
+              </Link>
+            </>
+          )}
+
+          {/* Opciones para admins */}
+          {userRole === 'admin' && (
+            <>
+              <Link
+                href="/mis-citas"
+                onClick={() => setShowMobileMenu(false)}
+                className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-pastel-light/50 transition-colors"
+              >
+                <svg className="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span className="font-medium">Todas las Citas</span>
+              </Link>
+              <Link
+                href="/mi-disponibilidad"
+                onClick={() => setShowMobileMenu(false)}
+                className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-pastel-light/50 transition-colors"
+              >
+                <svg className="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span className="font-medium">Disponibilidad</span>
+              </Link>
+            </>
+          )}
+
+          {/* Separador */}
+          <div className="border-t border-gray-100 my-2" />
+
+          {/* Cerrar sesión */}
+          <button
+            onClick={() => { handleLogout(); setShowMobileMenu(false) }}
+            className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            <span className="font-medium">Cerrar Sesión</span>
+          </button>
+        </div>
+      </BottomSheet>
     </header>
   )
 }
