@@ -7,6 +7,7 @@ import {
   FaLinkedinIn,
   FaLink,
   FaXTwitter,
+  FaShare
 } from 'react-icons/fa6';
 import toast from 'react-hot-toast';
 
@@ -18,11 +19,27 @@ interface ShareButtonsProps {
 export default function ShareButtons({ title, variant = 'default' }: ShareButtonsProps) {
   const [url, setUrl] = useState('');
   const [mounted, setMounted] = useState(false);
+  const [canNativeShare, setCanNativeShare] = useState(false);
 
   useEffect(() => {
     setMounted(true);
     setUrl(window.location.href);
+    if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
+      setCanNativeShare(true);
+    }
   }, []);
+
+  const handleNativeShare = async () => {
+    try {
+      await navigator.share({
+        title: title,
+        text: `Te comparto este artículo: ${title}`,
+        url: url,
+      });
+    } catch (err) {
+      console.log('Error sharing:', err);
+    }
+  };
 
   const handleCopyLink = async () => {
     try {
@@ -66,6 +83,18 @@ export default function ShareButtons({ title, variant = 'default' }: ShareButton
   if (!url) return null;
 
   if (variant === 'social-only') {
+    if (canNativeShare) {
+      return (
+        <button
+          onClick={handleNativeShare}
+          className="flex items-center gap-2 px-4 py-2 bg-secondary text-white rounded-lg hover:bg-opacity-90 transition-all shadow-sm w-full justify-center"
+        >
+          <FaShare className="text-sm" />
+          <span className="font-medium text-sm">Compartir</span>
+        </button>
+      );
+    }
+
     return (
       <div className="flex items-center justify-center gap-2">
         {shareLinks.map((link) => (
@@ -101,30 +130,40 @@ export default function ShareButtons({ title, variant = 'default' }: ShareButton
         ¿Te gustó este artículo? ¡Compártelo!
       </h3>
 
-      <div className="flex flex-wrap gap-3 justify-center">
-        {shareLinks.map((link) => (
-          <a
-            key={link.name}
-            href={link.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`w-10 h-10 flex items-center justify-center rounded-full text-white transition-transform hover:-translate-y-1 shadow-md ${link.color}`}
-            aria-label={`Compartir en ${link.name}`}
-            title={`Compartir en ${link.name}`}
-          >
-            <link.icon className="text-lg" />
-          </a>
-        ))}
-
+      {canNativeShare ? (
         <button
-          onClick={handleCopyLink}
-          className="w-10 h-10 flex items-center justify-center rounded-full text-white bg-secondary hover:bg-opacity-90 transition-transform hover:-translate-y-1 shadow-md"
-          aria-label="Copiar enlace"
-          title="Copiar enlace"
+          onClick={handleNativeShare}
+          className="flex items-center gap-3 px-6 py-3 bg-secondary text-white rounded-full hover:bg-opacity-90 transition-transform hover:-translate-y-1 shadow-md text-lg font-medium"
         >
-          <FaLink className="text-lg" />
+          <FaShare />
+          Compartir en mis redes
         </button>
-      </div>
+      ) : (
+        <div className="flex flex-wrap gap-3 justify-center">
+          {shareLinks.map((link) => (
+            <a
+              key={link.name}
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`w-10 h-10 flex items-center justify-center rounded-full text-white transition-transform hover:-translate-y-1 shadow-md ${link.color}`}
+              aria-label={`Compartir en ${link.name}`}
+              title={`Compartir en ${link.name}`}
+            >
+              <link.icon className="text-lg" />
+            </a>
+          ))}
+
+          <button
+            onClick={handleCopyLink}
+            className="w-10 h-10 flex items-center justify-center rounded-full text-white bg-secondary hover:bg-opacity-90 transition-transform hover:-translate-y-1 shadow-md"
+            aria-label="Copiar enlace"
+            title="Copiar enlace"
+          >
+            <FaLink className="text-lg" />
+          </button>
+        </div>
+      )}
     </div>
   );
 }
