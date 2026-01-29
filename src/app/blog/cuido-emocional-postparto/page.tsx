@@ -6,11 +6,11 @@ import SharePopover from '@/components/SharePopover';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: "El cuido emocional en el postparto de una mujer que nadie mira | Apoyo Psicológico",
+    title: "El cuidado emocional en el postparto de una mujer que nadie mira | Apoyo Psicológico",
     description: "El postparto es una etapa emocional compleja. Descubre cómo manejar las emociones, la soledad y el autocuidado mientras nace una nueva madre.",
     keywords: "postparto, salud emocional, maternidad, depresion postparto, autocuidado, apoyo emocional",
     openGraph: {
-        title: "El cuido emocional en el postparto de una mujer que nadie mira",
+        title: "El cuidado emocional en el postparto de una mujer que nadie mira",
         description: "Consejos para cuidar de ti misma mientras cuidas de tu bebé. No estás sola en este proceso.",
         images: [`${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/images/blog/cuido-emocional-postparto/post-parto.jpeg`],
     },
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    headline: "El cuido emocional en el postparto de una mujer que nadie mira",
+    headline: "El cuidado emocional en el postparto de una mujer que nadie mira",
     description: "Guía de apoyo emocional para madres en postparto: validación de emociones, consejos de autocuidado y la importancia de pedir ayuda.",
     image: `${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/images/blog/cuido-emocional-postparto/post-parto.jpeg`,
     datePublished: "2026-01-29",
@@ -58,11 +58,11 @@ export default function BlogPost() {
                             </span>
                         </div>
 
-                        <SharePopover title="El cuido emocional en el postparto de una mujer que nadie mira" />
+                        <SharePopover title="El cuidado emocional en el postparto de una mujer que nadie mira" />
                     </div>
 
                     <h1 className="text-3xl md:text-5xl font-libre-baskerville text-accent mb-6 leading-tight">
-                        El cuido emocional en el postparto de una mujer que nadie mira
+                        El cuidado emocional en el postparto de una mujer que nadie mira
                     </h1>
                     <div className="w-24 h-1 bg-secondary rounded-full mb-8"></div>
                 </header>

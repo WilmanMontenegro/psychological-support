@@ -7,7 +7,6 @@ import {
   FaLinkedinIn,
   FaLink,
   FaXTwitter,
-  FaTiktok
 } from 'react-icons/fa6';
 import toast from 'react-hot-toast';
 
@@ -40,7 +39,7 @@ export default function ShareButtons({ title, variant = 'default' }: ShareButton
     {
       name: 'WhatsApp',
       icon: FaWhatsapp,
-      href: `https://api.whatsapp.com/send?text=${encodeURIComponent(`${title} - ${url}`)}`,
+      href: `https://wa.me/?text=${encodeURIComponent(`${title} - ${url}`)}`,
       color: 'bg-[#25D366] hover:bg-[#20bd5a]',
     },
     {
@@ -61,12 +60,7 @@ export default function ShareButtons({ title, variant = 'default' }: ShareButton
       href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
       color: 'bg-[#0A66C2] hover:bg-[#0958a8]',
     },
-    {
-      name: 'TikTok',
-      icon: FaTiktok,
-      href: 'https://www.tiktok.com/@tupsicoana.com',
-      color: 'bg-[#000000] hover:bg-[#333333]',
-    },
+
   ];
 
   if (!url) return null;
@@ -97,7 +91,7 @@ export default function ShareButtons({ title, variant = 'default' }: ShareButton
     );
   }
 
-  const containerClasses = variant === 'default' 
+  const containerClasses = variant === 'default'
     ? "flex flex-col items-center justify-center py-8 border-t border-b border-gray-100 my-8"
     : "flex flex-col items-center justify-center";
 
@@ -106,7 +100,7 @@ export default function ShareButtons({ title, variant = 'default' }: ShareButton
       <h3 className="text-lg font-libre-baskerville text-accent mb-4 font-medium">
         ¿Te gustó este artículo? ¡Compártelo!
       </h3>
-      
+
       <div className="flex flex-wrap gap-3 justify-center">
         {shareLinks.map((link) => (
           <a

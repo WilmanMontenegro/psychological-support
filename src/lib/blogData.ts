@@ -10,7 +10,7 @@ export interface BlogPost {
 export const blogPosts: BlogPost[] = [
     {
         slug: 'cuido-emocional-postparto',
-        title: 'El cuido emocional en el postparto de una mujer que nadie mira',
+        title: 'El cuidado emocional en el postparto de una mujer que nadie mira',
         excerpt: 'El postparto es un tema muy complejo del que todos deberíamos hablar. Descubre cómo manejar las emociones, la soledad y el autocuidado mientras nace una nueva madre.',
         image: '/images/blog/cuido-emocional-postparto/post-parto.jpeg',
         category: 'Maternidad',
