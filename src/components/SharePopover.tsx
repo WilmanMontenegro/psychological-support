@@ -11,10 +11,14 @@ interface SharePopoverProps {
 export default function SharePopover({ title }: SharePopoverProps) {
   const [isOpen, setIsOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
+  const [canNativeShare, setCanNativeShare] = useState(false);
+  const [url, setUrl] = useState('');
 
-
-  // Close when clicking outside
   useEffect(() => {
+    setUrl(window.location.href);
+    if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
+      setCanNativeShare(true);
+    }
 
     const handleClickOutside = (event: MouseEvent) => {
       if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
@@ -31,13 +35,28 @@ export default function SharePopover({ title }: SharePopoverProps) {
     };
   }, [isOpen]);
 
+  const handleShare = async () => {
+    if (canNativeShare) {
+      try {
+        await navigator.share({
+          title: title,
+          text: `Te comparto este artículo: ${title}`,
+          url: url,
+        });
+      } catch (err) {
+        console.log('Error sharing:', err);
+      }
+    } else {
+      setIsOpen(!isOpen);
+    }
+  };
 
 
   return (
     <div className="relative inline-block" ref={popoverRef}>
       {/* Trigger Icon */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleShare}
         className={`flex items-center gap-2 px-3 py-1 rounded-full transition-all duration-300 text-sm ${isOpen
           ? 'bg-secondary text-white shadow-md'
           : 'text-gray-600 hover:text-secondary hover:bg-secondary/5'
