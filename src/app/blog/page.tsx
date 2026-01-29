@@ -17,6 +17,14 @@ const jsonLd = {
 
 const blogPosts = [
   {
+    slug: 'cuido-emocional-postparto',
+    title: 'El cuido emocional en el postparto de una mujer que nadie mira',
+    excerpt: 'El postparto es un tema muy complejo del que todos deberíamos hablar. Descubre cómo manejar las emociones, la soledad y el autocuidado mientras nace una nueva madre.',
+    image: '/images/blog/cuido-emocional-postparto/post-parto.jpeg',
+    category: 'Maternidad',
+    date: '2026-01-29'
+  },
+  {
     slug: 'como-construir-el-amor-propio',
     title: 'Cómo construir el amor propio en nuestra vida cotidiana',
     excerpt: 'El amor propio no es perfección ni sentirse bien siempre; es cómo te hablas, te cuidas, te respetas y pones límites. Aquí te comparto pasos prácticos para acompañarte sin abandonarte.',
@@ -59,13 +67,12 @@ export default function BlogPage() {
         </div>
 
         {/* Grid de artículos - centrado cuando hay pocos */}
-        <div className={`grid gap-8 ${
-          postsToRender.length === 1
-            ? 'max-w-md mx-auto'
-            : postsToRender.length === 2
+        <div className={`grid gap-8 ${postsToRender.length === 1
+          ? 'max-w-md mx-auto'
+          : postsToRender.length === 2
             ? 'md:grid-cols-2 max-w-4xl mx-auto'
             : 'md:grid-cols-2 lg:grid-cols-3'
-        }`}>
+          }`}>
           {postsToRender.map((post) => (
             <BlogCard key={post.slug} {...post} />
           ))}
