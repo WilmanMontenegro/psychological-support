@@ -11,13 +11,13 @@ interface BlogCardProps {
 }
 
 export default function BlogCard({ slug, title, excerpt, image, category, date }: BlogCardProps) {
-  const getMonthName = (dateStr: string) => {
+  const formatDateParts = (dateStr: string) => {
     const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-    const [, month, day] = dateStr.split('-');
-    return { day, month: months[parseInt(month) - 1] };
+    const [year, month, day] = dateStr.split('-');
+    return { day, month: months[parseInt(month) - 1], year };
   };
 
-  const { day, month } = getMonthName(date);
+  const { day, month, year } = formatDateParts(date);
 
   return (
     <Link href={`/blog/${slug}`}>
@@ -39,9 +39,11 @@ export default function BlogCard({ slug, title, excerpt, image, category, date }
             </span>
           </div>
           {/* Fecha */}
-          <div className="absolute top-4 right-4 bg-white rounded-lg px-3 py-2 text-center shadow-md">
-            <div className="text-2xl font-bold text-accent">{day}</div>
-            <div className="text-xs font-medium text-gray-600">{month}</div>
+          <div className="absolute top-4 right-4 bg-white rounded-xl shadow-md flex flex-col items-center justify-center p-2 min-w-[70px] aspect-square border border-gray-100">
+            <div className="text-3xl font-bold text-accent leading-none mb-0.5">{day}</div>
+            <div className="text-[10px] font-bold text-gray-500 uppercase tracking-wide leading-tight">
+              {month} - {year}
+            </div>
           </div>
         </div>
 
