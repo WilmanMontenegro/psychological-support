@@ -39,7 +39,12 @@ Una aplicación web minimalista para servicios de apoyo psicológico y acompaña
 - **Extensión**: El psicólogo puede añadir +10 min extra si es necesario.
 - **Admin God Mode**: El administrador tiene acceso ilimitado a todos los chats y funciones de eliminación.
 
-### 3. Interfaz Adaptativa
+### 3. Blog de Bienestar
+- **Enfoque**: Artículos educativos sobre salud mental.
+- **Diseño**: Tarjetas con fecha destacada (estilo calendario minimalista) e imágenes inmersivas.
+- **Categorías**: Clasificación por temas (Maternidad, Autoestima, etc.).
+
+### 4. Interfaz Adaptativa
 - **Diseño Mobile-First**: Alturas calculadas (`calc(100vh - X)`) para evitar scroll innecesario en móviles.
 - **Minimalismo**: Botones y acciones contextuales que solo aparecen cuando son necesarios.
 
