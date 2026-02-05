@@ -42,3 +42,9 @@ next-env.d.ts
 
 # AI files
 CLAUDE.md
+
+# Google Keys
+client_secret_*.json
+
+# Google Keys
+client_secret_*.json

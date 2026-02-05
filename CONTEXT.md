@@ -2,6 +2,10 @@
 
 Una aplicación web minimalista para servicios de apoyo psicológico y acompañamiento.
 
+## Estado del Proyecto
+Actualmente en desarrollo activo.
+**Versión Actual**: `1.0.0` (Producción)
+
 ## Filosofía del Proyecto
 
 **SIMPLICIDAD Y MINIMALISMO ANTE TODO**

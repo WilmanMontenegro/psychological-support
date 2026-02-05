@@ -6,7 +6,7 @@ import { getUserProfile } from '@/lib/auth';
 import type { UserProfile } from '@/lib/auth';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { FaTrash, FaUser, FaCircleUser } from 'react-icons/fa6';
+import { FaTrash, FaCircleUser } from 'react-icons/fa6';
 
 interface Comment {
     id: string;

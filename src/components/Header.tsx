@@ -17,7 +17,7 @@ export default function Header() {
   const router = useRouter()
 
   const getUserRole = useCallback(async (userId: string) => {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('profiles')
       .select('role')
       .eq('id', userId)

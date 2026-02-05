@@ -16,6 +16,11 @@ Plataforma web minimalista para acompañamiento psicológico vía chat.
 - Tailwind CSS v4
 - Supabase (Auth + DB)
 
+## Versionado
+Este proyecto sigue el estándar [Semantic Versioning](https://semver.org/).
+- **CHANGELOG.md**: Registro de cambios.
+- **package.json**: Fuente de verdad de la versión actual.
+
 ## Desarrollo
 
 Ver [CONTEXT.md](./CONTEXT.md) para guías de desarrollo, estructura y flujo de trabajo.
