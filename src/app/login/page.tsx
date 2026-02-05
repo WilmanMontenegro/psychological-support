@@ -137,6 +137,22 @@ function LoginForm() {
           Continuar con Google
         </button>
 
+        <button
+          onClick={() => {
+            setLoading(true);
+            supabase.auth.signInWithOAuth({
+              provider: 'facebook',
+              options: {
+                redirectTo: `${window.location.origin}/auth/callback`
+              }
+            });
+          }}
+          className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-700 hover:bg-gray-50 font-medium transition-colors mt-3"
+        >
+          <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" alt="Facebook" className="w-5 h-5" />
+          Continuar con Facebook
+        </button>
+
         <div className="relative mt-6">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-gray-300"></div>
