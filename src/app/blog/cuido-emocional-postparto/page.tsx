@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     openGraph: {
         title: "El cuidado emocional en el postparto de una mujer que nadie mira",
         description: "Consejos para cuidar de ti misma mientras cuidas de tu bebé. No estás sola en este proceso.",
-        images: [`${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/images/blog/cuido-emocional-postparto/post-parto.jpeg`],
+        images: [`${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/images/blog/post-parto.jpeg`],
     },
 };
 
@@ -21,7 +21,7 @@ const jsonLd = {
     "@type": "BlogPosting",
     headline: "El cuidado emocional en el postparto de una mujer que nadie mira",
     description: "Guía de apoyo emocional para madres en postparto: validación de emociones, consejos de autocuidado y la importancia de pedir ayuda.",
-    image: `${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/images/blog/cuido-emocional-postparto/post-parto.jpeg`,
+    image: `${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/images/blog/post-parto.jpeg`,
     datePublished: "2026-01-29",
     author: {
         "@type": "Person",
@@ -75,7 +75,7 @@ export default function BlogPost() {
 
                     <div className="float-right ml-6 mb-6 w-full md:w-1/2 rounded-2xl overflow-hidden shadow-lg">
                         <Image
-                            src="/images/blog/cuido-emocional-postparto/post-parto.jpeg"
+                            src="/images/blog/post-parto.jpeg"
                             alt="Madre y bebé en momento de conexión"
                             width={800}
                             height={600}

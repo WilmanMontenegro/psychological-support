@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Cómo construir el amor propio en nuestra vida cotidiana",
     description: "Pasos prácticos para cultivar el amor propio y el autocuidado en tu día a día",
-    images: [`${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/images/blog/como-construir-el-amor-propio/amorpropio.jpeg`],
+    images: [`${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/images/blog/amor-propio.jpeg`],
   },
 };
 
@@ -21,7 +21,7 @@ const jsonLd = {
   "@type": "BlogPosting",
   headline: "Cómo construir el amor propio en nuestra vida cotidiana",
   description: "Claves prácticas para cultivar el amor propio, establecer límites y acompañarte con empatía.",
-  image: `${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/images/blog/como-construir-el-amor-propio/amorpropio.jpeg`,
+  image: `${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/images/blog/amor-propio.jpeg`,
   datePublished: "2026-01-22",
   author: {
     "@type": "Person",
@@ -76,7 +76,7 @@ export default function BlogPost() {
           {/* Imagen integrada en el texto */}
           <div className="float-right ml-6 mb-6 w-full md:w-1/2 rounded-2xl overflow-hidden shadow-lg">
             <Image
-              src="/images/blog/como-construir-el-amor-propio/amorpropio.jpeg"
+              src="/images/blog/amor-propio.jpeg"
               alt="Amor propio en la vida cotidiana"
               width={1200}
               height={800}
@@ -111,8 +111,8 @@ export default function BlogPost() {
           </p>
         </div>
 
-        <ShareButtons 
-          title="Cómo construir el amor propio en nuestra vida cotidiana" 
+        <ShareButtons
+          title="Cómo construir el amor propio en nuestra vida cotidiana"
         />
 
         {/* Call to action */}

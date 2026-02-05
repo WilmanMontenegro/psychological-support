@@ -61,6 +61,10 @@ src/
 │   ├── AppointmentChat.tsx # Chat tiempo real
 │   └── ...
 └── lib/              # Utilidades (Supabase, Auth)
+
+public/
+└── images/
+    └── blog/         # Imágenes de artículos (estructura plana)
 ```
 
 ## Flujo de Trabajo Git

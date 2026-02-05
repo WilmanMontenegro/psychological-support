@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Manejo de Emociones | Acompañamiento Psicológico",
     description: "Descubre técnicas de apoyo psicológico para manejar tus emociones correctamente",
-    images: [`${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/images/blog/aprendamos-a-identificar-y-manejar-nuestras-emociones/portada.jpg`],
+    images: [`${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/images/blog/portada-emociones.jpg`],
   },
 };
 
@@ -21,7 +21,7 @@ const jsonLd = {
   "@type": "BlogPosting",
   headline: "Aprendamos a identificar y sobre todo a manejar nuestras emociones",
   description: "Guía completa sobre el manejo emocional y apoyo psicológico para tu bienestar mental",
-  image: `${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/images/blog/aprendamos-a-identificar-y-manejar-nuestras-emociones/portada.jpg`,
+  image: `${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/images/blog/portada-emociones.jpg`,
   datePublished: "2025-10-17",
   author: {
     "@type": "Person",
@@ -57,7 +57,7 @@ export default function BlogPost() {
                 Apoyo Emocional
               </span>
             </div>
-            
+
             <SharePopover title="Aprendamos a identificar y manejar nuestras emociones" />
           </div>
 
@@ -76,7 +76,7 @@ export default function BlogPost() {
           {/* Imagen integrada en el texto */}
           <div className="float-right ml-6 mb-6 w-full md:w-1/2 rounded-2xl overflow-hidden shadow-lg">
             <Image
-              src="/images/blog/aprendamos-a-identificar-y-manejar-nuestras-emociones/portada.jpg"
+              src="/images/blog/portada-emociones.jpg"
               alt="Manejo de emociones"
               width={1200}
               height={800}
@@ -103,8 +103,8 @@ export default function BlogPost() {
           </p>
         </div>
 
-        <ShareButtons 
-          title="Aprendamos a identificar y manejar nuestras emociones" 
+        <ShareButtons
+          title="Aprendamos a identificar y manejar nuestras emociones"
         />
 
         {/* Call to action */}
