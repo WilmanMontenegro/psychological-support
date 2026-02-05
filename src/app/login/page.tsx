@@ -120,6 +120,33 @@ function LoginForm() {
         </p>
       </div>
 
+      <div className="mt-8">
+        <button
+          onClick={() => {
+            setLoading(true);
+            supabase.auth.signInWithOAuth({
+              provider: 'google',
+              options: {
+                redirectTo: `${window.location.origin}/auth/callback`
+              }
+            });
+          }}
+          className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-700 hover:bg-gray-50 font-medium transition-colors"
+        >
+          <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
+          Continuar con Google
+        </button>
+
+        <div className="relative mt-6">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-300"></div>
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 bg-tertiary-light text-gray-500">O continúa con email</span>
+          </div>
+        </div>
+      </div>
+
       <form className="space-y-4" onSubmit={handleSubmit}>
         <div className="space-y-4">
           <div>

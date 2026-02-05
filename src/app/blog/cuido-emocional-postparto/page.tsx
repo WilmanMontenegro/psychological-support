@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { FaArrowLeft, FaCalendar, FaTag } from 'react-icons/fa6';
 import ShareButtons from '@/components/ShareButtons';
 import SharePopover from '@/components/SharePopover';
+import CommentsSection from '@/components/CommentsSection';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -168,6 +169,10 @@ export default function BlogPost() {
                     >
                         Agendar una consulta
                     </Link>
+                </div>
+
+                <div className="mt-8">
+                    <CommentsSection slug="cuido-emocional-postparto" />
                 </div>
 
                 {/* Botón volver abajo */}
