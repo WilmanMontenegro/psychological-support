@@ -21,7 +21,7 @@ Actualmente en desarrollo activo.
 - **Lenguaje**: TypeScript (Estricto)
 - **Estilos**: Tailwind CSS v4
 - **Base de Datos**: Supabase (PostgreSQL)
-- **Auth**: Supabase Auth
+- **Auth**: Supabase Auth (Google & Email/Password)
 - **Notificaciones**: react-hot-toast
 - **Emails**: Resend
 
@@ -51,6 +51,9 @@ Actualmente en desarrollo activo.
 ### 4. Interfaz Adaptativa
 - **Diseño Mobile-First**: Alturas calculadas (`calc(100vh - X)`) para evitar scroll innecesario en móviles.
 - **Minimalismo**: Botones y acciones contextuales que solo aparecen cuando son necesarios.
+
+### 5. Cumplimiento Legal
+- **Política de Privacidad**: Página dedicada (`/privacidad`) que detalla el tratamiento de datos y procesos de eliminación para cumplimiento con Meta y Google OAuth.
 
 ## Estructura de Directorios
 

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - **Blog Comments**: Full comments system implementation with Supabase.
 - **Google Login**: Authentication via Google OAuth for users.
+- **Privacy Policy**: New page at `/privacidad` for legal compliance.
 - **New Blog Post**: "¿Cuándo ir al psicólogo?".
 - **Security**: Row Level Security (RLS) policies for comments.
 
