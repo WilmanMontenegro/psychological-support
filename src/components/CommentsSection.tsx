@@ -6,7 +6,7 @@ import { getUserProfile } from '@/lib/auth';
 import type { UserProfile } from '@/lib/auth';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { FaTrash, FaCircleUser } from 'react-icons/fa6';
+import { FaTrash, FaCircleUser, FaHeart, FaRegHeart } from 'react-icons/fa6';
 
 interface Comment {
     id: string;
@@ -16,6 +16,8 @@ interface Comment {
     profiles?: {
         full_name: string;
     };
+    likes_count?: number;
+    user_has_liked?: boolean;
 }
 
 interface CommentsSectionProps {
@@ -30,9 +32,12 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
     const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
-        fetchComments();
         checkUser();
-    }, [slug]);
+    }, []);
+
+    useEffect(() => {
+        fetchComments();
+    }, [slug, user]);
 
     const checkUser = async () => {
         try {
@@ -45,21 +50,60 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
 
     const fetchComments = async () => {
         try {
-            // Unimos con la tabla profiles para obtener el nombre (si existe tabla profiles vinculada)
-            // Si no usas profiles en FK, tendrás que ajustar esto. Asumo que profiles existe por auth.ts
-            const { data, error } = await supabase
+            // Obtener comentarios
+            const { data: commentsData, error: commentsError } = await supabase
                 .from('comments')
-                .select(`
-          *,
-          profiles (full_name)
-        `)
+                .select('*')
                 .eq('post_slug', slug)
                 .order('created_at', { ascending: false });
 
-            if (error) throw error;
-            setComments(data || []);
+            if (commentsError) throw commentsError;
+
+            if (commentsData && commentsData.length > 0) {
+                const commentIds = commentsData.map(c => c.id);
+                const userIds = commentsData.map(c => c.user_id);
+
+                // Obtener perfiles
+                const { data: profilesData, error: profilesError } = await supabase
+                    .from('profiles')
+                    .select('id, full_name')
+                    .in('id', userIds);
+
+                if (profilesError) {
+                    console.error('Error obteniendo perfiles:', profilesError);
+                    toast.error('Error al cargar nombres de usuarios');
+                }
+
+                // Obtener todos los likes de estos comentarios
+                const { data: likesData } = await supabase
+                    .from('comment_likes')
+                    .select('comment_id, user_id')
+                    .in('comment_id', commentIds);
+
+                // Calcular likes por comentario y si el usuario actual dio like
+                const currentUserId = user?.id;
+
+                // Combinar todo
+                const enrichedComments = commentsData.map(comment => {
+                    const profile = profilesData?.find(p => p.id === comment.user_id);
+                    const commentLikes = likesData?.filter(l => l.comment_id === comment.id) || [];
+                    const userHasLiked = currentUserId ? commentLikes.some(l => l.user_id === currentUserId) : false;
+
+                    return {
+                        ...comment,
+                        profiles: profile || null,
+                        likes_count: commentLikes.length,
+                        user_has_liked: userHasLiked
+                    };
+                });
+
+                setComments(enrichedComments);
+            } else {
+                setComments([]);
+            }
         } catch (error) {
             console.error('Error cargando comentarios:', error);
+            toast.error('Error al cargar comentarios');
         } finally {
             setLoading(false);
         }
@@ -67,27 +111,50 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!user) return;
-        if (!newComment.trim()) return;
+        if (!user) {
+            toast.error('Debes iniciar sesión para comentar');
+            return;
+        }
+        if (!newComment.trim()) {
+            toast.error('El comentario no puede estar vacío');
+            return;
+        }
 
         setSubmitting(true);
         try {
-            const { error } = await supabase
+            const { data, error } = await supabase
                 .from('comments')
                 .insert({
                     post_slug: slug,
                     user_id: user.id,
                     content: newComment.trim()
-                });
+                })
+                .select()
+                .single();
 
-            if (error) throw error;
+            if (error) {
+                console.error('Error al insertar:', error);
+                throw error;
+            }
 
-            toast.success('Comentario publicado');
+            toast.success('¡Comentario publicado!');
             setNewComment('');
-            fetchComments(); // Recargar comentarios
-        } catch (error) {
+
+            // Recargar comentarios después de un momento para asegurar consistencia
+            setTimeout(() => {
+                fetchComments();
+            }, 500);
+        } catch (error: any) {
             console.error('Error publicando comentario:', error);
-            toast.error('No se pudo publicar el comentario');
+
+            // Mensajes de error más específicos
+            if (error?.message?.includes('permission')) {
+                toast.error('No tienes permisos para comentar. Verifica tu sesión.');
+            } else if (error?.code === '23503') {
+                toast.error('Error: Tu perfil no está configurado correctamente.');
+            } else {
+                toast.error('No se pudo publicar el comentario. Intenta de nuevo.');
+            }
         } finally {
             setSubmitting(false);
         }
@@ -109,6 +176,60 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
         } catch (error) {
             console.error('Error eliminando comentario:', error);
             toast.error('No se pudo eliminar');
+        }
+    };
+
+    const handleLike = async (commentId: string) => {
+        if (!user) {
+            toast.error('Debes iniciar sesión para dar like');
+            return;
+        }
+
+        const comment = comments.find(c => c.id === commentId);
+        if (!comment) return;
+
+        try {
+            if (comment.user_has_liked) {
+                // Quitar like
+                const { error } = await supabase
+                    .from('comment_likes')
+                    .delete()
+                    .eq('comment_id', commentId)
+                    .eq('user_id', user.id);
+
+                if (error) throw error;
+
+                // Actualizar estado local
+                setComments(comments.map(c => c.id === commentId ? {
+                    ...c,
+                    likes_count: (c.likes_count || 0) - 1,
+                    user_has_liked: false
+                } : c));
+            } else {
+                // Dar like
+                const { error } = await supabase
+                    .from('comment_likes')
+                    .insert({
+                        comment_id: commentId,
+                        user_id: user.id
+                    });
+
+                if (error) throw error;
+
+                // Actualizar estado local
+                setComments(comments.map(c => c.id === commentId ? {
+                    ...c,
+                    likes_count: (c.likes_count || 0) + 1,
+                    user_has_liked: true
+                } : c));
+            }
+        } catch (error: any) {
+            console.error('Error con like:', error);
+            if (error?.code === '23505') {
+                toast.error('Ya diste like a este comentario');
+            } else {
+                toast.error('Error al procesar el like');
+            }
         }
     };
 
@@ -178,35 +299,60 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
                     ))}
                 </div>
             ) : comments.length > 0 ? (
-                <div className="space-y-6">
+                <div className="space-y-4">
                     {comments.map((comment) => (
-                        <div key={comment.id} className="flex gap-4 p-4 hover:bg-gray-50 rounded-xl transition-colors">
-                            <div className="flex-shrink-0 mt-1">
-                                <div className="w-10 h-10 bg-pastel-dark rounded-full flex items-center justify-center text-accent font-bold text-lg">
-                                    {comment.profiles?.full_name?.charAt(0) || '?'}
+                        <div key={comment.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow">
+                            <div className="flex gap-4">
+                                <div className="flex-shrink-0">
+                                    <div className="w-11 h-11 bg-gradient-to-br from-secondary/20 to-accent/20 rounded-full flex items-center justify-center text-accent font-bold text-lg shadow-sm">
+                                        {comment.profiles?.full_name?.charAt(0)?.toUpperCase() || 'U'}
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="flex-1">
-                                <div className="flex items-center justify-between mb-2">
-                                    <h4 className="font-semibold text-gray-800">
-                                        {comment.profiles?.full_name || 'Usuario desconocido'}
-                                    </h4>
-                                    <span className="text-xs text-gray-500">
-                                        {formatDate(comment.created_at)}
-                                    </span>
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
+                                        <h4 className="font-semibold text-gray-800 text-base">
+                                            {comment.profiles?.full_name || 'Usuario'}
+                                        </h4>
+                                        <span className="text-xs text-gray-500">
+                                            {formatDate(comment.created_at)}
+                                        </span>
+                                    </div>
+                                    <p className="text-gray-700 leading-relaxed whitespace-pre-wrap text-sm md:text-base mb-3">
+                                        {comment.content}
+                                    </p>
+
+                                    {/* Acciones del comentario */}
+                                    <div className="flex items-center gap-4 pt-2 border-t border-gray-100">
+                                        {/* Botón de like */}
+                                        <button
+                                            onClick={() => handleLike(comment.id)}
+                                            className={`flex items-center gap-1.5 text-sm font-medium transition-all rounded-full px-3 py-1.5 ${
+                                                comment.user_has_liked
+                                                    ? 'text-red-500 bg-red-50 hover:bg-red-100'
+                                                    : 'text-gray-500 bg-gray-50 hover:bg-red-50 hover:text-red-500'
+                                            }`}
+                                            title={user ? (comment.user_has_liked ? 'Quitar like' : 'Me gusta') : 'Inicia sesión para dar like'}
+                                        >
+                                            {comment.user_has_liked ? (
+                                                <FaHeart className="text-base" />
+                                            ) : (
+                                                <FaRegHeart className="text-base" />
+                                            )}
+                                            <span>{comment.likes_count || 0}</span>
+                                        </button>
+
+                                        {/* Botón eliminar (solo si es el autor o admin) */}
+                                        {user && (user.id === comment.user_id || user.role === 'admin') && (
+                                            <button
+                                                onClick={() => handleDelete(comment.id)}
+                                                className="text-red-400 hover:text-red-600 text-xs flex items-center gap-1.5 transition-colors px-3 py-1.5 rounded-full hover:bg-red-50"
+                                            >
+                                                <FaTrash size={11} />
+                                                <span>Eliminar</span>
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
-                                <p className="text-gray-700 leading-relaxed whitespace-pre-wrap text-sm md:text-base">
-                                    {comment.content}
-                                </p>
-                                {/* Botón eliminar (solo si es el autor) */}
-                                {user && user.id === comment.user_id && (
-                                    <button
-                                        onClick={() => handleDelete(comment.id)}
-                                        className="mt-2 text-red-400 hover:text-red-600 text-xs flex items-center gap-1 transition-colors"
-                                    >
-                                        <FaTrash size={12} /> Eliminar
-                                    </button>
-                                )}
                             </div>
                         </div>
                     ))}
