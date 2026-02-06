@@ -7,7 +7,7 @@ Plataforma web minimalista para acompañamiento psicológico vía chat.
 - **Gestión de Citas**: Flujo simplificado (Pendiente -> Confirmada -> Finalizada).
 - **Chat Seguro**: Comunicación en tiempo real con ventanas de acceso restringido.
 - **Roles**: Paciente, Psicólogo y Administrador con control total.
-- **Blog**: Recursos y lecturas para el bienestar emocional.
+- **Blog**: Recursos y lecturas para el bienestar emocional con sistema de comentarios y likes.
 - **Privacidad**: Página de cumplimiento legal y tratamiento de datos personales.
 - **Diseño**: Interfaz limpia y adaptada a móviles.
 
