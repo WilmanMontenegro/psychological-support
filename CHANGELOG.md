@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-02-05
+
+### Added
+- **Comment Likes**: Sistema de likes para comentarios del blog con corazones.
+- **OAuth Callback**: Ruta de callback para autenticación con Google OAuth.
+- **RLS Policies**: Políticas de seguridad para lectura pública de nombres de perfiles y likes.
+
+### Fixed
+- **Login Redirect**: El login ahora redirige correctamente al blog desde donde se inició sesión.
+- **Comment Profiles**: Los comentarios ahora muestran correctamente el nombre del usuario.
+- **Share Buttons**: Mejorada la captura de URL para botones de compartir.
+
+### Changed
+- **Comment UI**: Rediseño de tarjetas de comentarios con mejor estilo visual (sombras, bordes, gradientes).
+- **Social Links**: Actualizados enlaces de Instagram y Facebook a @tupsicoana.
+- **Error Handling**: Mensajes de error más específicos en el sistema de comentarios.
+
 ## [1.0.0] - 2026-02-05
 
 ### Added

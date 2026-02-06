@@ -4,7 +4,7 @@ Una aplicación web minimalista para servicios de apoyo psicológico y acompaña
 
 ## Estado del Proyecto
 Actualmente en desarrollo activo.
-**Versión Actual**: `1.0.0` (Producción)
+**Versión Actual**: `1.1.0` (Producción)
 
 ## Filosofía del Proyecto
 
@@ -47,6 +47,8 @@ Actualmente en desarrollo activo.
 - **Enfoque**: Artículos educativos sobre salud mental.
 - **Diseño**: Tarjetas con fecha destacada (estilo calendario minimalista) e imágenes inmersivas.
 - **Categorías**: Clasificación por temas (Maternidad, Autoestima, etc.).
+- **Comentarios**: Sistema completo con likes, perfiles de usuario y permisos RLS.
+- **Interacción**: Los usuarios pueden dar like a comentarios y eliminar sus propios comentarios.
 
 ### 4. Interfaz Adaptativa
 - **Diseño Mobile-First**: Alturas calculadas (`calc(100vh - X)`) para evitar scroll innecesario en móviles.
