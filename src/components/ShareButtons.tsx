@@ -23,7 +23,10 @@ export default function ShareButtons({ title, variant = 'default' }: ShareButton
 
   useEffect(() => {
     setMounted(true);
-    setUrl(window.location.href);
+    // Asegurar que la URL se captura después de que la página esté completamente cargada
+    const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+    setUrl(currentUrl);
+
     if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
       setCanNativeShare(true);
     }

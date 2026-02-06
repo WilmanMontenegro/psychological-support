@@ -15,7 +15,10 @@ export default function SharePopover({ title }: SharePopoverProps) {
   const [url, setUrl] = useState('');
 
   useEffect(() => {
-    setUrl(window.location.href);
+    // Capturar la URL actual de forma segura
+    const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+    setUrl(currentUrl);
+
     if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
       setCanNativeShare(true);
     }
