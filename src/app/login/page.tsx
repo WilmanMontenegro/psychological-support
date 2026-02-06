@@ -78,20 +78,25 @@ function LoginForm() {
 
       if (signInError) throw signInError;
 
-      let redirectPath = '/mis-citas';
+      // Leer el parámetro redirect del URL
+      const redirectParam = searchParams.get('redirect');
+      let redirectPath = redirectParam || '/mis-citas';
 
-      try {
-        const profile = await getUserProfile();
+      // Solo sobrescribir si no hay redirect y el usuario tiene un rol específico
+      if (!redirectParam) {
+        try {
+          const profile = await getUserProfile();
 
-        if (!profile) {
-          console.warn('Perfil no encontrado tras iniciar sesión. Se usará la ruta por defecto.');
-        } else if (profile.role === 'psychologist' || profile.role === 'admin') {
-          redirectPath = '/mis-citas';
-        } else if (profile.role === 'patient') {
-          redirectPath = '/mis-citas';
+          if (!profile) {
+            console.warn('Perfil no encontrado tras iniciar sesión. Se usará la ruta por defecto.');
+          } else if (profile.role === 'psychologist' || profile.role === 'admin') {
+            redirectPath = '/mis-citas';
+          } else if (profile.role === 'patient') {
+            redirectPath = '/mis-citas';
+          }
+        } catch (profileError) {
+          console.error('Error al obtener perfil tras iniciar sesión:', profileError);
         }
-      } catch (profileError) {
-        console.error('Error al obtener perfil tras iniciar sesión:', profileError);
       }
 
       toast.success('¡Bienvenido! Sesión iniciada correctamente');
@@ -124,10 +129,15 @@ function LoginForm() {
         <button
           onClick={() => {
             setLoading(true);
+            const redirectParam = searchParams.get('redirect');
+            const callbackUrl = redirectParam
+              ? `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(redirectParam)}`
+              : `${window.location.origin}/auth/callback`;
+
             supabase.auth.signInWithOAuth({
               provider: 'google',
               options: {
-                redirectTo: `${window.location.origin}/auth/callback`
+                redirectTo: callbackUrl
               }
             });
           }}
