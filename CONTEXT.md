@@ -96,6 +96,15 @@ Formato: `<tipo>: <mensaje corto en imperativo>`
 - **Main**: Para cambios pequeños, ajustes visuales o documentación.
 - **Ramas**: Para funcionalidades grandes o refactors riesgosos.
 
+### Antes de hacer Push
+⚠️ **SIEMPRE probar el build local antes de hacer push:**
+```bash
+npm run build
+```
+- Verifica que no haya errores de compilación
+- Asegura que el código pase el linter de ESLint
+- Evita deploys fallidos en Vercel
+
 ## Despliegue
 
 - **Hosting**: Vercel (Automático desde `main`)

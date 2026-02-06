@@ -18,7 +18,7 @@ export default function PrivacyPage() {
                 <section className="mb-8">
                     <h2 className="text-xl font-bold text-secondary mb-4">1. Introducción</h2>
                     <p>
-                        Bienvenido a <strong>Acompañamiento Psicológico con Ana Marcela Polo Bastidas</strong> ("nosotros", "nuestro").
+                        Bienvenido a <strong>Acompañamiento Psicológico con Ana Marcela Polo Bastidas</strong> (&quot;nosotros&quot;, &quot;nuestro&quot;).
                         Respetamos su privacidad y nos comprometemos a proteger sus datos personales. Esta política de privacidad le informará
                         sobre cómo cuidamos sus datos personales cuando visita nuestro sitio web y utiliza nuestros servicios de autenticación.
                     </p>
@@ -59,11 +59,11 @@ export default function PrivacyPage() {
                     <p className="mt-2 text-sm bg-gray-50 p-4 rounded-lg border border-gray-200">
                         <strong>Instrucciones para solicitar la eliminación de datos:</strong>
                         <br /><br />
-                        1. Inicie sesión en su cuenta y vaya a "Mi Perfil".
+                        1. Inicie sesión en su cuenta y vaya a &quot;Mi Perfil&quot;.
                         <br />
-                        2. Busque la opción "Eliminar mi cuenta" (si está disponible) o contacte directamente con nosotros.
+                        2. Busque la opción &quot;Eliminar mi cuenta&quot; (si está disponible) o contacte directamente con nosotros.
                         <br />
-                        3. Alternativamente, envíe un correo electrónico a <strong>contacto@tupsicoana.com</strong> con el asunto "Solicitud de Eliminación de Datos".
+                        3. Alternativamente, envíe un correo electrónico a <strong>contacto@tupsicoana.com</strong> con el asunto &quot;Solicitud de Eliminación de Datos&quot;.
                         <br />
                         4. Procesaremos su solicitud y eliminaremos todos sus datos personales de nuestros servidores en un plazo máximo de 30 días.
                     </p>

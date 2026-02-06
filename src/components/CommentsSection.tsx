@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { getUserProfile } from '@/lib/auth';
 import type { UserProfile } from '@/lib/auth';
@@ -48,7 +48,7 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
         }
     };
 
-    const fetchComments = async () => {
+    const fetchComments = useCallback(async () => {
         try {
             // Obtener comentarios
             const { data: commentsData, error: commentsError } = await supabase
@@ -107,7 +107,7 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
         } finally {
             setLoading(false);
         }
-    };
+    }, [slug, user]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -122,7 +122,7 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
 
         setSubmitting(true);
         try {
-            const { data, error } = await supabase
+            const { error } = await supabase
                 .from('comments')
                 .insert({
                     post_slug: slug,
@@ -144,13 +144,14 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
             setTimeout(() => {
                 fetchComments();
             }, 500);
-        } catch (error: any) {
+        } catch (error) {
             console.error('Error publicando comentario:', error);
 
             // Mensajes de error más específicos
-            if (error?.message?.includes('permission')) {
+            const err = error as { message?: string; code?: string };
+            if (err?.message?.includes('permission')) {
                 toast.error('No tienes permisos para comentar. Verifica tu sesión.');
-            } else if (error?.code === '23503') {
+            } else if (err?.code === '23503') {
                 toast.error('Error: Tu perfil no está configurado correctamente.');
             } else {
                 toast.error('No se pudo publicar el comentario. Intenta de nuevo.');
@@ -223,9 +224,10 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
                     user_has_liked: true
                 } : c));
             }
-        } catch (error: any) {
+        } catch (error) {
             console.error('Error con like:', error);
-            if (error?.code === '23505') {
+            const err = error as { code?: string };
+            if (err?.code === '23505') {
                 toast.error('Ya diste like a este comentario');
             } else {
                 toast.error('Error al procesar el like');
