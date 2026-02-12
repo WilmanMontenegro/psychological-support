@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-02-12
+
+### Added
+- **New Blog Post**: "Cómo decir NO sin sentirte culpable" - Artículo sobre límites saludables y amor propio.
+- **Database Migrations**: Estructura de migraciones en `supabase/migrations/` para gestión de versiones de BD.
+- **Enhanced Error Handling**: Mejores mensajes de error en el sistema de likes (detección de tabla no existente, permisos RLS).
+
+### Fixed
+- **Comment Likes Error Handling**: Errores más específicos al dar like (tabla no existe, permisos, duplicado).
+
+### Changed
+- **Blog Post Structure**: Todos los posts seguir ahora un patrón consistente con subtítulos, énfasis visual (cajas resaltadas) y mejor legibilidad.
+
 ## [1.1.0] - 2026-02-05
 
 ### Added

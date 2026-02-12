@@ -35,19 +35,6 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
         checkUser();
     }, []);
 
-    useEffect(() => {
-        fetchComments();
-    }, [slug, user]);
-
-    const checkUser = async () => {
-        try {
-            const profile = await getUserProfile();
-            setUser(profile);
-        } catch (error) {
-            console.error('Error verificando usuario:', error);
-        }
-    };
-
     const fetchComments = useCallback(async () => {
         try {
             // Obtener comentarios
@@ -75,10 +62,15 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
                 }
 
                 // Obtener todos los likes de estos comentarios
-                const { data: likesData } = await supabase
+                const { data: likesData, error: likesError } = await supabase
                     .from('comment_likes')
                     .select('comment_id, user_id')
                     .in('comment_id', commentIds);
+
+                if (likesError) {
+                    console.error('Error obteniendo likes:', likesError);
+                    // Continuar de todos modos, solo sin datos de likes
+                }
 
                 // Calcular likes por comentario y si el usuario actual dio like
                 const currentUserId = user?.id;
@@ -108,6 +100,19 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
             setLoading(false);
         }
     }, [slug, user]);
+
+    useEffect(() => {
+        fetchComments();
+    }, [fetchComments]);
+
+    const checkUser = async () => {
+        try {
+            const profile = await getUserProfile();
+            setUser(profile);
+        } catch (error) {
+            console.error('Error verificando usuario:', error);
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -198,7 +203,10 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
                     .eq('comment_id', commentId)
                     .eq('user_id', user.id);
 
-                if (error) throw error;
+                if (error) {
+                    console.error('Error DELETE likes:', error);
+                    throw error;
+                }
 
                 // Actualizar estado local
                 setComments(comments.map(c => c.id === commentId ? {
@@ -215,7 +223,10 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
                         user_id: user.id
                     });
 
-                if (error) throw error;
+                if (error) {
+                    console.error('Error INSERT likes:', error);
+                    throw error;
+                }
 
                 // Actualizar estado local
                 setComments(comments.map(c => c.id === commentId ? {
@@ -225,12 +236,17 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
                 } : c));
             }
         } catch (error) {
-            console.error('Error con like:', error);
-            const err = error as { code?: string };
+            console.error('Error completo con like:', error);
+            const err = error as { code?: string; message?: string };
+            
             if (err?.code === '23505') {
                 toast.error('Ya diste like a este comentario');
+            } else if (err?.code === '42P01') {
+                toast.error('Error: La tabla de likes no existe. Contacta al administrador.');
+            } else if (err?.message?.includes('permission')) {
+                toast.error('Error de permisos. Verifica tu sesión.');
             } else {
-                toast.error('Error al procesar el like');
+                toast.error(`Error al procesar el like: ${err?.message || 'desconocido'}`);
             }
         }
     };

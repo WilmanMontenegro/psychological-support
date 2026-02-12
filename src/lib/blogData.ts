@@ -9,6 +9,14 @@ export interface BlogPost {
 
 export const blogPosts: BlogPost[] = [
     {
+        slug: 'como-decir-no-sin-sentir-culpa',
+        title: 'Cómo decir "NO" sin sentirte culpable',
+        excerpt: 'Aprender a decir no de manera adecuada es crucial. Descubre por qué la culpa aparece y cómo fortalecer tus límites sin miedo. Diciendo no te dices sí a ti misma.',
+        image: '/images/blog/decir-no.jpeg',
+        category: 'Autoestima',
+        date: '2026-02-12'
+    },
+    {
         slug: 'cuido-emocional-postparto',
         title: 'El cuidado emocional en el postparto de una mujer que nadie mira',
         excerpt: 'El postparto es un tema muy complejo del que todos deberíamos hablar. Descubre cómo manejar las emociones, la soledad y el autocuidado mientras nace una nueva madre.',
