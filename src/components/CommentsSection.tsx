@@ -30,9 +30,11 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
     const [user, setUser] = useState<UserProfile | null>(null);
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
+    const [authChecked, setAuthChecked] = useState(false);
 
     useEffect(() => {
-        checkUser();
+        checkUser().finally(() => setAuthChecked(true));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const fetchComments = useCallback(async () => {
@@ -102,8 +104,10 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
     }, [slug, user]);
 
     useEffect(() => {
-        fetchComments();
-    }, [fetchComments]);
+        if (authChecked) {
+            fetchComments();
+        }
+    }, [fetchComments, authChecked]);
 
     const checkUser = async () => {
         try {
@@ -238,7 +242,7 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
         } catch (error) {
             console.error('Error completo con like:', error);
             const err = error as { code?: string; message?: string };
-            
+
             if (err?.code === '23505') {
                 toast.error('Ya diste like a este comentario');
             } else if (err?.code === '42P01') {
@@ -344,11 +348,10 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
                                         {/* Botón de like */}
                                         <button
                                             onClick={() => handleLike(comment.id)}
-                                            className={`flex items-center gap-1.5 text-sm font-medium transition-all rounded-full px-3 py-1.5 ${
-                                                comment.user_has_liked
-                                                    ? 'text-red-500 bg-red-50 hover:bg-red-100'
-                                                    : 'text-gray-500 bg-gray-50 hover:bg-red-50 hover:text-red-500'
-                                            }`}
+                                            className={`flex items-center gap-1.5 text-sm font-medium transition-all rounded-full px-3 py-1.5 ${comment.user_has_liked
+                                                ? 'text-red-500 bg-red-50 hover:bg-red-100'
+                                                : 'text-gray-500 bg-gray-50 hover:bg-red-50 hover:text-red-500'
+                                                }`}
                                             title={user ? (comment.user_has_liked ? 'Quitar like' : 'Me gusta') : 'Inicia sesión para dar like'}
                                         >
                                             {comment.user_has_liked ? (
