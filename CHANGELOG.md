@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - **New Blog Post**: "La ilusión de las redes sociales" - Artículo sobre el uso consciente de redes y el bienestar mental.
 
+### Fixed
+- **Comments Loading**: Resuelto un bug de condición de carrera ('Race Condition') que impedía la carga de comentarios cuando el token de sesión JWT del navegador había expirado. El sistema ahora verifica y renueva el token antes de la petición principal de los comentarios.
+
 ## [1.1.1] - 2026-02-12
 
 ### Added
