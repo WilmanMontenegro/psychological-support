@@ -9,6 +9,14 @@ export interface BlogPost {
 
 export const blogPosts: BlogPost[] = [
     {
+        slug: 'la-ilusion-de-las-redes-sociales',
+        title: 'La ilusión de las redes sociales',
+        excerpt: 'Las redes sociales son como una ventana abierta donde vemos vidas que parecen perfectas, pero detrás de la pantalla hay una historia que no se muestra. Aprende a usarlas de manera consciente.',
+        image: '/images/blog/la-ilusion-de-las-redes-sociales.jpg',
+        category: 'Salud Mental',
+        date: '2026-02-19'
+    },
+    {
         slug: 'como-decir-no-sin-sentir-culpa',
         title: 'Cómo decir "NO" sin sentirte culpable',
         excerpt: 'Aprender a decir no de manera adecuada es crucial. Descubre por qué la culpa aparece y cómo fortalecer tus límites sin miedo. Diciendo no te dices sí a ti misma.',
