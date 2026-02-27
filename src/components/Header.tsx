@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Navigation from './Navigation'
 import Logo from './Logo'
 import BottomSheet from './BottomSheet'
+import LanguageSelector from './LanguageSelector'
 import { supabase } from '@/lib/supabase'
 import { FaSignInAlt } from 'react-icons/fa'
 import type { User } from '@supabase/supabase-js'
@@ -98,8 +99,11 @@ export default function Header() {
           <Navigation className="" showCTA={false} />
         </div>
 
-        {/* Botón CTA y Usuario */}
+        {/* Selector de idioma, Botón CTA y Usuario */}
         <div className="flex items-center justify-end gap-3">
+          {/* Selector de idioma */}
+          <LanguageSelector />
+
           {/* Solo mostrar "Agendar Cita" a pacientes o usuarios no logueados */}
           {(!user || userRole === 'patient') && (
             <Link
