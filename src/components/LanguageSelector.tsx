@@ -66,17 +66,14 @@ export default function LanguageSelector() {
       {/* Botón toggle - Diseño profesional y responsive */}
       <button
         onClick={handleToggleLanguage}
-        className="flex items-center justify-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-2.5 sm:py-2 rounded-lg hover:bg-secondary/10 transition-all duration-200 border border-gray-200 hover:border-secondary/30 active:scale-95"
+        className="flex items-center justify-center gap-0.5 px-1.5 py-1 rounded-md hover:bg-secondary/10 transition-all duration-200 border border-gray-200 hover:border-secondary/30 active:scale-95"
         aria-label="Cambiar idioma"
         title={currentLang === 'es' ? 'Switch to English' : 'Cambiar a Español'}
       >
-        {/* Bandera con tamaño responsive */}
-        <span className="text-base sm:text-lg leading-none">
+        <span className="text-sm leading-none">
           {currentLang === 'es' ? '🇪🇸' : '🇺🇸'}
         </span>
-        
-        {/* Texto del idioma */}
-        <span className="text-xs sm:text-sm font-semibold text-gray-700 min-w-7 sm:min-w-8 text-center">
+        <span className="text-xs font-semibold text-gray-700">
           {currentLang === 'es' ? 'ES' : 'EN'}
         </span>
       </button>
