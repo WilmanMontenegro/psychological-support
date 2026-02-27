@@ -4,7 +4,7 @@ Una aplicación web minimalista para servicios de apoyo psicológico y acompaña
 
 ## Estado del Proyecto
 Actualmente en desarrollo activo.
-**Versión Actual**: `1.1.0` (Producción)
+**Versión Actual**: `1.1.3` (Producción)
 
 ## Filosofía del Proyecto
 
@@ -46,16 +46,25 @@ Actualmente en desarrollo activo.
 ### 3. Blog de Bienestar
 - **Enfoque**: Artículos educativos sobre salud mental.
 - **Diseño**: Tarjetas con fecha destacada (estilo calendario minimalista) e imágenes inmersivas.
-- **Categorías**: Clasificación por temas (Maternidad, Autoestima, etc.).
+- **Categorías**: Clasificación por temas (Maternidad, Autoestima, Salud Mental, Bienestar).
 - **Comentarios**: Sistema completo con likes, perfiles de usuario y permisos RLS.
 - **Interacción**: Los usuarios pueden dar like a comentarios y eliminar sus propios comentarios.
+- **SEO Automático**: Sitemap dinámico que se actualiza automáticamente con cada nuevo post.
+- **Posts Actuales**: 6 artículos publicados (desde Oct 2025 hasta Feb 2026).
+- **Login Contextual**: Al iniciar sesión desde un blog, el usuario regresa al mismo artículo.
 
 ### 4. Interfaz Adaptativa
 - **Diseño Mobile-First**: Alturas calculadas (`calc(100vh - X)`) para evitar scroll innecesario en móviles.
 - **Minimalismo**: Botones y acciones contextuales que solo aparecen cuando son necesarios.
+- **Multiidioma**: Selector de idioma ES/EN con Google Translate integrado para visitantes angloparlantes.
+- **Responsive**: Todos los componentes optimizados para mobile, tablet y desktop.
 
-### 5. Cumplimiento Legal
+### 5. Cumplimiento Legal y SEO
 - **Política de Privacidad**: Página dedicada (`/privacidad`) que detalla el tratamiento de datos y procesos de eliminación para cumplimiento con Meta y Google OAuth.
+- **Google Search Console**: Verificado mediante registro TXT en DNS (Vercel).
+- **Sitemap Dinámico**: Auto-generado en `/sitemap.xml` desde `blogData.ts` para mejor indexación.
+- **Meta Tags**: Open Graph, Twitter Cards y SEO optimizado por página.
+- **Robots.txt**: Configurado para permitir crawling de bots de búsqueda.
 
 ## Estructura de Directorios
 
@@ -75,6 +84,36 @@ public/
 └── images/
     └── blog/         # Imágenes de artículos (estructura plana)
 ```
+
+## Cómo Agregar un Nuevo Post al Blog
+
+### Paso 1: Crear el directorio y archivo del post
+```bash
+mkdir -p src/app/blog/[slug-del-post]
+```
+
+### Paso 2: Crear `page.tsx` con la estructura estándar
+- Copiar estructura de cualquier post existente
+- Actualizar: title, description, keywords, date, slug
+- Escribir contenido con subtítulos (h2), párrafos y cajas destacadas
+- Incluir imagen flotante con `float-right` en desktop
+
+### Paso 3: Guardar la imagen
+- Ubicación: `public/images/blog/[slug-del-post].jpg`
+- Formato recomendado: JPG optimizado (< 2MB)
+- Dimensiones sugeridas: 1200x800px
+
+### Paso 4: Actualizar `src/lib/blogData.ts`
+- Agregar al inicio del array `blogPosts` (más reciente primero)
+- Incluir: slug, title, excerpt, image, category, date
+
+### Paso 5: Verificar
+```bash
+npm run lint   # Sin errores
+npm run build  # Compilación exitosa
+```
+
+**¡Listo!** El sitemap se actualiza automáticamente. El nuevo post aparecerá en `/blog` y en `/sitemap.xml`.
 
 ## Flujo de Trabajo Git
 
