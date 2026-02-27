@@ -1,10 +1,12 @@
 import { MetadataRoute } from 'next'
+import { blogPosts } from '@/lib/blogData'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tupsicoana.com'
   const today = new Date()
   
-  return [
+  // Páginas estáticas
+  const staticPages: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
       lastModified: today,
@@ -36,10 +38,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.85,
     },
     {
-      url: `${baseUrl}/blog/aprendamos-a-identificar-y-manejar-nuestras-emociones`,
-      lastModified: new Date('2025-01-15'),
-      changeFrequency: 'monthly',
-      priority: 0.8,
+      url: `${baseUrl}/privacidad`,
+      lastModified: today,
+      changeFrequency: 'yearly',
+      priority: 0.6,
     },
     {
       url: `${baseUrl}/registro`,
@@ -54,4 +56,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.7,
     },
   ]
+
+  // Posts del blog (se generan dinámicamente desde blogData.ts)
+  const blogPages: MetadataRoute.Sitemap = blogPosts.map((post) => ({
+    url: `${baseUrl}/blog/${post.slug}`,
+    lastModified: new Date(post.date),
+    changeFrequency: 'monthly' as const,
+    priority: 0.8,
+  }))
+
+  return [...staticPages, ...blogPages]
 }
