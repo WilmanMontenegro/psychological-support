@@ -79,12 +79,15 @@ function LoginForm() {
 
       if (signInError) throw signInError;
 
-      // Leer el parámetro redirect del URL
+      // Leer el parámetro redirect del URL y respetar siempre si existe
       const redirectParam = searchParams.get('redirect');
-      let redirectPath = redirectParam || '/mis-citas';
+      let redirectPath = '/mis-citas';
 
-      // Solo sobrescribir si no hay redirect y el usuario tiene un rol específico
-      if (!redirectParam) {
+      if (redirectParam) {
+        // Si hay redirect explícito, usarlo SIEMPRE
+        redirectPath = redirectParam;
+      } else {
+        // Solo si NO hay redirect, usar la lógica basada en rol
         try {
           const profile = await getUserProfile();
 
