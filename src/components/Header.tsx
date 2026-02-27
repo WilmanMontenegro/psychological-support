@@ -100,7 +100,7 @@ export default function Header() {
         </div>
 
         {/* Selector de idioma, Botón CTA y Usuario */}
-        <div className="flex items-center justify-end gap-2 sm:gap-3">
+        <div className="flex items-center justify-end gap-1 sm:gap-3">
           {/* Selector de idioma */}
           <LanguageSelector />
 
