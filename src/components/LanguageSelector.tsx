@@ -62,7 +62,7 @@ export default function LanguageSelector() {
   };
 
   return (
-    <div className="relative ml-8 sm:ml-4">
+    <div className="relative ml-4 sm:ml-3">
       {/* Botón toggle - Diseño profesional y responsive */}
       <button
         onClick={handleToggleLanguage}
