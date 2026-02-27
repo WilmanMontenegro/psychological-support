@@ -9,6 +9,14 @@ export interface BlogPost {
 
 export const blogPosts: BlogPost[] = [
     {
+        slug: 'la-ansiedad',
+        title: 'La ansiedad: Cuándo es normal y cuándo buscar ayuda',
+        excerpt: 'Todos hemos sentido ansiedad. Aprende a identificar cuándo es adaptativa y cuándo se vuelve patológica. Entiende este mecanismo de defensa y cómo manejarlo mejor.',
+        image: '/images/blog/la-ansiedad.jpg',
+        category: 'Salud Mental',
+        date: '2026-02-26'
+    },
+    {
         slug: 'la-ilusion-de-las-redes-sociales',
         title: 'La ilusión de las redes sociales',
         excerpt: 'Las redes sociales son como una ventana abierta donde vemos vidas que parecen perfectas, pero detrás de la pantalla hay una historia que no se muestra. Aprende a usarlas de manera consciente.',

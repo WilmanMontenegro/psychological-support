@@ -34,7 +34,6 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
 
     useEffect(() => {
         checkUser().finally(() => setAuthChecked(true));
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const fetchComments = useCallback(async () => {
