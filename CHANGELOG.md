@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-03-15
+
+### Changed
+- **Enfoque del Sitio**: Se retiraron de la experiencia pública los flujos clínicos visibles y se consolidó el enfoque en marca personal, blog y comunidad.
+- **Rutas Legacy**: `/agendar-cita`, `/mis-citas` y `/mi-disponibilidad` ahora redirigen a `/blog` para evitar navegación a secciones clínicas.
+- **CTAs y Copy Público**: Se ajustaron llamados a la acción y textos ambiguos para mantener alcance no clínico en perfil, blog y contacto.
+
+### Fixed
+- **Mensaje de Contacto**: Se aclaró el alcance de `Contáctame` para consultas sobre contenido, colaboraciones y proyectos.
+- **Consistencia Editorial**: Se eliminó redundancia en la presentación profesional y se armonizó el lenguaje del sitio.
+
 ## [1.1.3] - 2026-02-26
 
 ### Added
