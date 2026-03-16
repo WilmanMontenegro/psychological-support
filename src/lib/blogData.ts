@@ -59,7 +59,7 @@ export const blogPosts: BlogPost[] = [
     {
         slug: 'cuando-ir-al-psicologo',
         title: '¿Cuándo ir al psicólogo? Rompiendo mitos',
-        excerpt: 'El error más grande es pensar que ir al psicólogo es solo para "los locos" o cuando ya no puedes más. Descubre por qué el acompañamiento psicológico es un acto de cuidado y amor propio.',
+        excerpt: 'El error más grande es pensar que ir al psicólogo es solo para "los locos" o cuando ya no puedes más. Descubre por qué buscar apoyo emocional es un acto de cuidado y amor propio.',
         image: '/images/blog/acompanamiento-psicologico.jpeg',
         category: 'Salud Mental',
         date: '2026-02-05'

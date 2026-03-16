@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server'
 
 const pausedResponse = {
-  error:
-    'La funcionalidad de citas y acompañamiento psicológico está temporalmente pausada. Ana Marcela es psicóloga en formación.'
+  error: 'Esta funcionalidad no está disponible en este momento.'
 }
 
 export async function GET() {

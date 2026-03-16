@@ -7,12 +7,12 @@ import CommentsSection from '@/components/CommentsSection';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "Aprendamos a Identificar y Manejar nuestras Emociones | Apoyo Psicológico",
-  description: "Guía sobre el manejo de emociones y acompañamiento emocional. Aprende a reconocer, entender y controlar tus emociones para tu bienestar mental.",
+  title: "Aprendamos a Identificar y Manejar nuestras Emociones | Bienestar Emocional",
+  description: "Guía sobre manejo de emociones y autocuidado. Aprende a reconocer, entender y regular tus emociones para tu bienestar.",
   keywords: "manejo de emociones, inteligencia emocional, apoyo emocional, bienestar mental, crecimiento personal, psicología emocional",
   openGraph: {
-    title: "Manejo de Emociones | Acompañamiento Psicológico",
-    description: "Descubre técnicas de apoyo psicológico para manejar tus emociones correctamente",
+    title: "Manejo de Emociones | Bienestar Emocional",
+    description: "Descubre técnicas prácticas para manejar tus emociones con mayor claridad",
     images: [`${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/images/blog/portada-emociones.jpg`],
   },
 };
@@ -21,7 +21,7 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
   headline: "Aprendamos a identificar y sobre todo a manejar nuestras emociones",
-  description: "Guía completa sobre el manejo emocional y apoyo psicológico para tu bienestar mental",
+  description: "Guía completa sobre manejo emocional y autocuidado para tu bienestar",
   image: `${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/images/blog/portada-emociones.jpg`,
   datePublished: "2025-10-17",
   author: {

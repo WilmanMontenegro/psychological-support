@@ -125,7 +125,7 @@ function LoginForm() {
         </h2>
         <div className="w-16 h-1 bg-secondary rounded-full mx-auto mt-4"></div>
         <p className="mt-4 text-center text-gray-600">
-          Ingresa a tu cuenta para comentar en el blog
+          Ingresa a tu cuenta para comentar en el blog y participar en la comunidad
         </p>
       </div>
 

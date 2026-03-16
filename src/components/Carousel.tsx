@@ -76,11 +76,11 @@ export default function Carousel({
                     </p>
                   )}
                   <Link
-                    href="/contactame"
+                    href="/blog"
                     className="inline-block px-3 py-2 sm:px-4 sm:py-2 rounded text-white font-medium transition text-sm sm:text-base"
                     style={{ backgroundColor: 'var(--color-secondary)' }}
                   >
-                    Contáctame
+                    Ver blog
                   </Link>
                 </div>
               </div>
