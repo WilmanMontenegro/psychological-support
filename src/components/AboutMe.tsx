@@ -72,7 +72,7 @@ export default function AboutMe({ showButton = true, bgColor = 'bg-white' }: Abo
             </div>
 
             <p className="text-lg font-lato leading-relaxed text-gray-700 text-justify">
-              Soy Ana Marcela Polo Bastidas, <strong>psicóloga en formación</strong> y estudiante de Psicología en etapa final. Mi camino académico y práctico me ha permitido acercarme a diferentes enfoques, y actualmente me centro en una perspectiva psicosocial, donde comprendo al ser humano no solo desde lo individual, sino también desde sus vínculos, su entorno y su comunidad.
+              Soy Ana Marcela Polo Bastidas, <strong>psicóloga en formación</strong>. Mi camino académico y práctico me ha permitido acercarme a diferentes enfoques, y actualmente me centro en una perspectiva psicosocial, donde comprendo al ser humano no solo desde lo individual, sino también desde sus vínculos, su entorno y su comunidad.
             </p>
 
             <p className="text-lg font-lato leading-relaxed text-gray-700 text-justify">
