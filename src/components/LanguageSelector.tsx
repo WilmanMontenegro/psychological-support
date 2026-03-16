@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 
 declare global {
   interface Window {
@@ -70,9 +71,13 @@ export default function LanguageSelector() {
         aria-label="Cambiar idioma"
         title={currentLang === 'es' ? 'Switch to English' : 'Cambiar a Español'}
       >
-        <span className="text-sm leading-none">
-          {currentLang === 'es' ? '🇪🇸' : '🇺🇸'}
-        </span>
+        <Image
+          src={currentLang === 'es' ? '/images/flags/es.svg' : '/images/flags/en.svg'}
+          alt={currentLang === 'es' ? 'Bandera de España' : 'Bandera de Estados Unidos'}
+          width={18}
+          height={12}
+          className="rounded-[2px]"
+        />
         <span className="text-xs font-semibold text-gray-700">
           {currentLang === 'es' ? 'ES' : 'EN'}
         </span>
