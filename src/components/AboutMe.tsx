@@ -76,11 +76,11 @@ export default function AboutMe({ showButton = true, bgColor = 'bg-white' }: Abo
             </p>
 
             <p className="text-lg font-lato leading-relaxed text-gray-700 text-justify">
-              Mi propósito es acompañar a las personas en sus procesos de autoconocimiento, fortalecimiento emocional y desarrollo personal, brindando un espacio seguro, cercano y sin juicios, donde puedan expresarse libremente y encontrar recursos internos y externos para afrontar los retos de la vida.
+              Mi propósito es crear y compartir contenido que promueva el autoconocimiento, el fortalecimiento emocional y el desarrollo personal desde una mirada educativa y cercana.
             </p>
 
             <p className="text-lg font-lato leading-relaxed text-gray-700 text-justify">
-              Creo en el poder de la empatía, el acompañamiento y el apoyo mutuo como claves para el bienestar y la transformación personal y social.
+              Creo en el poder de la empatía, el aprendizaje colectivo y el apoyo mutuo como claves para el bienestar y la transformación personal y social.
             </p>
 
             {/* Botón de contacto */}

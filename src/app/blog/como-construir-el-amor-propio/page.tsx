@@ -104,11 +104,11 @@ export default function BlogPost() {
           </p>
 
           <p className="text-gray-700 leading-relaxed mb-8">
-            El amor propio también se construye acompañado. A veces, solos nos cuesta; hay procesos emocionales que necesitan ser mirados por alguien más. Encuentra a alguien con quien puedas hablar sin ser juzgada, entender lo que te pasa en tu proceso de mejorar tu amor propio, reconectar contigo y sentirte sostenida.
+            El amor propio también puede fortalecerse en comunidad. A veces, compartir experiencias y escuchar otras miradas ayuda a comprender mejor lo que sentimos y a sostener hábitos de cuidado personal.
           </p>
 
           <p className="text-gray-700 leading-relaxed mb-8 font-semibold">
-            Si sientes que necesitas ayuda o un espacio para hablar y ser escuchada, y sobre todo conectar contigo, te acompaño en tu proceso. No serás juzgada y ese espacio será únicamente para ti.
+            Si este tema resonó contigo, te invito a seguir leyendo, comentar en el blog y construir conversación con respeto.
           </p>
         </div>
 
@@ -119,10 +119,10 @@ export default function BlogPost() {
         {/* Call to action */}
         <div className="mt-12 p-8 bg-pastel-light rounded-2xl text-center">
           <h3 className="text-2xl font-libre-baskerville text-accent mb-4">
-            ¿Quieres fortalecer tu amor propio?
+            ¿Quieres seguir aprendiendo sobre amor propio?
           </h3>
           <p className="text-gray-600 mb-6">
-            Si deseas compartir tu proceso o resolver una inquietud, puedes escribirme por el formulario de contacto.
+            Si deseas sugerir temas o proponer una colaboración, puedes escribirme por el formulario de contacto.
           </p>
           <Link
             href="/contactame"

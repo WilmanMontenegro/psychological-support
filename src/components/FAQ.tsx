@@ -11,24 +11,24 @@ interface FAQItem {
 
 const faqData: FAQItem[] = [
   {
-    question: "¿Cómo puedo agendar una cita?",
-    answer: "Puedes agendar tu cita directamente a través del formulario disponible en esta página web. Solo debes ingresar tus datos y seleccionar el horario que mejor se ajuste a tu disponibilidad. Una vez enviada la solicitud, recibirás la confirmación con los detalles de tu sesión."
+    question: "¿Para qué sirve esta página?",
+    answer: "Este sitio comparte contenido educativo sobre bienestar emocional, reflexiones personales y artículos del blog."
   },
   {
-    question: "¿Cuánto dura una sesión de acompañamiento psicológico?",
-    answer: "Las sesiones tienen una duración de entre 20 y 30 minutos, brindando un espacio de acompañamiento psicológico centrado en el bienestar emocional y personal. Cada encuentro se adapta a tus necesidades y ritmo, integrando herramientas prácticas para fortalecer la autoestima, la gestión emocional y el equilibrio interior."
+    question: "¿Cómo puedo participar en la comunidad?",
+    answer: "Puedes registrarte e iniciar sesión para comentar en los artículos y participar en las conversaciones del blog."
   },
   {
-    question: "¿Ofrecen acompañamiento psicológico presencial?",
-    answer: "No, en el momento las sesiones de acompañamiento psicológico se realizan de manera virtual, lo que te permite acceder al proceso desde cualquier lugar con comodidad y privacidad. Es un espacio seguro y confidencial, ideal para quienes buscan cuidar su bienestar desde su entorno personal."
+    question: "¿Ofrecen atención clínica o terapéutica?",
+    answer: "No. Este sitio está enfocado en contenido educativo y comunidad digital."
   },
   {
-    question: "¿Qué métodos de pago aceptan?",
-    answer: "Aceptamos transferencias bancarias, y tarjetas de débito/crédito. También manejamos planes de pago flexibles para facilitar el acceso a nuestros servicios de acompañamiento."
+    question: "¿Cómo puedo contactarte?",
+    answer: "Puedes usar el formulario de contacto para consultas sobre contenido, colaboraciones y proyectos."
   },
   {
-    question: "¿Es confidencial la información compartida?",
-    answer: "Sí, absolutamente. Toda la información compartida durante las sesiones es estrictamente confidencial. El acompañamiento se realiza bajo el principio ético del secreto profesional y en cumplimiento de las normas legales que protegen tu privacidad y bienestar."
+    question: "¿Qué pasa con mis datos?",
+    answer: "El manejo de datos se rige por la política de privacidad del sitio. Puedes revisarla en la sección correspondiente."
   }
 ]
 
@@ -57,7 +57,7 @@ export default function FAQ() {
           <div className="relative">
             <Image
               src="/images/FAQ.jpg"
-              alt="Sesión de acompañamiento profesional"
+              alt="Preguntas frecuentes del sitio"
               width={960}
               height={640}
               className="w-full h-auto rounded-lg shadow-lg object-cover"

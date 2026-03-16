@@ -157,10 +157,10 @@ export default function BlogPost() {
                 {/* Call to action */}
                 <div className="mt-12 p-8 bg-pastel-light rounded-2xl text-center">
                     <h3 className="text-2xl font-libre-baskerville text-accent mb-4">
-                        ¿Necesitas alguien que te acompañe?
+                        ¿Te gustaría que escriba más sobre este tema?
                     </h3>
                     <p className="text-gray-600 mb-6">
-                        El postparto es un camino que no tienes que recorrer en soledad. Si deseas escribirme, puedes hacerlo por el formulario de contacto.
+                        Si deseas compartir una sugerencia o propuesta de colaboración, puedes escribirme por el formulario de contacto.
                     </p>
                     <Link
                         href="/contactame"

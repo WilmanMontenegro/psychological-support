@@ -129,10 +129,10 @@ export default function BlogPost() {
                 {/* Call to action */}
                 <div className="mt-12 p-8 bg-pastel-light rounded-2xl text-center">
                     <h3 className="text-2xl font-libre-baskerville text-accent mb-4">
-                        ¿Quieres seguir esta conversación?
+                        ¿Te gustaría leer más contenido como este?
                     </h3>
                     <p className="text-gray-600 mb-6">
-                        Si deseas escribirme para continuar la conversación, puedes hacerlo por el formulario de contacto.
+                        Si deseas escribirme por colaboraciones, sugerencias de temas o consultas sobre contenido, puedes usar el formulario de contacto.
                     </p>
                     <Link
                         href="/contactame"
