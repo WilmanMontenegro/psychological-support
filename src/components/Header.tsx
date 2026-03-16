@@ -104,14 +104,6 @@ export default function Header() {
           {/* Selector de idioma */}
           <LanguageSelector />
 
-          <Link
-            href="/contactame"
-            className="hidden sm:block text-white px-2 sm:px-3 lg:px-4 py-2 rounded hover:brightness-95 transition-all font-montserrat font-medium text-xs sm:text-sm lg:text-base shadow-md"
-            style={{ backgroundColor: 'var(--color-secondary)' }}
-          >
-            Contáctame
-          </Link>
-
           {/* Icono de Usuario */}
           {user ? (
             <div className="relative hidden sm:flex user-dropdown">
@@ -174,7 +166,7 @@ export default function Header() {
 
       {/* Navegación móvil fija abajo */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-background border-t shadow-lg z-50 pb-safe">
-        <Navigation className="" showCTA={true} isMobile={true} authItem={mobileAuthItem} />
+        <Navigation className="" showCTA={false} isMobile={true} authItem={mobileAuthItem} />
       </div>
 
       {/* Menú móvil */}
