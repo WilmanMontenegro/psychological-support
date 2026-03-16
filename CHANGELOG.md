@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] - 2026-03-15
+
+### Fixed
+- **Auth con Supabase SSR**: Se separó la creación de clientes browser/server para manejar correctamente sesión y cookies en el callback OAuth y endpoints del servidor.
+- **Redirects de Login**: Se sanitizaron redirects de autenticación para evitar rutas inválidas o externas.
+- **SEO Social**: Se corrigió la referencia OG global hacia un asset real del proyecto.
+- **Login con Google**: Se reemplazó el icono remoto por un recurso local para evitar fallos por configuración de hosts de imágenes.
+- **Seguridad y Limpieza**: Se eliminó un bypass admin hardcodeado en lógica cliente de citas y se redujo logging innecesario en producción.
+
+### Changed
+- **Headers HTTP**: Se reemplazó `X-XSS-Protection` por `Referrer-Policy`, alineado con navegadores modernos.
+
 ## [1.2.0] - 2026-03-15
 
 ### Changed

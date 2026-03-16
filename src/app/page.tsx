@@ -21,7 +21,7 @@ const jsonLd = {
   name: "Tu Psico Ana",
   description: "Marca personal y blog de bienestar emocional",
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com",
-  image: `${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/og-image.jpg`,
+  image: `${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/images/logo-grande-1000x1000.png`,
   jobTitle: "Psicóloga en formación"
 };
 

@@ -1,11 +1,16 @@
-import { createClient as createSupabaseClient } from '@supabase/supabase-js';
+import { createBrowserClient } from '@supabase/ssr';
 
-// Use placeholder during build if env vars not available
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key';
+function getSupabaseConfig() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-export const supabase = createSupabaseClient(supabaseUrl, supabaseAnonKey);
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error('Faltan las variables NEXT_PUBLIC_SUPABASE_URL o NEXT_PUBLIC_SUPABASE_ANON_KEY.');
+  }
 
-export function createClient() {
-  return createSupabaseClient(supabaseUrl, supabaseAnonKey);
+  return { supabaseUrl, supabaseAnonKey };
 }
+
+const { supabaseUrl, supabaseAnonKey } = getSupabaseConfig();
+
+export const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);

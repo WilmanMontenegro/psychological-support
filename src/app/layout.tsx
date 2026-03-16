@@ -25,7 +25,7 @@ const libreBaskerville = Libre_Baskerville({
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com";
-const ogImage = `${siteUrl}/og-image.jpg`;
+const ogImage = `${siteUrl}/images/logo-grande-1000x1000.png`;
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Person",

@@ -3,6 +3,7 @@
 import { Suspense, useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
+import { sanitizeAuthRedirect } from '@/lib/authRedirect';
 import { supabase } from '@/lib/supabase';
 import { getUserProfile } from '@/lib/auth';
 import { translateSupabaseError } from '@/lib/errorMessages';
@@ -81,12 +82,9 @@ function LoginForm() {
 
       // Leer el parámetro redirect del URL y respetar siempre si existe
       const redirectParam = searchParams.get('redirect');
-      let redirectPath = '/blog';
+      let redirectPath = sanitizeAuthRedirect(redirectParam, '/blog');
 
-      if (redirectParam) {
-        // Si hay redirect explícito, usarlo SIEMPRE
-        redirectPath = redirectParam;
-      } else {
+      if (!redirectParam) {
         // Solo si NO hay redirect, usar la lógica basada en rol
         try {
           const profile = await getUserProfile();
@@ -133,8 +131,8 @@ function LoginForm() {
         <button
           onClick={() => {
             setLoading(true);
-            const redirectParam = searchParams.get('redirect');
-            const callbackUrl = redirectParam
+            const redirectParam = sanitizeAuthRedirect(searchParams.get('redirect'), '/blog');
+            const callbackUrl = redirectParam && redirectParam !== '/blog'
               ? `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(redirectParam)}`
               : `${window.location.origin}/auth/callback`;
 
@@ -147,7 +145,7 @@ function LoginForm() {
           }}
           className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-700 hover:bg-gray-50 font-medium transition-colors"
         >
-          <Image src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" width={20} height={20} className="w-5 h-5" />
+          <Image src="/images/google.svg" alt="Google" width={20} height={20} className="w-5 h-5" />
           Continuar con Google
         </button>
 

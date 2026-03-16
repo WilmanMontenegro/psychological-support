@@ -61,7 +61,6 @@ export function useAppointmentChat(
 
     // --- 2. Realtime Subscription ---
     const handleNewMessage = (payload: { new: AppointmentMessage }) => {
-      console.log("[Chat] Realtime event received:", payload);
       const newMessage = payload.new as AppointmentMessage;
       // Add message only if it's not already in the list
       // This prevents duplicates from the initial load and the subscription firing simultaneously
@@ -86,11 +85,7 @@ export function useAppointmentChat(
         handleNewMessage,
       )
       .subscribe((status, err) => {
-        if (status === "SUBSCRIBED") {
-          console.log(
-            `[Chat] Subscribed successfully to channel: appointment-messages-${appointmentId}`,
-          );
-        } else if (status === "CHANNEL_ERROR") {
+        if (status === "CHANNEL_ERROR") {
           console.error("[Chat] Subscription failed:", err);
           toast.error(
             "Error de conexión con el chat. Intenta recargar la página.",
@@ -102,9 +97,6 @@ export function useAppointmentChat(
 
     // --- 3. Cleanup ---
     return () => {
-      console.log(
-        `[Chat] Cleaning up and unsubscribing from channel: appointment-messages-${appointmentId}`,
-      );
       if (channelRef.current) {
         supabase.removeChannel(channelRef.current);
         channelRef.current = null;

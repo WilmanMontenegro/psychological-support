@@ -39,8 +39,8 @@ export default function ShareButtons({ title, variant = 'default' }: ShareButton
         text: `Te comparto este artículo: ${title}`,
         url: url,
       });
-    } catch (err) {
-      console.log('Error sharing:', err);
+    } catch {
+      // El usuario puede cancelar el diálogo nativo sin que sea un error de UI.
     }
   };
 

@@ -1,4 +1,5 @@
-import { createClient } from '@/lib/supabase';
+import { sanitizeAuthRedirect } from '@/lib/authRedirect';
+import { createClient } from '@/lib/supabase-server';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
@@ -7,13 +8,11 @@ export async function GET(request: Request) {
   const redirect = requestUrl.searchParams.get('redirect');
 
   if (code) {
-    const supabase = createClient();
+    const supabase = await createClient();
     await supabase.auth.exchangeCodeForSession(code);
   }
 
-  // SIEMPRE respetar el parámetro redirect si existe (ej: cuando viene del blog)
-  // Solo usar /blog como fallback si no hay redirect especificado
-  const redirectUrl = redirect && redirect.trim() !== '' ? redirect : '/blog';
+  const redirectUrl = sanitizeAuthRedirect(redirect, '/blog');
   
   return NextResponse.redirect(new URL(redirectUrl, requestUrl.origin));
 }
