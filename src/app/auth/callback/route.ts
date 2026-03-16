@@ -12,8 +12,8 @@ export async function GET(request: Request) {
   }
 
   // SIEMPRE respetar el parámetro redirect si existe (ej: cuando viene del blog)
-  // Solo usar /mis-citas como fallback si no hay redirect especificado
-  const redirectUrl = redirect && redirect.trim() !== '' ? redirect : '/mis-citas';
+  // Solo usar /blog como fallback si no hay redirect especificado
+  const redirectUrl = redirect && redirect.trim() !== '' ? redirect : '/blog';
   
   return NextResponse.redirect(new URL(redirectUrl, requestUrl.origin));
 }

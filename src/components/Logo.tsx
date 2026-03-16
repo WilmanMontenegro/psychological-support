@@ -48,10 +48,10 @@ export default function Logo({
       />
       <div className="min-w-0">
         <h1 className={`${sizeClasses[size].title} font-libre-baskerville leading-tight ${getTextAlignClass()} ${textColor}`}>
-          Acompañamiento Psicológico
+          Ana Marcela Polo Bastidas
         </h1>
         <p className={`${sizeClasses[size].subtitle} font-montserrat leading-tight ${getTextAlignClass()} ${textColor}`}>
-          Con Ana Marcela Polo Bastidas
+          Psicóloga en formación
         </p>
       </div>
     </div>

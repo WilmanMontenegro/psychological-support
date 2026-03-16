@@ -122,14 +122,14 @@ export default function BlogPost() {
             ¿Quieres fortalecer tu amor propio?
           </h3>
           <p className="text-gray-600 mb-6">
-            Agenda un espacio seguro para hablar, ser escuchada y acompañada en tu proceso.
+            Si deseas compartir tu proceso o resolver una inquietud, puedes escribirme por el formulario de contacto.
           </p>
           <Link
-            href="/agendar-cita"
+            href="/contactame"
             className="inline-block px-8 py-3 text-white rounded-lg font-medium transition hover:opacity-90"
             style={{ backgroundColor: 'var(--color-secondary)' }}
           >
-            Agendar una consulta
+            Ir a contacto
           </Link>
         </div>
 

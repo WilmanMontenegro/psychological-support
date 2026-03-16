@@ -81,7 +81,7 @@ function LoginForm() {
 
       // Leer el parámetro redirect del URL y respetar siempre si existe
       const redirectParam = searchParams.get('redirect');
-      let redirectPath = '/mis-citas';
+      let redirectPath = '/blog';
 
       if (redirectParam) {
         // Si hay redirect explícito, usarlo SIEMPRE
@@ -94,9 +94,9 @@ function LoginForm() {
           if (!profile) {
             console.warn('Perfil no encontrado tras iniciar sesión. Se usará la ruta por defecto.');
           } else if (profile.role === 'psychologist' || profile.role === 'admin') {
-            redirectPath = '/mis-citas';
+            redirectPath = '/blog';
           } else if (profile.role === 'patient') {
-            redirectPath = '/mis-citas';
+            redirectPath = '/blog';
           }
         } catch (profileError) {
           console.error('Error al obtener perfil tras iniciar sesión:', profileError);
@@ -125,7 +125,7 @@ function LoginForm() {
         </h2>
         <div className="w-16 h-1 bg-secondary rounded-full mx-auto mt-4"></div>
         <p className="mt-4 text-center text-gray-600">
-          Ingresa a tu cuenta para continuar
+          Ingresa a tu cuenta para comentar en el blog
         </p>
       </div>
 

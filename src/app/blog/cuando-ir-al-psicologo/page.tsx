@@ -132,14 +132,14 @@ export default function BlogPost() {
                         ¿Sientes que necesitas ese espacio seguro?
                     </h3>
                     <p className="text-gray-600 mb-6">
-                        Estoy aquí para escucharte y acompañarte en tu proceso sin juicios.
+                        Si deseas escribirme para continuar la conversación, puedes hacerlo por el formulario de contacto.
                     </p>
                     <Link
-                        href="https://tupsicoana.com/agendar-cita"
+                        href="/contactame"
                         className="inline-block px-8 py-3 text-white rounded-lg font-medium transition hover:opacity-90"
                         style={{ backgroundColor: 'var(--color-secondary)' }}
                     >
-                        Agendar una consulta
+                        Ir a contacto
                     </Link>
                 </div>
 

@@ -340,7 +340,7 @@ export default function MiPerfilPage() {
           <h2 className="text-xl font-semibold text-red-600 mb-4">Zona de Peligro</h2>
           <p className="text-gray-600 mb-4">
             Eliminar tu cuenta es una acción <strong>permanente e irreversible</strong>.
-            Todos tus datos, incluyendo tus citas, serán eliminados.
+            Todos tus datos de la cuenta y actividad en el sitio serán eliminados.
           </p>
 
           {!showDeleteConfirm ? (

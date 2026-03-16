@@ -160,14 +160,14 @@ export default function BlogPost() {
                         ¿Necesitas alguien que te acompañe?
                     </h3>
                     <p className="text-gray-600 mb-6">
-                        El postparto es un camino que no tienes que recorrer en soledad. Estoy aquí para escucharte y darte herramientas.
+                        El postparto es un camino que no tienes que recorrer en soledad. Si deseas escribirme, puedes hacerlo por el formulario de contacto.
                     </p>
                     <Link
-                        href="/agendar-cita"
+                        href="/contactame"
                         className="inline-block px-8 py-3 text-white rounded-lg font-medium transition hover:opacity-90"
                         style={{ backgroundColor: 'var(--color-secondary)' }}
                     >
-                        Agendar una consulta
+                        Ir a contacto
                     </Link>
                 </div>
 

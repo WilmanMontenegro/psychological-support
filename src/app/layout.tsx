@@ -28,46 +28,45 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com";
 const ogImage = `${siteUrl}/og-image.jpg`;
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "MedicalBusiness",
+  "@type": "Person",
   name: "Tu Psico Ana",
   url: siteUrl,
   image: ogImage,
-  description: "Servicios de apoyo psicológico y acompañamiento profesional en línea.",
-  areaServed: "LatAm",
-  serviceType: "Apoyo psicológico y acompañamiento",
+  description: "Marca personal y contenido educativo sobre bienestar emocional.",
+  jobTitle: "Psicóloga en formación",
 };
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Acompañamiento Psicológico Online | Apoyo Emocional | Tu Psico Ana",
+    default: "Ana Marcela Polo Bastidas | Psicóloga en formación | Tu Psico Ana",
     template: "%s | Tu Psico Ana"
   },
-  description: "Acompañamiento psicológico online profesional, coaching emocional y apoyo en manejo de emociones. Agenda tu sesión de acompañamiento psicológico.",
-  keywords: ["acompañamiento psicológico", "apoyo psicológico", "psicólogo online", "coaching emocional", "apoyo emocional", "salud mental", "manejo de emociones", "psicólogo en línea", "consulta psicológica"],
+  description: "Sitio personal de Ana Marcela Polo Bastidas, psicóloga en formación. Blog y recursos de bienestar emocional y crecimiento personal.",
+  keywords: ["psicóloga en formación", "marca personal", "bienestar emocional", "blog", "crecimiento personal"],
 
-  category: "health",
+  category: "personal-brand",
   applicationName: "Tu Psico Ana",
   openGraph: {
     type: "website",
     siteName: "Tu Psico Ana",
     locale: "es_ES",
     url: siteUrl,
-    title: "Acompañamiento Psicológico Online | Apoyo Emocional",
-    description: "Acompañamiento psicológico, coaching emocional y apoyo psicológico profesional en línea",
+    title: "Ana Marcela Polo Bastidas | Psicóloga en formación",
+    description: "Marca personal y contenido educativo sobre bienestar emocional y crecimiento personal",
     images: [
       {
         url: ogImage,
         width: 1200,
         height: 630,
-        alt: "Acompañamiento Psicológico y Apoyo Emocional",
+        alt: "Ana Marcela Polo Bastidas - Psicóloga en formación",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Acompañamiento Psicológico Online | Tu Psico Ana",
-    description: "Acompañamiento psicológico profesional y coaching emocional",
+    title: "Ana Marcela Polo Bastidas | Tu Psico Ana",
+    description: "Psicóloga en formación. Blog y recursos de bienestar emocional",
     images: [ogImage],
   },
   robots: {

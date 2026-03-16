@@ -114,14 +114,14 @@ export default function BlogPost() {
             ¿Necesitas apoyo para manejar tus emociones?
           </h3>
           <p className="text-gray-600 mb-6">
-            Estoy aquí para acompañarte en tu proceso de crecimiento emocional
+            Si quieres escribirme para compartir tu proceso o hacer una consulta general, estaré atenta.
           </p>
           <Link
-            href="https://tupsicoana.com/agendar-cita"
+            href="/contactame"
             className="inline-block px-8 py-3 text-white rounded-lg font-medium transition hover:opacity-90"
             style={{ backgroundColor: 'var(--color-secondary)' }}
           >
-            Agendar una consulta
+            Ir a contacto
           </Link>
         </div>
 

@@ -199,10 +199,10 @@ export default function AppointmentList({
         </p>
         {isPatient && (
           <Link
-            href="/agendar-cita"
+            href="/contactame"
             className="text-secondary hover:underline font-medium"
           >
-            Agenda tu primera cita aquí
+            Escríbenos por contacto
           </Link>
         )}
       </div>

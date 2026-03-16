@@ -104,16 +104,13 @@ export default function Header() {
           {/* Selector de idioma */}
           <LanguageSelector />
 
-          {/* Solo mostrar "Agendar Cita" a pacientes o usuarios no logueados */}
-          {(!user || userRole === 'patient') && (
-            <Link
-              href="/agendar-cita"
-              className="hidden sm:block text-white px-2 sm:px-3 lg:px-4 py-2 rounded hover:brightness-95 transition-all font-montserrat font-medium text-xs sm:text-sm lg:text-base shadow-md"
-              style={{ backgroundColor: 'var(--color-secondary)' }}
-            >
-              <span className="lg:inline">Agendar </span>Cita
-            </Link>
-          )}
+          <Link
+            href="/contactame"
+            className="hidden sm:block text-white px-2 sm:px-3 lg:px-4 py-2 rounded hover:brightness-95 transition-all font-montserrat font-medium text-xs sm:text-sm lg:text-base shadow-md"
+            style={{ backgroundColor: 'var(--color-secondary)' }}
+          >
+            Contáctame
+          </Link>
 
           {/* Icono de Usuario */}
           {user ? (
@@ -147,66 +144,6 @@ export default function Header() {
                   >
                     Mi Perfil
                   </Link>
-
-                  {/* Opciones para pacientes */}
-                  {userRole === 'patient' && (
-                    <>
-                      <Link
-                        href="/mis-citas"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        onClick={() => setShowDropdown(false)}
-                      >
-                        Mis Citas
-                      </Link>
-                      <Link
-                        href="/agendar-cita"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        onClick={() => setShowDropdown(false)}
-                      >
-                        Agendar Cita
-                      </Link>
-                    </>
-                  )}
-
-                  {/* Opciones para psicólogos */}
-                  {userRole === 'psychologist' && (
-                    <>
-                      <Link
-                        href="/mis-citas"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        onClick={() => setShowDropdown(false)}
-                      >
-                        Citas Asignadas
-                      </Link>
-                      <Link
-                        href="/mi-disponibilidad"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        onClick={() => setShowDropdown(false)}
-                      >
-                        Mi Disponibilidad
-                      </Link>
-                    </>
-                  )}
-
-                  {/* Opciones para admins */}
-                  {userRole === 'admin' && (
-                    <>
-                      <Link
-                        href="/mis-citas"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        onClick={() => setShowDropdown(false)}
-                      >
-                        Todas las Citas
-                      </Link>
-                      <Link
-                        href="/mi-disponibilidad"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        onClick={() => setShowDropdown(false)}
-                      >
-                        Disponibilidad
-                      </Link>
-                    </>
-                  )}
 
                   <button
                     onClick={handleLogout}
@@ -258,84 +195,6 @@ export default function Header() {
             </svg>
             <span className="font-medium">Mi Perfil</span>
           </Link>
-
-          {/* Opciones para pacientes */}
-          {userRole === 'patient' && (
-            <>
-              <Link
-                href="/mis-citas"
-                onClick={() => setShowMobileMenu(false)}
-                className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-pastel-light/50 transition-colors"
-              >
-                <svg className="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                <span className="font-medium">Mis Citas</span>
-              </Link>
-              <Link
-                href="/agendar-cita"
-                onClick={() => setShowMobileMenu(false)}
-                className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-pastel-light/50 transition-colors"
-              >
-                <svg className="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                <span className="font-medium">Agendar Cita</span>
-              </Link>
-            </>
-          )}
-
-          {/* Opciones para psicólogos */}
-          {userRole === 'psychologist' && (
-            <>
-              <Link
-                href="/mis-citas"
-                onClick={() => setShowMobileMenu(false)}
-                className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-pastel-light/50 transition-colors"
-              >
-                <svg className="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                <span className="font-medium">Citas Asignadas</span>
-              </Link>
-              <Link
-                href="/mi-disponibilidad"
-                onClick={() => setShowMobileMenu(false)}
-                className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-pastel-light/50 transition-colors"
-              >
-                <svg className="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span className="font-medium">Mi Disponibilidad</span>
-              </Link>
-            </>
-          )}
-
-          {/* Opciones para admins */}
-          {userRole === 'admin' && (
-            <>
-              <Link
-                href="/mis-citas"
-                onClick={() => setShowMobileMenu(false)}
-                className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-pastel-light/50 transition-colors"
-              >
-                <svg className="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                <span className="font-medium">Todas las Citas</span>
-              </Link>
-              <Link
-                href="/mi-disponibilidad"
-                onClick={() => setShowMobileMenu(false)}
-                className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-pastel-light/50 transition-colors"
-              >
-                <svg className="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span className="font-medium">Disponibilidad</span>
-              </Link>
-            </>
-          )}
 
           {/* Separador */}
           <div className="border-t border-gray-100 my-2" />

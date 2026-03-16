@@ -12,8 +12,6 @@ export default function RegistroPage() {
   const [formData, setFormData] = useState({
     email: '',
     fullName: '',
-    birthdate: '',
-    gender: '',
     password: '',
     confirmPassword: ''
   });
@@ -54,9 +52,7 @@ export default function RegistroPage() {
         password: formData.password,
         options: {
           data: {
-            full_name: formData.fullName,
-            birthdate: formData.birthdate,
-            gender: formData.gender
+            full_name: formData.fullName
           }
         }
       });
@@ -83,7 +79,7 @@ export default function RegistroPage() {
           </h2>
           <div className="w-16 h-1 bg-secondary rounded-full mx-auto mt-4"></div>
           <p className="mt-6 text-center text-gray-600">
-            Regístrate para agendar tu cita
+            Regístrate para comentar en el blog
           </p>
         </div>
 
@@ -119,41 +115,6 @@ export default function RegistroPage() {
                 className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent"
                 placeholder="tu@email.com"
               />
-            </div>
-
-            <div>
-              <label htmlFor="birthdate" className="block text-sm font-medium text-gray-700 mb-1">
-                Fecha de Nacimiento
-              </label>
-              <input
-                id="birthdate"
-                name="birthdate"
-                type="date"
-                required
-                value={formData.birthdate}
-                onChange={handleChange}
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-1">
-                Género
-              </label>
-              <select
-                id="gender"
-                name="gender"
-                required
-                value={formData.gender}
-                onChange={handleChange}
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent"
-              >
-                <option value="">Selecciona tu género</option>
-                <option value="Masculino">Masculino</option>
-                <option value="Femenino">Femenino</option>
-                <option value="Otro">Otro</option>
-                <option value="Prefiero no decir">Prefiero no decir</option>
-              </select>
             </div>
 
             <div>

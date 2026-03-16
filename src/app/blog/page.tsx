@@ -3,16 +3,16 @@ import type { Metadata } from 'next';
 import { blogPosts } from '@/lib/blogData';
 
 export const metadata: Metadata = {
-  title: "Blog de Acompañamiento Psicológico y Coaching Emocional | Salud Mental",
-  description: "Artículos sobre acompañamiento psicológico, coaching emocional, manejo de emociones, apoyo emocional y bienestar mental. Consejos prácticos de salud mental.",
-  keywords: "acompañamiento psicológico, coaching emocional, salud mental, manejo de emociones, bienestar emocional, apoyo emocional, inteligencia emocional, crecimiento personal",
+  title: "Blog de bienestar emocional | Tu Psico Ana",
+  description: "Artículos sobre bienestar emocional, autocuidado y crecimiento personal desde una mirada educativa y cercana.",
+  keywords: "bienestar emocional, autocuidado, salud mental, crecimiento personal, blog emocional, psicóloga en formación",
 };
 
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Blog",
-  name: "Blog de Acompañamiento Psicológico",
-  description: "Artículos sobre salud mental, bienestar emocional y apoyo psicológico",
+  name: "Blog de bienestar emocional",
+  description: "Artículos educativos sobre salud mental, bienestar emocional y crecimiento personal",
   url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/blog`,
 };
 
@@ -31,11 +31,11 @@ export default function BlogPage() {
         {/* Título */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-libre-baskerville text-accent mb-4">
-            Blog de Apoyo Psicológico
+            Blog de Bienestar Emocional
           </h1>
           <div className="w-16 h-1 bg-secondary rounded-full mx-auto mb-6"></div>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-            Artículos, reflexiones y consejos prácticos sobre salud mental, bienestar emocional y acompañamiento psicológico. Descubre cómo mejorar tu apoyo emocional y crecimiento personal.
+            Artículos, reflexiones y consejos prácticos sobre salud mental, bienestar emocional y crecimiento personal desde una perspectiva educativa.
           </p>
         </div>
 

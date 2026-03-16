@@ -1,66 +1,42 @@
 
 import Carousel from '@/components/Carousel'
 import AboutMe from '@/components/AboutMe'
-import TherapyServices from '@/components/TherapyServices'
-import FAQ from '@/components/FAQ'
 import BlogSection from '@/components/BlogSection'
 import ContactForm from '@/components/ContactForm'
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Acompañamiento Psicológico Online | Apoyo Emocional y Coaching",
-  description: "Acompañamiento psicológico online con enfoque en coaching emocional, apoyo psicológico y manejo de emociones. Acompañamiento profesional para tu bienestar y crecimiento personal.",
-  keywords: "acompañamiento psicológico, apoyo psicológico online, coaching emocional, psicólogo, apoyo emocional, manejo de emociones, salud mental, psicólogo en línea, consulta psicológica",
+  title: "Ana Marcela Polo Bastidas | Psicóloga en formación",
+  description: "Sitio personal de Ana Marcela Polo Bastidas, psicóloga en formación. Contenido educativo, reflexiones y blog sobre bienestar emocional y crecimiento personal.",
+  keywords: "psicóloga en formación, marca personal, bienestar emocional, blog, crecimiento personal",
   openGraph: {
-    title: "Acompañamiento Psicológico Online | Coaching Emocional",
-    description: "Sesiones de acompañamiento psicológico y coaching emocional. Agenda tu cita hoy.",
+    title: "Ana Marcela Polo Bastidas | Psicóloga en formación",
+    description: "Marca personal y contenido educativo sobre bienestar emocional y crecimiento personal.",
   },
 };
 
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": ["MedicalBusiness", "LocalBusiness"],
+  "@type": "Person",
   name: "Tu Psico Ana",
-  description: "Acompañamiento psicológico, coaching emocional y apoyo emocional en línea",
+  description: "Marca personal y blog de bienestar emocional",
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com",
   image: `${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/og-image.jpg`,
-  areaServed: {
-    "@type": "Place",
-    name: "Latinoamérica"
-  },
-  serviceType: ["Acompañamiento Psicológico", "Apoyo Emocional", "Coaching Emocional", "Manejo de Emociones"],
-  priceRange: "$$$",
-  availableService: [
-    {
-      "@type": "Service",
-      name: "Acompañamiento Psicológico Online",
-      description: "Sesiones de acompañamiento psicológico personalizado y profesional"
-    },
-    {
-      "@type": "Service",
-      name: "Coaching Emocional",
-      description: "Apoyo emocional y desarrollo personal a través del coaching psicológico"
-    },
-    {
-      "@type": "Service",
-      name: "Manejo de Emociones",
-      description: "Técnicas y acompañamiento para identificar y manejar tus emociones de forma efectiva"
-    }
-  ]
+  jobTitle: "Psicóloga en formación"
 };
 
 const carouselImages = [
   {
     src: "/images/carrusel_1.jpg",
-    alt: "Apoyo emocional y comprensión - Acompañamiento psicológico profesional",
-    title: "Acompañamiento Emocional",
-    description: "Un espacio seguro para expresar tus sentimientos y encontrar sanación"
+    alt: "Bienestar emocional y reflexión personal",
+    title: "Bienestar Emocional",
+    description: "Un espacio para reflexionar, aprender y crecer"
   },
   {
     src: "/images/carrusel_2.jpg",
-    alt: "Acompañamiento psicológico y conexión - Tu psicólogo de confianza",
+    alt: "Conexión y crecimiento personal",
     title: "Conexión y Comprensión",
-    description: "Te acompaño en tu proceso de crecimiento con empatía y profesionalismo",
+    description: "Contenido cercano para fortalecer tu desarrollo personal",
     objectPosition: 70
   },
   {
@@ -82,7 +58,7 @@ export default function Home() {
       <main>
         {/* Hero Section con Carrusel */}
         <section className="w-full">
-          <h1 className="sr-only">Acompañamiento Psicológico Profesional - Apoyo Emocional en Línea</h1>
+          <h1 className="sr-only">Ana Marcela Polo Bastidas, psicóloga en formación</h1>
           <Carousel
             images={carouselImages}
             autoSlideInterval={6000}
@@ -94,19 +70,13 @@ export default function Home() {
         {/* Sección Sobre Mí */}
         <AboutMe />
 
-        {/* Sección de Servicios de Acompañamiento */}
-        <TherapyServices />
-
-        {/* Sección Preguntas Frecuentes */}
-        <FAQ />
-
         {/* Sección Blog */}
         <BlogSection />
 
         {/* Sección Contáctame */}
         <section className="relative overflow-hidden bg-gradient-to-b from-[#f8edf4] via-pastel-light to-tertiary-light">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(191,136,172,0.22),_transparent_55%)]" />
-          <h2 className="sr-only">Agendar Cita de Acompañamiento Psicológico</h2>
+          <h2 className="sr-only">Contacto y colaboraciones</h2>
           <ContactForm showImage={true} variant="section" />
         </section>
       </main>

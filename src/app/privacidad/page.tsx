@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-    title: 'Política de Privacidad | Acompañamiento Psicológico',
+    title: 'Política de Privacidad | Tu Psico Ana',
     description: 'Política de privacidad y tratamiento de datos personales.',
 }
 
@@ -18,7 +18,7 @@ export default function PrivacyPage() {
                 <section className="mb-8">
                     <h2 className="text-xl font-bold text-secondary mb-4">1. Introducción</h2>
                     <p>
-                        Bienvenido a <strong>Acompañamiento Psicológico con Ana Marcela Polo Bastidas</strong> (&quot;nosotros&quot;, &quot;nuestro&quot;).
+                        Bienvenido a <strong>Tu Psico Ana - Marca personal de Ana Marcela Polo Bastidas</strong> (&quot;nosotros&quot;, &quot;nuestro&quot;).
                         Respetamos su privacidad y nos comprometemos a proteger sus datos personales. Esta política de privacidad le informará
                         sobre cómo cuidamos sus datos personales cuando visita nuestro sitio web y utiliza nuestros servicios de autenticación.
                     </p>
@@ -36,7 +36,7 @@ export default function PrivacyPage() {
                     </ul>
                     <p className="mt-4">
                         Al utilizar el inicio de sesión con <strong>Google</strong> o <strong>Facebook</strong>, recibimos su nombre y correo electrónico
-                        exclusivamente para crear su perfil de usuario y permitirle gestionar sus citas y comentarios.
+                        exclusivamente para crear su perfil de usuario y permitirle gestionar su cuenta y comentarios.
                     </p>
                 </section>
 
@@ -45,7 +45,7 @@ export default function PrivacyPage() {
                     <p>Solo utilizaremos sus datos personales cuando la ley lo permita. Principalmente, para:</p>
                     <ul className="list-disc pl-5 mt-2 space-y-2">
                         <li>Registrarlo como nuevo usuario.</li>
-                        <li>Gestionar sus citas y el servicio de acompañamiento psicológico.</li>
+                        <li>Gestionar su cuenta y sus interacciones dentro del sitio.</li>
                         <li>Permitirle participar en funciones interactivas como comentarios en el blog.</li>
                         <li>Notificarle sobre cambios en nuestros términos o política de privacidad.</li>
                     </ul>

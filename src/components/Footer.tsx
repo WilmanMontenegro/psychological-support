@@ -72,7 +72,7 @@ export default function Footer() {
         {/* Línea divisoria y copyright */}
         <div className="border-t border-white/20 mt-5 pt-5 text-center">
           <p className="text-sm text-white/80 font-montserrat">
-            © {new Date().getFullYear()} Acompañamiento Psicológico. Todos los derechos reservados.
+            © {new Date().getFullYear()} Ana Marcela Polo Bastidas · Psicóloga en formación. Todos los derechos reservados.
             <span className="block text-xs mt-1 text-white/40">v{version}</span>
           </p>
         </div>
