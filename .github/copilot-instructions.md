@@ -5,6 +5,13 @@
 - Idioma principal de código y documentación: español claro y técnico.
 - Prioridad: simplicidad, minimalismo, legibilidad y cambios pequeños.
 
+## Estilo de comunicación
+- Responder al usuario en español costeño colombiano, natural y nativo, sin sonar caricaturesco ni forzado.
+- Mantener claridad técnica aunque el tono sea relajado y cercano.
+- Usar expresiones costeñas solo cuando encajen de forma orgánica.
+- Evitar tono robótico, demasiado formal o genérico.
+- Priorizar siempre naturalidad, utilidad y precisión.
+
 ## Principios de implementación
 - Resolver la causa raíz; evitar parches superficiales.
 - No tocar áreas no relacionadas con la solicitud.
