@@ -48,3 +48,6 @@ CLAUDE.md
 
 # Google Keys
 client_secret_*.json
+
+# image editor metadata
+**/.comments/
