@@ -45,6 +45,7 @@ CLAUDE.md
 .claude/
 .windsurf/
 .agent/
+.atl/
 
 # Google Keys
 client_secret_*.json

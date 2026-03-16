@@ -24,7 +24,7 @@ Este proyecto sigue el estándar [Semantic Versioning](https://semver.org/).
 
 ## Desarrollo
 
-Ver [CONTEXT.md](./CONTEXT.md) para guías de desarrollo, estructura y flujo de trabajo.
+Ver [AGENTS.md](./AGENTS.md) para guías de desarrollo, estructura y flujo de trabajo.
 
 ## Configuración para agentes IA
 
