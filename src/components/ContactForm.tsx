@@ -85,7 +85,7 @@ export default function ContactForm({ showImage = true, variant = 'section' }: C
             </h2>
             <div className="w-20 h-1 bg-secondary rounded-full mx-auto mb-4" />
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Si necesitas información adicional, deseas colaborar o simplemente continuar la conversación, déjame tus datos y te responderé a la brevedad.
+              Este canal es para consultas sobre contenido del blog, colaboraciones y proyectos.
             </p>
           </div>
 
