@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import { type UserProfile } from "@/lib/auth";
 
 // Types
@@ -195,16 +194,8 @@ export default function AppointmentList({
             ? "Aún no tienes citas asignadas."
             : isAdmin
               ? "No hay citas registradas en este momento."
-              : "No tienes citas agendadas"}
+              : "No tienes citas agendadas. Esta funcionalidad está temporalmente pausada."}
         </p>
-        {isPatient && (
-          <Link
-            href="/contactame"
-            className="text-secondary hover:underline font-medium"
-          >
-            Escríbenos por contacto
-          </Link>
-        )}
       </div>
     );
   }
