@@ -81,7 +81,7 @@ export default function BlogPost() {
         </header>
 
         {/* Contenido */}
-        <div className="prose prose-lg max-w-none text-justify">
+        <div className="prose prose-lg max-w-none [&>p]:text-justify">
           <p className="text-gray-700 leading-relaxed mb-8">
             Cuando intentamos decir &quot;no&quot;, nuestra amígdala cerebral activa una alerta cuyo objetivo es evitar el rechazo. Por eso, aprender a decir no de manera adecuada es tan importante. Cuando tendemos a aceptar todo para mantener contenta a la gente o evitar herir sus sentimientos, sin percatarnos de que al hacerlo provocamos un conflicto dentro de nosotros.
           </p>

@@ -81,7 +81,7 @@ export default function BlogPost() {
                 </header>
 
                 {/* Contenido */}
-                <div className="prose prose-lg max-w-none text-justify">
+                <div className="prose prose-lg max-w-none [&>p]:text-justify">
                     <p className="text-gray-700 leading-relaxed mb-8">
                         Las redes sociales son como una ventana abierta donde vemos la vida de los demás. Vemos personas con cuerpos perfectos, que hacen muchas cosas, viajan, tienen relaciones estables y siempre parecen felices. Aunque sabemos que no todo es real, nos comparamos con lo que vemos en la pantalla.
                     </p>

@@ -81,7 +81,7 @@ export default function BlogPost() {
         </header>
 
         {/* Contenido */}
-        <div className="prose prose-lg max-w-none text-justify">
+        <div className="prose prose-lg max-w-none [&>p]:text-justify">
           <p className="text-gray-700 leading-relaxed mb-8">
             Hoy hablaremos sobre el amor propio, sobre cómo complementarlo en nuestro día a día y, sobre todo, en cómo manejarlo de una manera adecuada.
           </p>

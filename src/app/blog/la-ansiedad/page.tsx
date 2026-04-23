@@ -81,7 +81,7 @@ export default function BlogPost() {
                 </header>
 
                 {/* Contenido */}
-                <div className="prose prose-lg max-w-none text-justify">
+                <div className="prose prose-lg max-w-none [&>p]:text-justify">
                     <p className="text-gray-700 leading-relaxed mb-8">
                         Hoy quiero hablar de un tema muy importante en la actualidad y que, en algún momento, todos hemos vivido: <strong>la ansiedad</strong>. Todos hemos sentido ansiedad, aunque sea mínima. Por ejemplo, cuando tenemos una presentación en la universidad o en el colegio. En ese momento, nuestra amígdala cerebral activa la alerta de huida porque empezamos a pensar que lo vamos a hacer mal, que se van a burlar o que nos vamos a equivocar. Entonces entramos en un estado de ansiedad y nuestra mente comienza a imaginar miles de escenarios… y casi todos terminan mal.
                     </p>

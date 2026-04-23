@@ -81,7 +81,7 @@ export default function BlogPost() {
                 </header>
 
                 {/* Contenido */}
-                <div className="prose prose-lg max-w-none text-justify">
+                <div className="prose prose-lg max-w-none [&>p]:text-justify">
                     <p className="text-gray-700 leading-relaxed mb-8">
                         El error más grande de muchas personas es pensar o creer que ir al psicólogo es solo para &quot;los locos&quot;, o no aceptar que necesitan ayuda. También están quienes solo van cuando ya no pueden más: cuando el dolor es evidente, cuando el cuerpo grita o cuando la tristeza es imposible de esconder.
                     </p>

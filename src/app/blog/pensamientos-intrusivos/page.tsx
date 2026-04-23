@@ -81,20 +81,20 @@ export default function BlogPost() {
                 </header>
 
                 {/* Contenido */}
-                <div className="prose prose-lg max-w-none text-justify">
+                <div className="prose prose-lg max-w-none [&>p]:text-justify">
                     <p className="text-gray-700 leading-relaxed mb-8">
                         Hoy quiero hablar de algo que muchas personas han vivido, pero que casi no se menciona: <strong>los pensamientos intrusivos</strong>. Son esos pensamientos que surgen de la nada, sin que los invites, y que a menudo te hacen sentir incómoda, confundida o incluso culpable.
                     </p>
 
-                    {/* Imagen integrada en el texto */}
-                    <div className="float-right ml-6 mb-6 w-full md:w-1/2 rounded-2xl overflow-hidden shadow-lg">
+                    {/* Imagen del post */}
+                    <div className="w-full rounded-2xl overflow-hidden shadow-lg mb-8">
                         <Image
                             src="/images/blog/pensamientos-intrusivos.jpg"
                             alt="Pensamientos intrusivos"
                             width={1200}
                             height={800}
                             className="w-full h-auto"
-                            sizes="(max-width: 768px) 100vw, 50vw"
+                            sizes="100vw"
                             priority
                         />
                     </div>
@@ -110,8 +110,6 @@ export default function BlogPost() {
                     <p className="text-gray-700 leading-relaxed mb-8">
                         Lo primero que quiero que sepas es esto: <strong>tener pensamientos intrusivos es más común de lo que crees</strong>. No significa que quieras hacer lo que pensaste. No significa que seas una mala persona. No significa que haya algo mal en ti. Solo indica que tu mente está generando contenido, y no siempre refleja quién eres realmente.
                     </p>
-
-                    <div className="clear-both"></div>
 
                     <div className="p-6 bg-secondary/5 rounded-xl border-l-4 border-secondary my-8">
                         <p className="text-gray-800 font-semibold">

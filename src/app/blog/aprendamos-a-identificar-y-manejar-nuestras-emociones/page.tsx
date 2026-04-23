@@ -81,7 +81,7 @@ export default function BlogPost() {
         </header>
 
         {/* Contenido */}
-        <div className="prose prose-lg max-w-none text-justify">
+        <div className="prose prose-lg max-w-none [&>p]:text-justify">
           <p className="text-gray-700 leading-relaxed mb-8">
             Cuando pensamos que manejar nuestras emociones significa mantenerlas ocultas, que nadie sepa cómo te sientes, o cuando te haces el fuerte cuando estás triste, eso se llama fingir que no existen o simplemente deshacernos de ellas. Saber manejar las emociones no se trata de ignorarlas, sino de reconocerlas, saber cómo te sientes y vivir con ellas de tal manera que sepas controlarlas.
           </p>

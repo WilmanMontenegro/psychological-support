@@ -81,7 +81,7 @@ export default function BlogPost() {
                 </header>
 
                 {/* Contenido */}
-                <div className="prose prose-lg max-w-none text-justify">
+                <div className="prose prose-lg max-w-none [&>p]:text-justify">
                     <p className="text-gray-700 leading-relaxed mb-8 font-medium">
                         El postparto es un tema muy complejo del que todos deberíamos hablar, y de cómo se vive este proceso en nuestra salud emocional y personal.
                     </p>
