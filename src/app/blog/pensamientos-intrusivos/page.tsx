@@ -82,28 +82,28 @@ export default function BlogPost() {
 
                 {/* Contenido */}
                 <div className="prose prose-lg max-w-none [&>p]:text-justify">
-                    <p className="text-gray-700 leading-relaxed mb-8">
-                        Hoy quiero hablar de algo que muchas personas han vivido, pero que casi no se menciona: <strong>los pensamientos intrusivos</strong>. Son esos pensamientos que surgen de la nada, sin que los invites, y que a menudo te hacen sentir incómoda, confundida o incluso culpable.
-                    </p>
-
-                    {/* Imagen integrada en el texto */}
-                    <div className="float-right ml-6 mb-6 w-full md:w-1/2 rounded-2xl overflow-hidden shadow-lg">
+                    {/* Imagen integrada en el texto - al inicio para evitar huecos */}
+                    <div className="float-right ml-6 mb-4 w-full md:w-2/5 rounded-2xl overflow-hidden shadow-lg">
                         <Image
                             src="/images/blog/pensamientos-intrusivos.jpg"
                             alt="Pensamientos intrusivos"
                             width={1200}
                             height={800}
                             className="w-full h-auto"
-                            sizes="(max-width: 768px) 100vw, 50vw"
+                            sizes="(max-width: 768px) 100vw, 40vw"
                             priority
                         />
                     </div>
 
                     <p className="text-gray-700 leading-relaxed mb-8">
+                        Hoy quiero hablar de algo que muchas personas han vivido, pero que casi no se menciona: <strong>los pensamientos intrusivos</strong>. Son esos pensamientos que surgen de la nada, sin que los invites, y que a menudo te hacen sentir incómoda, confundida o incluso culpable.
+                    </p>
+
+                    <p className="text-gray-700 leading-relaxed mb-8">
                         Son ideas que llegan de repente y te preguntas: <em>&ldquo;&iquest;por qu&eacute; pens&eacute; eso?&rdquo;</em>. Son pensamientos que no son parte de ti, que no reflejan qui&eacute;n eres, pero a&uacute;n as&iacute; aparecen y se repiten en tu mente.
                     </p>
 
-                    <h2 className="text-2xl font-libre-baskerville text-accent mt-8 mb-4 clear-right">
+                    <h2 className="text-2xl font-libre-baskerville text-accent mt-8 mb-4">
                         No estás sola en esto
                     </h2>
 
