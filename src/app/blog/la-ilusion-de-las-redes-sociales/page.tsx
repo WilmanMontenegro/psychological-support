@@ -11,6 +11,18 @@ export const metadata: Metadata = {
     description: 'Aprende a usar las redes sociales de manera consciente y evita compararte con vidas que parecen perfectas. Tu valor no depende de una pantalla.',
     keywords: 'redes sociales, comparación, ansiedad, estrés, salud mental, uso consciente, bienestar emocional',
     openGraph: {
+        type: 'article',
+        title: 'La ilusión de las redes sociales',
+        description: 'Aprende a usar las redes sociales de manera consciente y evita compararte con vidas que parecen perfectas.',
+        images: [{
+            url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://tupsicoana.com'}/images/blog/la-ilusion-de-las-redes-sociales.jpg`,
+            width: 1200,
+            height: 800,
+            alt: 'La ilusión de las redes sociales',
+        }],
+    },
+    twitter: {
+        card: 'summary_large_image',
         title: 'La ilusión de las redes sociales',
         description: 'Aprende a usar las redes sociales de manera consciente y evita compararte con vidas que parecen perfectas.',
         images: [`${process.env.NEXT_PUBLIC_SITE_URL || 'https://tupsicoana.com'}/images/blog/la-ilusion-de-las-redes-sociales.jpg`],

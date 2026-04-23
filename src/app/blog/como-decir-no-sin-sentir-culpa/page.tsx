@@ -11,7 +11,19 @@ export const metadata: Metadata = {
   description: 'Aprende a establecer límites saludables, a decir no sin culpa y a reconocer que el autocuidado no es egoísmo. Una guía para fortalecer tu amor propio.',
   keywords: 'decir no, límites saludables, culpa, autocuidado, amor propio, asertividad, bienestar emocional',
   openGraph: {
+    type: 'article',
     title: 'Cómo decir &quot;NO&quot; sin sentirte culpable',
+    description: 'Estrategias prácticas para establecer límites sin sentir culpa. Descubre por qué decir no es un acto de amor propio.',
+    images: [{
+      url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://tupsicoana.com'}/images/blog/decir-no.jpeg`,
+      width: 1200,
+      height: 800,
+      alt: 'Cómo decir NO sin sentirte culpable',
+    }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Cómo decir "NO" sin sentirte culpable',
     description: 'Estrategias prácticas para establecer límites sin sentir culpa. Descubre por qué decir no es un acto de amor propio.',
     images: [`${process.env.NEXT_PUBLIC_SITE_URL || 'https://tupsicoana.com'}/images/blog/decir-no.jpeg`],
   },

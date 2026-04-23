@@ -10,6 +10,18 @@ export const metadata: Metadata = {
     description: 'Los pensamientos intrusivos son más comunes de lo que crees. Aprende a identificarlos, entenderlos y dejarlos pasar sin juzgarte.',
     keywords: 'pensamientos intrusivos, salud mental, ansiedad, sobrepensar, bienestar emocional, terapia psicológica',
     openGraph: {
+        type: 'article',
+        title: 'Pensamientos intrusivos: cuando tu mente te juega en contra',
+        description: 'Los pensamientos intrusivos son más comunes de lo que crees. Aprende a identificarlos, entenderlos y dejarlos pasar sin juzgarte.',
+        images: [{
+            url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://tupsicoana.com'}/images/blog/pensamientos-intrusivos.jpg`,
+            width: 1200,
+            height: 800,
+            alt: 'Pensamientos intrusivos',
+        }],
+    },
+    twitter: {
+        card: 'summary_large_image',
         title: 'Pensamientos intrusivos: cuando tu mente te juega en contra',
         description: 'Los pensamientos intrusivos son más comunes de lo que crees. Aprende a identificarlos, entenderlos y dejarlos pasar sin juzgarte.',
         images: [`${process.env.NEXT_PUBLIC_SITE_URL || 'https://tupsicoana.com'}/images/blog/pensamientos-intrusivos.jpg`],

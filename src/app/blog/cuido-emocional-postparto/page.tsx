@@ -11,6 +11,18 @@ export const metadata: Metadata = {
     description: "El postparto es una etapa emocional compleja. Descubre cómo manejar las emociones, la soledad y el autocuidado mientras nace una nueva madre.",
     keywords: "postparto, salud emocional, maternidad, depresion postparto, autocuidado, apoyo emocional",
     openGraph: {
+        type: 'article',
+        title: "El cuidado emocional en el postparto de una mujer que nadie mira",
+        description: "Consejos para cuidar de ti misma mientras cuidas de tu bebé. No estás sola en este proceso.",
+        images: [{
+            url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/images/blog/post-parto.jpeg`,
+            width: 1200,
+            height: 800,
+            alt: "El cuidado emocional en el postparto",
+        }],
+    },
+    twitter: {
+        card: 'summary_large_image',
         title: "El cuidado emocional en el postparto de una mujer que nadie mira",
         description: "Consejos para cuidar de ti misma mientras cuidas de tu bebé. No estás sola en este proceso.",
         images: [`${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/images/blog/post-parto.jpeg`],

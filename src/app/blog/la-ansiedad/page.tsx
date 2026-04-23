@@ -11,6 +11,18 @@ export const metadata: Metadata = {
     description: 'Entiende qué es la ansiedad, cuándo es adaptativa y cuándo se vuelve patológica. Aprende a identificar las señales y manejarla mejor.',
     keywords: 'ansiedad, estrés, salud mental, ansiedad adaptativa, ansiedad patológica, manejo de ansiedad, bienestar emocional',
     openGraph: {
+        type: 'article',
+        title: 'La ansiedad: Cuándo es normal y cuándo buscar ayuda',
+        description: 'Entiende qué es la ansiedad, cuándo es adaptativa y cuándo se vuelve patológica. Aprende a identificar las señales y manejarla mejor.',
+        images: [{
+            url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://tupsicoana.com'}/images/blog/la-ansiedad.jpg`,
+            width: 1200,
+            height: 800,
+            alt: 'La ansiedad: Cuándo es normal y cuándo buscar ayuda',
+        }],
+    },
+    twitter: {
+        card: 'summary_large_image',
         title: 'La ansiedad: Cuándo es normal y cuándo buscar ayuda',
         description: 'Entiende qué es la ansiedad, cuándo es adaptativa y cuándo se vuelve patológica. Aprende a identificar las señales y manejarla mejor.',
         images: [`${process.env.NEXT_PUBLIC_SITE_URL || 'https://tupsicoana.com'}/images/blog/la-ansiedad.jpg`],

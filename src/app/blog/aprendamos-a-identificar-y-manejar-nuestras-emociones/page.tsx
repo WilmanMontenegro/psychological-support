@@ -11,7 +11,19 @@ export const metadata: Metadata = {
   description: "Guía sobre manejo de emociones y autocuidado. Aprende a reconocer, entender y regular tus emociones para tu bienestar.",
   keywords: "manejo de emociones, inteligencia emocional, apoyo emocional, bienestar mental, crecimiento personal, psicología emocional",
   openGraph: {
+    type: 'article',
     title: "Manejo de Emociones | Bienestar Emocional",
+    description: "Descubre técnicas prácticas para manejar tus emociones con mayor claridad",
+    images: [{
+      url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/images/blog/portada-emociones.jpg`,
+      width: 1200,
+      height: 800,
+      alt: "Manejo de emociones",
+    }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "Aprendamos a identificar y manejar nuestras emociones",
     description: "Descubre técnicas prácticas para manejar tus emociones con mayor claridad",
     images: [`${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/images/blog/portada-emociones.jpg`],
   },

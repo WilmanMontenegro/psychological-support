@@ -11,6 +11,18 @@ export const metadata: Metadata = {
     description: "Descubre por qué ir al psicólogo no es de 'locos', sino un acto de amor propio. Aprende a identificar señales para cuidar tu bienestar emocional.",
     keywords: "cuando ir al psicologo, mitos psicologia, apoyo emocional, salud mental, terapia psicologica, acompañamiento emocional, bienestar, cuidado personal",
     openGraph: {
+        type: 'article',
+        title: "¿Cuándo ir al psicólogo? Rompiendo mitos",
+        description: "Buscar apoyo emocional es un acto de cuidado y respeto hacia ti mismo.",
+        images: [{
+            url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/images/blog/acompanamiento-psicologico.jpeg`,
+            width: 1200,
+            height: 800,
+            alt: "¿Cuándo ir al psicólogo?",
+        }],
+    },
+    twitter: {
+        card: 'summary_large_image',
         title: "¿Cuándo ir al psicólogo? Rompiendo mitos",
         description: "Buscar apoyo emocional es un acto de cuidado y respeto hacia ti mismo.",
         images: [`${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/images/blog/acompanamiento-psicologico.jpeg`],

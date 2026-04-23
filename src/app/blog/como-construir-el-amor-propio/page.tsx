@@ -11,6 +11,18 @@ export const metadata: Metadata = {
   description: "Guía práctica para fortalecer el amor propio en la vida cotidiana: cuidados, límites, autoconocimiento y acompañamiento emocional.",
   keywords: "amor propio, autoestima, crecimiento personal, bienestar emocional, limites saludables, acompañamiento emocional",
   openGraph: {
+    type: 'article',
+    title: "Cómo construir el amor propio en nuestra vida cotidiana",
+    description: "Pasos prácticos para cultivar el amor propio y el autocuidado en tu día a día",
+    images: [{
+      url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/images/blog/amor-propio.jpeg`,
+      width: 1200,
+      height: 800,
+      alt: "Cómo construir el amor propio",
+    }],
+  },
+  twitter: {
+    card: 'summary_large_image',
     title: "Cómo construir el amor propio en nuestra vida cotidiana",
     description: "Pasos prácticos para cultivar el amor propio y el autocuidado en tu día a día",
     images: [`${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/images/blog/amor-propio.jpeg`],
