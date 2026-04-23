@@ -111,6 +111,8 @@ export default function BlogPost() {
                         Lo primero que quiero que sepas es esto: <strong>tener pensamientos intrusivos es más común de lo que crees</strong>. No significa que quieras hacer lo que pensaste. No significa que seas una mala persona. No significa que haya algo mal en ti. Solo indica que tu mente está generando contenido, y no siempre refleja quién eres realmente.
                     </p>
 
+                    <div className="clear-both"></div>
+
                     <div className="p-6 bg-secondary/5 rounded-xl border-l-4 border-secondary my-8">
                         <p className="text-gray-800 font-semibold">
                             💭 Tener pensamientos intrusivos no te define. No significa que seas una mala persona ni que haya algo mal en ti.
