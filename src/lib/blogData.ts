@@ -9,6 +9,14 @@ export interface BlogPost {
 
 export const blogPosts: BlogPost[] = [
     {
+        slug: 'pensamientos-intrusivos',
+        title: 'Pensamientos intrusivos: cuando tu mente te juega en contra',
+        excerpt: 'Los pensamientos intrusivos son más comunes de lo que crees. Aprende a identificarlos, entenderlos y dejarlos pasar sin juzgarte.',
+        image: '/images/blog/pensamientos-intrusivos.jpg',
+        category: 'Salud Mental',
+        date: '2026-04-23'
+    },
+    {
         slug: 'la-ansiedad',
         title: 'La ansiedad: Cuándo es normal y cuándo buscar ayuda',
         excerpt: 'Todos hemos sentido ansiedad. Aprende a identificar cuándo es adaptativa y cuándo se vuelve patológica. Entiende este mecanismo de defensa y cómo manejarlo mejor.',
