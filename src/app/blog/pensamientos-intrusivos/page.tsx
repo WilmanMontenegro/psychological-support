@@ -104,7 +104,7 @@ export default function BlogPost() {
                     </p>
 
                     <h2 className="text-2xl font-libre-baskerville text-accent mt-8 mb-4">
-                        No estás sola en esto
+                        No estás solo/a en esto
                     </h2>
 
                     <p className="text-gray-700 leading-relaxed mb-8">
