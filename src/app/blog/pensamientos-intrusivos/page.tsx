@@ -83,7 +83,7 @@ export default function BlogPost() {
                 {/* Contenido */}
                 <div className="prose prose-lg max-w-none [&>p]:text-justify">
                     {/* Imagen integrada en el texto - al inicio para evitar huecos */}
-                    <div className="float-right ml-6 mb-4 w-full md:w-2/5 rounded-2xl overflow-hidden shadow-lg">
+                    <div className="float-left mr-6 mb-4 w-full md:w-2/5 rounded-2xl overflow-hidden shadow-lg">
                         <Image
                             src="/images/blog/pensamientos-intrusivos.jpg"
                             alt="Pensamientos intrusivos"
