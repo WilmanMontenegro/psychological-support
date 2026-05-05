@@ -111,6 +111,12 @@ function slugify(value: string): string {
     .slice(0, 80);
 }
 
+function buildPublishedSlug(baseSlug: string): string {
+  const safeBase = slugify(baseSlug) || 'blog';
+  const suffix = Date.now().toString(36).slice(-6);
+  return `${safeBase}-${suffix}`.slice(0, 80);
+}
+
 function inferCategory(text: string): string {
   const lower = text.toLowerCase();
 
@@ -815,18 +821,52 @@ async function handleCallbackAction(
     return;
   }
 
-  const { error } = await supabase
+  let publishedSlug = draft.slug;
+  let publishError: { message?: string } | null = null;
+
+  const { error: primaryPublishError } = await supabase
     .from('blog_drafts')
     .update({ status: 'published', published_at: new Date().toISOString() })
     .eq('id', draftId);
 
-  if (error) {
+  if (!primaryPublishError) {
+    publishError = null;
+  } else {
+    const errorMessage = primaryPublishError.message?.toLowerCase() || '';
+    const slugConflict =
+      errorMessage.includes('duplicate key') ||
+      errorMessage.includes('blog_drafts_published_slug_unique_idx');
+    const missingPublishedAt = errorMessage.includes('published_at');
+
+    if (slugConflict) {
+      publishedSlug = buildPublishedSlug(draft.slug);
+      const { error: slugRetryError } = await supabase
+        .from('blog_drafts')
+        .update({
+          slug: publishedSlug,
+          status: 'published',
+          published_at: new Date().toISOString(),
+        })
+        .eq('id', draftId);
+      publishError = slugRetryError;
+    } else if (missingPublishedAt) {
+      const { error: publishedAtRetryError } = await supabase
+        .from('blog_drafts')
+        .update({ status: 'published' })
+        .eq('id', draftId);
+      publishError = publishedAtRetryError;
+    } else {
+      publishError = primaryPublishError;
+    }
+  }
+
+  if (publishError) {
     await answerCallbackQuery(token, callbackId, 'No se pudo publicar');
     return;
   }
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.tupsicoana.com';
-  const postUrl = `${siteUrl}/blog/${draft.slug}`;
+  const postUrl = `${siteUrl}/blog/${publishedSlug}`;
 
   await answerCallbackQuery(token, callbackId, 'Publicado');
   await sendTelegramMessage(
