@@ -15,7 +15,7 @@ type Props = {
 };
 
 type CalloutKind = 'success' | 'warning' | 'note';
-const SHORT_PARAGRAPH_MAX = 190;
+const IMAGE_PARAGRAPH_MIN = 220;
 
 function formatDate(dateInput: string) {
   return new Date(dateInput).toLocaleDateString('es-CO', {
@@ -53,6 +53,59 @@ function getCalloutStyles(kind: CalloutKind): string {
   if (kind === 'success') return 'bg-green-50 border-green-500 text-green-800';
   if (kind === 'warning') return 'bg-red-50 border-red-500 text-red-800';
   return 'bg-secondary/5 border-secondary text-gray-800';
+}
+
+function countWords(value: string): number {
+  return value.trim().split(/\s+/).filter(Boolean).length;
+}
+
+function isExplicitCallout(paragraph: string): boolean {
+  return Boolean(detectCallout(paragraph));
+}
+
+function findImageParagraphIndex(paragraphs: string[]): number {
+  const preferredIndex = paragraphs.findIndex((paragraph, index) => {
+    if (index === 0) return false;
+    if (isExplicitCallout(paragraph)) return false;
+    return paragraph.length >= IMAGE_PARAGRAPH_MIN || countWords(paragraph) >= 34;
+  });
+
+  return preferredIndex === -1 ? Math.min(1, paragraphs.length - 1) : preferredIndex;
+}
+
+function calloutCandidateScore(paragraph: string): number {
+  const clean = paragraph.trim();
+  const lower = clean.toLowerCase();
+  if (clean.length < 90 || clean.length > 260) return 0;
+  if (isExplicitCallout(clean)) return 0;
+
+  const hints = [
+    'no tienes que',
+    'no se trata',
+    'lo importante',
+    'es importante',
+    'la clave',
+    'tu bienestar',
+    'autocuidado',
+    'poner límites',
+    'poner limites',
+    'paso a paso',
+    'pedir ayuda',
+    'no estás sola',
+    'no estas sola',
+    'escucharte',
+  ];
+
+  return hints.reduce((score, hint) => (lower.includes(hint) ? score + 1 : score), 0);
+}
+
+function findAutoCalloutIndexes(paragraphs: string[], imageIndex: number): number[] {
+  return paragraphs
+    .map((paragraph, index) => ({ index, score: calloutCandidateScore(paragraph) }))
+    .filter(({ index, score }) => score > 0 && index !== 0 && index !== imageIndex)
+    .sort((a, b) => b.score - a.score || a.index - b.index)
+    .slice(0, 2)
+    .map(({ index }) => index);
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -102,6 +155,8 @@ export default async function DynamicBlogPostPage({ params }: Props) {
     .split('\n')
     .map((item) => item.trim())
     .filter(Boolean);
+  const imageParagraphIndex = findImageParagraphIndex(paragraphs);
+  const autoCalloutIndexes = findAutoCalloutIndexes(paragraphs, imageParagraphIndex);
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -156,29 +211,8 @@ export default async function DynamicBlogPostPage({ params }: Props) {
             <div key={`${post.id}-${index}`}>
               {(() => {
                 const callout = detectCallout(paragraph);
-                const isShortParagraph = paragraph.length <= SHORT_PARAGRAPH_MAX;
 
-                if (index === 1 && !callout) {
-                  if (isShortParagraph) {
-                    return (
-                      <div className="mb-6 not-prose">
-                        <p className="text-gray-700 leading-relaxed mb-4" style={{ textAlign: 'justify' }}>
-                          {paragraph}
-                        </p>
-                        <div className="rounded-2xl overflow-hidden shadow-lg">
-                          <Image
-                            src={imageUrl}
-                            alt={post.title}
-                            width={1200}
-                            height={800}
-                            className="w-full h-auto"
-                            sizes="100vw"
-                          />
-                        </div>
-                      </div>
-                    );
-                  }
-
+                if (index === imageParagraphIndex && !callout) {
                   return (
                     <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-5 items-start not-prose">
                       <div className={inlineSide === 'left' ? 'md:order-1' : 'md:order-2'}>
@@ -204,6 +238,16 @@ export default async function DynamicBlogPostPage({ params }: Props) {
                 }
 
                 if (!callout) {
+                  if (autoCalloutIndexes.includes(index)) {
+                    return (
+                      <div className={`p-5 rounded-xl border-l-4 my-6 ${getCalloutStyles('note')}`}>
+                        <p className="text-gray-800 font-semibold" style={{ textAlign: 'justify' }}>
+                          💭 {paragraph}
+                        </p>
+                      </div>
+                    );
+                  }
+
                   return (
                     <p className="text-gray-700 leading-relaxed mb-6" style={{ textAlign: 'justify' }}>
                       {paragraph}
