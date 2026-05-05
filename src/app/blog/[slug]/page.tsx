@@ -215,26 +215,37 @@ export default async function DynamicBlogPostPage({ params }: Props) {
         <div className="prose prose-lg max-w-none">
           {paragraphs.map((paragraph, index) => (
             <div key={`${post.id}-${index}`}>
-              {index === 1 ? (
-                <div
-                  className={`mb-8 w-full md:w-1/2 rounded-2xl overflow-hidden shadow-lg ${
-                    inlineSide === 'left' ? 'float-left mr-6' : 'float-right ml-6'
-                  }`}
-                >
-                  <Image
-                    src={imageUrl}
-                    alt={post.title}
-                    width={1200}
-                    height={800}
-                    className="w-full h-auto"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
-                </div>
-              ) : null}
               {(() => {
                 const callout = detectCallout(paragraph);
+                const isHeading = isLikelyHeading(paragraph);
+
+                if (index === 1 && !callout && !isHeading) {
+                  return (
+                    <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-6 items-start not-prose">
+                      <div className={inlineSide === 'left' ? 'md:order-1' : 'md:order-2'}>
+                        <div className="rounded-2xl overflow-hidden shadow-lg">
+                          <Image
+                            src={imageUrl}
+                            alt={post.title}
+                            width={1200}
+                            height={800}
+                            className="w-full h-auto"
+                            sizes="(max-width: 768px) 100vw, 50vw"
+                          />
+                        </div>
+                      </div>
+                      <p
+                        className={`text-gray-700 leading-relaxed m-0 ${inlineSide === 'left' ? 'md:order-2' : 'md:order-1'}`}
+                        style={{ textAlign: 'justify' }}
+                      >
+                        {paragraph}
+                      </p>
+                    </div>
+                  );
+                }
+
                 if (!callout) {
-                  if (isLikelyHeading(paragraph)) {
+                  if (isHeading) {
                     return (
                       <h2 className="text-2xl md:text-[2.05rem] leading-tight font-libre-baskerville text-accent mt-12 mb-5">
                         {paragraph}
@@ -276,8 +287,7 @@ export default async function DynamicBlogPostPage({ params }: Props) {
             </div>
           ))}
         </div>
-
-        <div className="clear-both my-12 py-8 border-t border-b border-gray-200">
+        <div className="my-12 py-8 border-t border-b border-gray-200">
           <p className="text-sm text-gray-600 mb-6 font-medium">¿Te gustó este artículo? Compártelo:</p>
           <ShareButtons title={post.title} />
         </div>
