@@ -15,6 +15,7 @@ type Props = {
 };
 
 type CalloutKind = 'success' | 'warning' | 'note';
+const SHORT_PARAGRAPH_MAX = 190;
 
 function formatDate(dateInput: string) {
   return new Date(dateInput).toLocaleDateString('es-CO', {
@@ -57,14 +58,14 @@ function getCalloutStyles(kind: CalloutKind): string {
 function isLikelyHeading(paragraph: string): boolean {
   const clean = paragraph.trim();
   if (!clean) return false;
-  if (clean.length > 80) return false;
+  if (clean.length > 65) return false;
   if (clean.includes(':')) return false;
   if (/[.!?]$/.test(clean)) return false;
   if (clean.startsWith('✅') || clean.startsWith('⚠') || clean.startsWith('💭')) return false;
   if (/^recuerda:/i.test(clean)) return false;
 
   const words = clean.split(/\s+/).filter(Boolean);
-  if (words.length < 3 || words.length > 10) return false;
+  if (words.length < 3 || words.length > 8) return false;
 
   const lower = clean.toLowerCase();
   const headingHints = [
@@ -81,16 +82,33 @@ function isLikelyHeading(paragraph: string): boolean {
     'señales',
     'pasos',
     'claves',
-    'recuerda',
   ];
 
   return headingHints.some((hint) => lower.includes(hint));
 }
 
+function isLongParagraph(paragraph: string): boolean {
+  const clean = paragraph.trim();
+  if (!clean) return false;
+  const words = clean.split(/\s+/).filter(Boolean);
+  return clean.length >= 120 || words.length >= 18;
+}
+
+function shouldRenderAsHeading(paragraphs: string[], index: number): boolean {
+  const current = paragraphs[index] || '';
+  if (!isLikelyHeading(current)) return false;
+
+  const prev = paragraphs[index - 1];
+  const next = paragraphs[index + 1];
+  const prevIsLong = Boolean(prev && isLongParagraph(prev));
+  const nextIsLong = Boolean(next && isLongParagraph(next));
+  return prevIsLong && nextIsLong;
+}
+
 function isLikelyKeyPhrase(paragraph: string): boolean {
   const clean = paragraph.trim();
   if (!clean) return false;
-  if (clean.length < 80 || clean.length > 280) return false;
+  if (clean.length < 110 || clean.length > 220) return false;
   if (isLikelyHeading(clean)) return false;
   if (detectCallout(clean)) return false;
 
@@ -110,6 +128,16 @@ function isLikelyKeyPhrase(paragraph: string): boolean {
   ];
 
   return keyHints.some((hint) => lower.includes(hint));
+}
+
+function getAutoCalloutIndex(paragraphs: string[]): number {
+  return paragraphs.findIndex((paragraph, index) => {
+    if (index < 3 || index >= paragraphs.length - 1) return false;
+    if (!isLikelyKeyPhrase(paragraph)) return false;
+    const prev = paragraphs[index - 1];
+    const next = paragraphs[index + 1];
+    return Boolean(prev && next && isLongParagraph(prev) && isLongParagraph(next));
+  });
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -159,10 +187,7 @@ export default async function DynamicBlogPostPage({ params }: Props) {
     .split('\n')
     .map((item) => item.trim())
     .filter(Boolean);
-  const autoCalloutIndex = paragraphs.findIndex((paragraph, index) => {
-    if (index < 2) return false;
-    return isLikelyKeyPhrase(paragraph);
-  });
+  const autoCalloutIndex = getAutoCalloutIndex(paragraphs);
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -217,11 +242,32 @@ export default async function DynamicBlogPostPage({ params }: Props) {
             <div key={`${post.id}-${index}`}>
               {(() => {
                 const callout = detectCallout(paragraph);
-                const isHeading = isLikelyHeading(paragraph);
+                const isHeading = shouldRenderAsHeading(paragraphs, index);
+                const isShortParagraph = paragraph.length <= SHORT_PARAGRAPH_MAX;
 
                 if (index === 1 && !callout && !isHeading) {
+                  if (isShortParagraph) {
+                    return (
+                      <div className="mb-6 not-prose">
+                        <p className="text-gray-700 leading-relaxed mb-4" style={{ textAlign: 'justify' }}>
+                          {paragraph}
+                        </p>
+                        <div className="rounded-2xl overflow-hidden shadow-lg">
+                          <Image
+                            src={imageUrl}
+                            alt={post.title}
+                            width={1200}
+                            height={800}
+                            className="w-full h-auto"
+                            sizes="100vw"
+                          />
+                        </div>
+                      </div>
+                    );
+                  }
+
                   return (
-                    <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-6 items-start not-prose">
+                    <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-5 items-start not-prose">
                       <div className={inlineSide === 'left' ? 'md:order-1' : 'md:order-2'}>
                         <div className="rounded-2xl overflow-hidden shadow-lg">
                           <Image
@@ -247,14 +293,14 @@ export default async function DynamicBlogPostPage({ params }: Props) {
                 if (!callout) {
                   if (isHeading) {
                     return (
-                      <h2 className="text-2xl md:text-[2.05rem] leading-tight font-libre-baskerville text-accent mt-12 mb-5">
+                      <h2 className="text-2xl md:text-[2rem] leading-tight font-libre-baskerville text-accent mt-10 mb-4">
                         {paragraph}
                       </h2>
                     );
                   }
                   if (index === autoCalloutIndex) {
                     return (
-                      <div className={`p-6 rounded-xl border-l-4 my-8 ${getCalloutStyles('note')}`}>
+                      <div className={`p-5 rounded-xl border-l-4 my-6 ${getCalloutStyles('note')}`}>
                         <h3 className="text-lg font-semibold mb-2">💭 Idea clave</h3>
                         <p className="text-gray-700" style={{ textAlign: 'justify' }}>
                           {paragraph}
@@ -263,7 +309,7 @@ export default async function DynamicBlogPostPage({ params }: Props) {
                     );
                   }
                   return (
-                    <p className="text-gray-700 leading-relaxed mb-8" style={{ textAlign: 'justify' }}>
+                    <p className="text-gray-700 leading-relaxed mb-6" style={{ textAlign: 'justify' }}>
                       {paragraph}
                     </p>
                   );
@@ -271,7 +317,7 @@ export default async function DynamicBlogPostPage({ params }: Props) {
 
                 const hasBody = Boolean(callout.body);
                 return (
-                  <div className={`p-6 rounded-xl border-l-4 my-8 ${getCalloutStyles(callout.kind)}`}>
+                  <div className={`p-5 rounded-xl border-l-4 my-6 ${getCalloutStyles(callout.kind)}`}>
                     <h3 className="text-lg font-semibold mb-2">
                       {callout.kind === 'success' ? '✅ ' : callout.kind === 'warning' ? '⚠️ ' : '💭 '}
                       {callout.title}

@@ -449,6 +449,14 @@ function parseDraftContent(message: TelegramMessage) {
 }
 
 type FlowStep = 'awaiting_content' | 'awaiting_image';
+type UserIntent =
+  | 'reset'
+  | 'unpublish'
+  | 'unpublish_delete'
+  | 'no_image'
+  | 'blog_content'
+  | 'greeting'
+  | 'other';
 
 const ANITA_INTRO =
   'Hola, soy Anita. Pásame el texto completo del blog (puede ser largo). Después te pregunto por la imagen de portada y publicamos cuando quieras.';
@@ -489,12 +497,22 @@ function wantsUnpublish(text: string): boolean {
 function wantsUnpublishAndDelete(text: string): boolean {
   const t = text.trim().toLowerCase();
   if (!t || t.length > 80) return false;
-  return (
+  if (
     t === '/despublicar-y-borrar' ||
     t.startsWith('/despublicar-y-borrar ') ||
     t === 'despublicar y borrar' ||
     t === 'despublica y borra'
-  );
+  ) {
+    return true;
+  }
+
+  // Variantes naturales: "despublicalo y borralo", "despublícalo y bórralo", etc.
+  const normalized = t.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const hasUnpublishIntent =
+    normalized.includes('despublic') || normalized.includes('despubl');
+  const hasDeleteIntent =
+    normalized.includes('borrar') || normalized.includes('borralo') || normalized.includes('elimina');
+  return hasUnpublishIntent && hasDeleteIntent;
 }
 
 function isLikelyBlogBody(text: string): boolean {
@@ -502,6 +520,157 @@ function isLikelyBlogBody(text: string): boolean {
   if (trimmed.length >= 160) return true;
   const lines = trimmed.split('\n').map((l) => l.trim()).filter(Boolean);
   return lines.length >= 4 && trimmed.length >= 90;
+}
+
+function isResetCommand(text: string): boolean {
+  const t = text.trim().toLowerCase();
+  return t === '/start' || t === '/nuevo' || t === '/blog' || t === '/crear' || t === '/reset';
+}
+
+function toValidIntent(value: string | undefined): UserIntent | null {
+  if (!value) return null;
+  const normalized = value.trim().toLowerCase();
+  const allowed: UserIntent[] = [
+    'reset',
+    'unpublish',
+    'unpublish_delete',
+    'no_image',
+    'blog_content',
+    'greeting',
+    'other',
+  ];
+  return allowed.includes(normalized as UserIntent) ? (normalized as UserIntent) : null;
+}
+
+function inferIntentRuleBased(inputText: string): UserIntent {
+  if (isResetCommand(inputText)) return 'reset';
+  if (wantsUnpublishAndDelete(inputText)) return 'unpublish_delete';
+  if (wantsUnpublish(inputText)) return 'unpublish';
+  if (wantsNoImage(inputText)) return 'no_image';
+  if (isLikelyBlogBody(inputText)) return 'blog_content';
+  if (isTrivialGreeting(inputText)) return 'greeting';
+  return 'other';
+}
+
+async function inferIntentWithOpenAI(inputText: string): Promise<UserIntent | null> {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) return null;
+
+  const model = process.env.OPENAI_MODEL || DEFAULT_AI_MODEL;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), AI_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(OPENAI_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+      signal: controller.signal,
+      body: JSON.stringify({
+        model,
+        temperature: 0,
+        max_tokens: 40,
+        response_format: { type: 'json_object' },
+        messages: [
+          {
+            role: 'system',
+            content:
+              'Clasifica intención para un bot de Telegram. Responde solo JSON: {"intent":"..."} usando una etiqueta exacta: reset, unpublish, unpublish_delete, no_image, blog_content, greeting, other.',
+          },
+          { role: 'user', content: inputText },
+        ],
+      }),
+    });
+    if (!response.ok) return null;
+
+    const data = (await response.json()) as {
+      choices?: Array<{ message?: { content?: string } }>;
+    };
+    const raw = data.choices?.[0]?.message?.content;
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { intent?: string };
+    return toValidIntent(parsed.intent);
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function inferIntentWithGemini(inputText: string): Promise<UserIntent | null> {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) return null;
+
+  const model = process.env.GEMINI_MODEL || DEFAULT_GEMINI_MODEL;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), AI_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(
+      `${GEMINI_API_BASE}/${model}:generateContent?key=${encodeURIComponent(apiKey)}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
+        body: JSON.stringify({
+          systemInstruction: {
+            parts: [
+              {
+                text: 'Clasifica intención para un bot de Telegram. Devuelve solo JSON con {"intent":"..."} y etiqueta exacta entre: reset, unpublish, unpublish_delete, no_image, blog_content, greeting, other.',
+              },
+            ],
+          },
+          generationConfig: {
+            temperature: 0,
+            maxOutputTokens: 40,
+            responseMimeType: 'application/json',
+          },
+          contents: [
+            {
+              role: 'user',
+              parts: [{ text: inputText }],
+            },
+          ],
+        }),
+      }
+    );
+    if (!response.ok) return null;
+
+    const data = (await response.json()) as {
+      candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
+    };
+    const raw = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { intent?: string };
+    return toValidIntent(parsed.intent);
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function inferUserIntent(inputText: string): Promise<UserIntent> {
+  const ruleBased = inferIntentRuleBased(inputText);
+  if (ruleBased === 'blog_content' || ruleBased === 'reset') return ruleBased;
+
+  if (!inputText || inputText.length > 420) return ruleBased;
+
+  const provider = (process.env.AI_PROVIDER || 'gemini').toLowerCase();
+  const aiIntent =
+    provider === 'gemini'
+      ? await inferIntentWithGemini(inputText)
+      : await inferIntentWithOpenAI(inputText);
+
+  if (!aiIntent || aiIntent === 'other') return ruleBased;
+
+  // Guardrail para acciones destructivas: exige señales mínimas también por reglas.
+  if (aiIntent === 'unpublish_delete' && !wantsUnpublishAndDelete(inputText)) return ruleBased;
+  if (aiIntent === 'unpublish' && !wantsUnpublish(inputText)) return ruleBased;
+
+  return aiIntent;
 }
 
 function publishKeyboard(draftId: string) {
@@ -1110,27 +1279,21 @@ export async function POST(request: Request) {
     }
 
     const incomingRaw = normalizeText(message.text || message.caption || '');
-    const incomingText = incomingRaw.toLowerCase();
+    const intent = await inferUserIntent(incomingRaw);
 
-    if (
-      incomingText === '/start' ||
-      incomingText === '/nuevo' ||
-      incomingText === '/blog' ||
-      incomingText === '/crear' ||
-      incomingText === '/reset'
-    ) {
+    if (intent === 'reset') {
       await upsertFlow(chatId, 'awaiting_content', null);
       await sendTelegramMessage(token, chatId, buildGuidedQuestionsMessage());
       return NextResponse.json({ ok: true });
     }
 
-    if (wantsUnpublish(incomingRaw)) {
+    if (intent === 'unpublish') {
       await unpublishDraftForChat(token, chatId, incomingRaw);
       await clearFlowAfterPublish(chatId);
       return NextResponse.json({ ok: true });
     }
 
-    if (wantsUnpublishAndDelete(incomingRaw)) {
+    if (intent === 'unpublish_delete') {
       await unpublishAndDeleteDraftForChat(token, chatId, incomingRaw);
       await clearFlowAfterPublish(chatId);
       return NextResponse.json({ ok: true });
@@ -1151,7 +1314,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: true });
     }
 
-    if (flow.step === 'awaiting_image' && flow.draft_id && wantsNoImage(incomingRaw)) {
+    if (flow.step === 'awaiting_image' && flow.draft_id && intent === 'no_image') {
       const supabase = createAdminClient();
       const { data: draftRow } = await supabase
         .from('blog_drafts')
@@ -1172,8 +1335,7 @@ export async function POST(request: Request) {
     if (
       flow.step === 'awaiting_image' &&
       flow.draft_id &&
-      !wantsNoImage(incomingRaw) &&
-      isLikelyBlogBody(incomingRaw)
+      intent === 'blog_content'
     ) {
       await updateDraftBodyFromText(flow.draft_id, incomingRaw);
       await sendTelegramMessage(
@@ -1185,12 +1347,12 @@ export async function POST(request: Request) {
     }
 
     if (flow.step === 'awaiting_content') {
-      if (isTrivialGreeting(incomingRaw)) {
+      if (intent === 'greeting') {
         await sendTelegramMessage(token, chatId, ANITA_INTRO);
         return NextResponse.json({ ok: true });
       }
 
-      if (!isLikelyBlogBody(incomingRaw)) {
+      if (intent !== 'blog_content') {
         const reply = await getAssistantReply(incomingRaw);
         await sendTelegramMessage(
           token,
