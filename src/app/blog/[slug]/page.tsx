@@ -8,6 +8,8 @@ import ShareButtons from '@/components/ShareButtons';
 import SharePopover from '@/components/SharePopover';
 import { getPublishedDraftBySlug } from '@/lib/blogDrafts';
 
+export const dynamic = 'force-dynamic';
+
 type Props = {
   params: Promise<{ slug: string }>;
 };
@@ -85,6 +87,31 @@ function isLikelyHeading(paragraph: string): boolean {
   return headingHints.some((hint) => lower.includes(hint));
 }
 
+function isLikelyKeyPhrase(paragraph: string): boolean {
+  const clean = paragraph.trim();
+  if (!clean) return false;
+  if (clean.length < 80 || clean.length > 280) return false;
+  if (isLikelyHeading(clean)) return false;
+  if (detectCallout(clean)) return false;
+
+  const lower = clean.toLowerCase();
+  const keyHints = [
+    'tu bienestar no es un lujo',
+    'no estás sola',
+    'no estas sola',
+    'recuerda',
+    'la clave',
+    'es importante',
+    'empieza con',
+    'paso a paso',
+    'autocuidado',
+    'poner límites',
+    'poner limites',
+  ];
+
+  return keyHints.some((hint) => lower.includes(hint));
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPublishedDraftBySlug(slug);
@@ -132,6 +159,10 @@ export default async function DynamicBlogPostPage({ params }: Props) {
     .split('\n')
     .map((item) => item.trim())
     .filter(Boolean);
+  const autoCalloutIndex = paragraphs.findIndex((paragraph, index) => {
+    if (index < 2) return false;
+    return isLikelyKeyPhrase(paragraph);
+  });
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -208,6 +239,16 @@ export default async function DynamicBlogPostPage({ params }: Props) {
                       <h2 className="text-2xl md:text-[2.05rem] leading-tight font-libre-baskerville text-accent mt-12 mb-5">
                         {paragraph}
                       </h2>
+                    );
+                  }
+                  if (index === autoCalloutIndex) {
+                    return (
+                      <div className={`p-6 rounded-xl border-l-4 my-8 ${getCalloutStyles('note')}`}>
+                        <h3 className="text-lg font-semibold mb-2">💭 Idea clave</h3>
+                        <p className="text-gray-700" style={{ textAlign: 'justify' }}>
+                          {paragraph}
+                        </p>
+                      </div>
                     );
                   }
                   return (

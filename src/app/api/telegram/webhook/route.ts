@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { createAdminClient } from '@/lib/supabase-admin';
 
 const TELEGRAM_API_BASE = 'https://api.telegram.org';
@@ -327,7 +328,7 @@ async function improveDraftWithOpenAI(
           {
             role: 'system',
             content:
-              'Eres editor de un blog de bienestar emocional. Recibes texto del autor. Conserva su voz, tono y mensaje: NO lo conviertas en marketing ni lo acortes demasiado. Solo quita saludos y meta-texto tipo "sube esto". Devuelve solo JSON con: title, excerpt, category, contentClean, seoTitle, seoDescription, inlineImageSide. contentClean debe ser el articulo fiel (parrafos claros, misma esencia y extension similar). category: Salud Mental | Autoestima | Maternidad | Bienestar. inlineImageSide: left o right.',
+              'Eres editor de un blog de bienestar emocional. Recibes texto del autor. Conserva su voz, tono y mensaje: NO lo conviertas en marketing ni lo acortes demasiado. Solo quita saludos y meta-texto tipo "sube esto". Devuelve solo JSON con: title, excerpt, category, contentClean, seoTitle, seoDescription, inlineImageSide. contentClean debe ser el articulo fiel (parrafos claros, misma esencia y extension similar) y con formato editorial automatico: agrega subtitulos breves en lineas separadas (sin ":" al final) y al menos una frase destacada en una linea que empiece por "💭 Recuerda:". Si aplica, puedes incluir lineas que empiecen por "✅" o "⚠️" para comparativos clave. category: Salud Mental | Autoestima | Maternidad | Bienestar. inlineImageSide: left o right.',
           },
           {
             role: 'user',
@@ -378,7 +379,7 @@ async function improveDraftWithGemini(
           systemInstruction: {
             parts: [
               {
-                text: 'Eres editor de un blog de bienestar emocional. Conserva voz y mensaje del autor; no reescribas como anuncio. Quita solo saludos y meta-texto. Devuelve solo JSON: title, excerpt, category, contentClean, seoTitle, seoDescription, inlineImageSide. contentClean fiel al original. category: Salud Mental | Autoestima | Maternidad | Bienestar. inlineImageSide: left o right.',
+                text: 'Eres editor de un blog de bienestar emocional. Conserva voz y mensaje del autor; no reescribas como anuncio. Quita solo saludos y meta-texto. Devuelve solo JSON: title, excerpt, category, contentClean, seoTitle, seoDescription, inlineImageSide. contentClean fiel al original y con formato editorial automatico: subtitulos breves en lineas separadas (sin ":" al final) y al menos una linea destacada que empiece por "💭 Recuerda:". Si aplica, agrega lineas "✅" y "⚠️" para contrastes utiles. category: Salud Mental | Autoestima | Maternidad | Bienestar. inlineImageSide: left o right.',
               },
             ],
           },
@@ -475,10 +476,24 @@ function wantsUnpublish(text: string): boolean {
   return (
     t === '/despublicar' ||
     t.startsWith('/despublicar ') ||
+    t.startsWith('/despublicar@') ||
     t === 'despublicalo' ||
     t === 'despublícalo' ||
     t === 'despublicar' ||
-    t === 'despublica'
+    t === 'despublica' ||
+    t === 'despublciar' ||
+    t === 'despublcar'
+  );
+}
+
+function wantsUnpublishAndDelete(text: string): boolean {
+  const t = text.trim().toLowerCase();
+  if (!t || t.length > 80) return false;
+  return (
+    t === '/despublicar-y-borrar' ||
+    t.startsWith('/despublicar-y-borrar ') ||
+    t === 'despublicar y borrar' ||
+    t === 'despublica y borra'
   );
 }
 
@@ -530,7 +545,7 @@ async function clearFlowAfterPublish(chatId: number) {
   await upsertFlow(chatId, 'awaiting_content', null);
 }
 
-async function unpublishDraftForChat(token: string, chatId: number, incomingRaw: string) {
+async function findPublishedDraftTarget(chatId: number, incomingRaw: string) {
   const supabase = createAdminClient();
   const commandArg = incomingRaw
     .trim()
@@ -553,14 +568,41 @@ async function unpublishDraftForChat(token: string, chatId: number, incomingRaw:
     targetQuery = targetQuery.order('published_at', { ascending: false, nullsFirst: false }).limit(1);
   }
 
-  const { data: target, error: targetError } = await targetQuery.maybeSingle();
+  let { data: target, error: targetError } = await targetQuery.maybeSingle();
+
+  // Fallback: si no hay match por chat, intenta en todos los posts publicados.
+  if (!target) {
+    let fallbackQuery = supabase.from('blog_drafts').select('id, title, slug').eq('status', 'published');
+    if (slugArg) {
+      fallbackQuery = fallbackQuery.eq('slug', slugArg);
+    } else {
+      fallbackQuery = fallbackQuery
+        .order('published_at', { ascending: false, nullsFirst: false })
+        .order('created_at', { ascending: false })
+        .limit(1);
+    }
+    const fallback = await fallbackQuery.maybeSingle();
+    target = fallback.data ?? null;
+    targetError = targetError || fallback.error;
+  }
+
   if (targetError || !target) {
+    return { target: null, slugArg };
+  }
+
+  return { target, slugArg };
+}
+
+async function unpublishDraftForChat(token: string, chatId: number, incomingRaw: string) {
+  const supabase = createAdminClient();
+  const { target, slugArg } = await findPublishedDraftTarget(chatId, incomingRaw);
+  if (!target) {
     await sendTelegramMessage(
       token,
       chatId,
       slugArg
-        ? `No encontré un post publicado con slug "${slugArg}" en este chat.`
-        : 'No encontré posts publicados para despublicar en este chat.'
+        ? `No encontré un post publicado con slug "${slugArg}".`
+        : 'No encontré posts publicados para despublicar.'
     );
     return;
   }
@@ -575,9 +617,37 @@ async function unpublishDraftForChat(token: string, chatId: number, incomingRaw:
     return;
   }
 
+  revalidatePath('/blog');
+  revalidatePath(`/blog/${target.slug}`);
+
   await sendTelegramMessage(token, chatId, `Listo. "${target.title}" quedó despublicado y volvió a borrador.`, {
     replyMarkup: publishKeyboard(target.id),
   });
+}
+
+async function unpublishAndDeleteDraftForChat(token: string, chatId: number, incomingRaw: string) {
+  const supabase = createAdminClient();
+  const { target, slugArg } = await findPublishedDraftTarget(chatId, incomingRaw);
+  if (!target) {
+    await sendTelegramMessage(
+      token,
+      chatId,
+      slugArg
+        ? `No encontré un post publicado con slug "${slugArg}".`
+        : 'No encontré posts publicados para despublicar y borrar.'
+    );
+    return;
+  }
+
+  const { error: deleteError } = await supabase.from('blog_drafts').delete().eq('id', target.id);
+  if (deleteError) {
+    await sendTelegramMessage(token, chatId, 'No pude despublicar y borrar ese post. Intenta de nuevo.');
+    return;
+  }
+
+  revalidatePath('/blog');
+  revalidatePath(`/blog/${target.slug}`);
+  await sendTelegramMessage(token, chatId, `Listo. "${target.title}" fue despublicado y eliminado.`);
 }
 
 async function resolvePendingDraftForChat(
@@ -941,6 +1011,8 @@ async function handleCallbackAction(
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.tupsicoana.com';
   const postUrl = `${siteUrl}/blog/${publishedSlug}`;
+  revalidatePath('/blog');
+  revalidatePath(`/blog/${publishedSlug}`);
 
   await answerCallbackQuery(token, callbackId, 'Publicado');
   await sendTelegramMessage(
@@ -1054,6 +1126,12 @@ export async function POST(request: Request) {
 
     if (wantsUnpublish(incomingRaw)) {
       await unpublishDraftForChat(token, chatId, incomingRaw);
+      await clearFlowAfterPublish(chatId);
+      return NextResponse.json({ ok: true });
+    }
+
+    if (wantsUnpublishAndDelete(incomingRaw)) {
+      await unpublishAndDeleteDraftForChat(token, chatId, incomingRaw);
       await clearFlowAfterPublish(chatId);
       return NextResponse.json({ ok: true });
     }

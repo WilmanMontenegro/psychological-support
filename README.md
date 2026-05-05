@@ -26,6 +26,12 @@ Este proyecto sigue el estándar [Semantic Versioning](https://semver.org/).
 
 Ver [AGENTS.md](./AGENTS.md) para guías de desarrollo, estructura y flujo de trabajo.
 
+## Operación por Telegram
+
+Para la operación del flujo de blogs por Telegram (comandos, estados, migraciones y troubleshooting), ver:
+
+- [docs/telegram-blog-flow.md](./docs/telegram-blog-flow.md)
+
 ## Configuración para agentes IA
 
 El proyecto incluye personalización para mejorar el trabajo con agentes:
