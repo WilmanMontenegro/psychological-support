@@ -64,8 +64,7 @@ function isExplicitCallout(paragraph: string): boolean {
 }
 
 function findImageParagraphIndex(paragraphs: string[]): number {
-  const preferredIndex = paragraphs.findIndex((paragraph, index) => {
-    if (index === 0) return false;
+  const preferredIndex = paragraphs.findIndex((paragraph) => {
     if (isExplicitCallout(paragraph)) return false;
     return paragraph.length >= IMAGE_PARAGRAPH_MIN || countWords(paragraph) >= 34;
   });

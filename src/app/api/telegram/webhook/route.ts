@@ -527,6 +527,29 @@ function isResetCommand(text: string): boolean {
   return t === '/start' || t === '/nuevo' || t === '/blog' || t === '/crear' || t === '/reset';
 }
 
+function maybePublishingAction(inputText: string): boolean {
+  const normalized = inputText
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+  if (!normalized || normalized.length > 120) return false;
+
+  const actionHints = [
+    'despublic',
+    'despubl',
+    'depublic',
+    'borrar',
+    'borralo',
+    'eliminar',
+    'eliminalo',
+    'quitar',
+    'quitalo',
+  ];
+
+  return actionHints.some((hint) => normalized.includes(hint));
+}
+
 function toValidIntent(value: string | undefined): UserIntent | null {
   if (!value) return null;
   const normalized = value.trim().toLowerCase();
@@ -663,6 +686,10 @@ async function inferUserIntent(inputText: string): Promise<UserIntent> {
     provider === 'gemini'
       ? await inferIntentWithGemini(inputText)
       : await inferIntentWithOpenAI(inputText);
+
+  if (ruleBased === 'other' && maybePublishingAction(inputText)) {
+    if (aiIntent === 'unpublish_delete' || aiIntent === 'unpublish') return aiIntent;
+  }
 
   if (!aiIntent || aiIntent === 'other') return ruleBased;
 
