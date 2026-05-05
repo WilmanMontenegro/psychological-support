@@ -31,6 +31,12 @@ type TelegramUpdate = {
   update_id: number;
   message?: TelegramMessage;
   edited_message?: TelegramMessage;
+  callback_query?: {
+    id: string;
+    data?: string;
+    message?: TelegramMessage;
+    from?: { id?: number };
+  };
 };
 
 const categoryRules: Record<string, string[]> = {
@@ -66,6 +72,24 @@ function normalizeText(value: string): string {
     .replace(/\n{3,}/g, '\n\n');
 }
 
+function isLikelyPreambleLine(line: string): boolean {
+  const lower = line.toLowerCase().trim();
+  if (!lower) return true;
+  const patterns = [
+    /^hola\b/,
+    /^buen[ao]s?\b/,
+    /^mira\b/,
+    /^te comparto\b/,
+    /^te envio\b/,
+    /^tengo este blog\b/,
+    /^puedes subirlo\b/,
+    /^quiero subir\b/,
+    /^por favor\b/,
+  ];
+
+  return patterns.some((pattern) => pattern.test(lower));
+}
+
 function slugify(value: string): string {
   return value
     .normalize('NFD')
@@ -94,10 +118,154 @@ type AiDraftResult = {
   title?: string;
   excerpt?: string;
   category?: string;
+  contentClean?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  inlineImageSide?: 'left' | 'right';
 };
 
 function isAllowedCategory(value: string): boolean {
   return Object.prototype.hasOwnProperty.call(categoryRules, value);
+}
+
+function sanitizeAiDraft(parsed: AiDraftResult): AiDraftResult {
+  const result: AiDraftResult = {};
+
+  if (parsed.title && typeof parsed.title === 'string') {
+    result.title = parsed.title.trim().slice(0, 140);
+  }
+  if (parsed.excerpt && typeof parsed.excerpt === 'string') {
+    result.excerpt = parsed.excerpt.trim().slice(0, 220);
+  }
+  if (
+    parsed.category &&
+    typeof parsed.category === 'string' &&
+    isAllowedCategory(parsed.category.trim())
+  ) {
+    result.category = parsed.category.trim();
+  }
+  if (parsed.contentClean && typeof parsed.contentClean === 'string') {
+    result.contentClean = normalizeText(parsed.contentClean);
+  }
+  if (parsed.seoTitle && typeof parsed.seoTitle === 'string') {
+    result.seoTitle = parsed.seoTitle.trim().slice(0, 160);
+  }
+  if (parsed.seoDescription && typeof parsed.seoDescription === 'string') {
+    result.seoDescription = parsed.seoDescription.trim().slice(0, 200);
+  }
+  if (parsed.inlineImageSide === 'left' || parsed.inlineImageSide === 'right') {
+    result.inlineImageSide = parsed.inlineImageSide;
+  }
+
+  return result;
+}
+
+function sanitizeAiChatReply(value: string): string {
+  const normalized = normalizeText(value).slice(0, 900);
+  return normalized || 'Claro. Cuentame que quieres publicar y te ayudo a dejarlo listo.';
+}
+
+async function getAssistantReply(inputText: string): Promise<string | null> {
+  const provider = (process.env.AI_PROVIDER || 'gemini').toLowerCase();
+  if (provider === 'gemini') {
+    return getAssistantReplyWithGemini(inputText);
+  }
+
+  return getAssistantReplyWithOpenAI(inputText);
+}
+
+async function getAssistantReplyWithOpenAI(inputText: string): Promise<string | null> {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) return null;
+
+  const model = process.env.OPENAI_MODEL || DEFAULT_AI_MODEL;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), AI_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(OPENAI_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+      signal: controller.signal,
+      body: JSON.stringify({
+        model,
+        temperature: 0.5,
+        messages: [
+          {
+            role: 'system',
+            content:
+              'Eres Anita, asistente para crear blogs de bienestar emocional en Telegram. Responde en espanol, breve, clara y accionable. Si te piden ideas de imagen, da 3 ideas concretas. No uses formato largo.',
+          },
+          { role: 'user', content: inputText },
+        ],
+      }),
+    });
+    if (!response.ok) return null;
+
+    const data = (await response.json()) as {
+      choices?: Array<{ message?: { content?: string } }>;
+    };
+    const text = data.choices?.[0]?.message?.content;
+    if (!text) return null;
+    return sanitizeAiChatReply(text);
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function getAssistantReplyWithGemini(inputText: string): Promise<string | null> {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) return null;
+
+  const model = process.env.GEMINI_MODEL || DEFAULT_GEMINI_MODEL;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), AI_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(
+      `${GEMINI_API_BASE}/${model}:generateContent?key=${encodeURIComponent(apiKey)}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
+        body: JSON.stringify({
+          systemInstruction: {
+            parts: [
+              {
+                text: 'Eres Anita, asistente para crear blogs de bienestar emocional en Telegram. Responde en espanol, breve, clara y accionable. Si te piden ideas de imagen, da 3 ideas concretas. No uses formato largo.',
+              },
+            ],
+          },
+          generationConfig: {
+            temperature: 0.5,
+          },
+          contents: [
+            {
+              role: 'user',
+              parts: [{ text: inputText }],
+            },
+          ],
+        }),
+      }
+    );
+    if (!response.ok) return null;
+
+    const data = (await response.json()) as {
+      candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
+    };
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) return null;
+    return sanitizeAiChatReply(text);
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 async function improveDraftWithAi(
@@ -139,7 +307,7 @@ async function improveDraftWithOpenAI(
           {
             role: 'system',
             content:
-              'Eres editor de un blog de bienestar emocional. Devuelve solo JSON válido con campos: title, excerpt, category. No agregues ningún texto fuera del JSON. category debe ser exactamente una de: Salud Mental, Autoestima, Maternidad, Bienestar.',
+              'Eres editor de un blog de bienestar emocional. Recibes texto libre de Telegram. Ignora saludos, pedidos como "puedes subirlo" y cualquier preámbulo conversacional. Devuelve solo JSON válido con campos: title, excerpt, category, contentClean, seoTitle, seoDescription, inlineImageSide. No agregues texto fuera del JSON. category debe ser exactamente una de: Salud Mental, Autoestima, Maternidad, Bienestar. inlineImageSide debe ser left o right.',
           },
           {
             role: 'user',
@@ -160,23 +328,7 @@ async function improveDraftWithOpenAI(
     if (!raw) return null;
 
     const parsed = JSON.parse(raw) as AiDraftResult;
-    const result: AiDraftResult = {};
-
-    if (parsed.title && typeof parsed.title === 'string') {
-      result.title = parsed.title.trim().slice(0, 140);
-    }
-    if (parsed.excerpt && typeof parsed.excerpt === 'string') {
-      result.excerpt = parsed.excerpt.trim().slice(0, 220);
-    }
-    if (
-      parsed.category &&
-      typeof parsed.category === 'string' &&
-      isAllowedCategory(parsed.category.trim())
-    ) {
-      result.category = parsed.category.trim();
-    }
-
-    return result;
+    return sanitizeAiDraft(parsed);
   } catch {
     return null;
   } finally {
@@ -206,7 +358,7 @@ async function improveDraftWithGemini(
           systemInstruction: {
             parts: [
               {
-                text: 'Eres editor de un blog de bienestar emocional. Devuelve solo JSON valido con campos: title, excerpt, category. category debe ser exactamente una de: Salud Mental, Autoestima, Maternidad, Bienestar.',
+                text: 'Eres editor de un blog de bienestar emocional. Recibes texto libre de Telegram. Ignora saludos, pedidos como "puedes subirlo" y cualquier preámbulo conversacional. Devuelve solo JSON valido con campos: title, excerpt, category, contentClean, seoTitle, seoDescription, inlineImageSide. category debe ser exactamente una de: Salud Mental, Autoestima, Maternidad, Bienestar. inlineImageSide debe ser left o right.',
               },
             ],
           },
@@ -239,23 +391,7 @@ async function improveDraftWithGemini(
     if (!raw) return null;
 
     const parsed = JSON.parse(raw) as AiDraftResult;
-    const result: AiDraftResult = {};
-
-    if (parsed.title && typeof parsed.title === 'string') {
-      result.title = parsed.title.trim().slice(0, 140);
-    }
-    if (parsed.excerpt && typeof parsed.excerpt === 'string') {
-      result.excerpt = parsed.excerpt.trim().slice(0, 220);
-    }
-    if (
-      parsed.category &&
-      typeof parsed.category === 'string' &&
-      isAllowedCategory(parsed.category.trim())
-    ) {
-      result.category = parsed.category.trim();
-    }
-
-    return result;
+    return sanitizeAiDraft(parsed);
   } catch {
     return null;
   } finally {
@@ -270,13 +406,17 @@ function parseDraftContent(message: TelegramMessage) {
     .map((line) => line.trim())
     .filter(Boolean);
 
-  const firstLine = lines[0] || `Borrador ${new Date().toISOString().slice(0, 10)}`;
+  const linesWithoutPreamble = lines.filter((line) => !isLikelyPreambleLine(line));
+  const effectiveLines = linesWithoutPreamble.length > 0 ? linesWithoutPreamble : lines;
+
+  const firstLine = effectiveLines[0] || `Borrador ${new Date().toISOString().slice(0, 10)}`;
   const title = firstLine.replace(/^titulo:\s*/i, '').slice(0, 140);
   const slugBase = slugify(title || firstLine);
   const slug = slugBase || `borrador-${Date.now()}`;
-  const excerptSource = lines[1] || rawContent || title;
+  const contentBody = effectiveLines.slice(1).join('\n\n').trim();
+  const excerptSource = effectiveLines[1] || contentBody || title;
   const excerpt = excerptSource.slice(0, 220);
-  const contentRaw = rawContent || title;
+  const contentRaw = contentBody || rawContent || title;
 
   return {
     title,
@@ -285,6 +425,10 @@ function parseDraftContent(message: TelegramMessage) {
     contentRaw,
     category: inferCategory(`${title}\n${contentRaw}`),
   };
+}
+
+function buildGuidedQuestionsMessage() {
+  return 'Que quieres publicar hoy? Mándame el texto del blog y si quieres una portada, también la imagen.';
 }
 
 async function telegramRequest<T>(
@@ -361,11 +505,19 @@ async function uploadCoverFromTelegram(
   return data.publicUrl || null;
 }
 
-async function sendTelegramMessage(token: string, chatId: number, text: string) {
+async function sendTelegramMessage(
+  token: string,
+  chatId: number,
+  text: string,
+  options?: {
+    replyMarkup?: Record<string, unknown>;
+  }
+) {
   try {
     await telegramRequest(token, 'sendMessage', {
       chat_id: chatId,
       text,
+      ...(options?.replyMarkup ? { reply_markup: options.replyMarkup } : {}),
     });
   } catch (error) {
     console.error('No se pudo enviar respuesta a Telegram:', error);
@@ -375,6 +527,153 @@ async function sendTelegramMessage(token: string, chatId: number, text: string) 
 function getLatestPhoto(message: TelegramMessage): TelegramPhoto | undefined {
   if (!message.photo || message.photo.length === 0) return undefined;
   return message.photo[message.photo.length - 1];
+}
+
+async function answerCallbackQuery(token: string, callbackQueryId: string, text: string) {
+  try {
+    await telegramRequest(token, 'answerCallbackQuery', {
+      callback_query_id: callbackQueryId,
+      text,
+    });
+  } catch (error) {
+    console.error('No se pudo responder callback de Telegram:', error);
+  }
+}
+
+async function handleCallbackAction(
+  token: string,
+  callbackQuery: NonNullable<TelegramUpdate['callback_query']>
+) {
+  const callbackData = callbackQuery.data || '';
+  const callbackMessage = callbackQuery.message;
+  const chatId = callbackMessage?.chat?.id;
+  const callbackId = callbackQuery.id;
+
+  if (!chatId || !callbackId) return;
+
+  const [action, draftId] = callbackData.split(':');
+  if (!action || !draftId) {
+    await answerCallbackQuery(token, callbackId, 'Accion no valida');
+    return;
+  }
+
+  if (action === 'keep') {
+    await answerCallbackQuery(token, callbackId, 'Borrador queda pendiente');
+    await sendTelegramMessage(token, chatId, 'Listo. El borrador quedó pendiente para publicarlo cuando quieras.');
+    return;
+  }
+
+  if (action !== 'publish') {
+    await answerCallbackQuery(token, callbackId, 'Accion no soportada');
+    return;
+  }
+
+  const supabase = createAdminClient();
+  const { data: draft, error: draftError } = await supabase
+    .from('blog_drafts')
+    .select('id, slug, title, status')
+    .eq('id', draftId)
+    .maybeSingle();
+
+  if (draftError || !draft) {
+    await answerCallbackQuery(token, callbackId, 'No encontré ese borrador');
+    return;
+  }
+
+  if (draft.status === 'published') {
+    await answerCallbackQuery(token, callbackId, 'Ese borrador ya está publicado');
+    return;
+  }
+
+  const { error } = await supabase
+    .from('blog_drafts')
+    .update({ status: 'published', published_at: new Date().toISOString() })
+    .eq('id', draftId);
+
+  if (error) {
+    await answerCallbackQuery(token, callbackId, 'No se pudo publicar');
+    return;
+  }
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.tupsicoana.com';
+  const postUrl = `${siteUrl}/blog/${draft.slug}`;
+
+  await answerCallbackQuery(token, callbackId, 'Publicado');
+  await sendTelegramMessage(
+    token,
+    chatId,
+    `Publicado con exito.\n\nTitulo: ${draft.title}\nURL: ${postUrl}`
+  );
+}
+
+async function updateLatestPendingDraftCoverFromPhoto(
+  token: string,
+  chatId: number,
+  message: TelegramMessage
+): Promise<boolean> {
+  const latestPhoto = getLatestPhoto(message);
+  if (!latestPhoto) return false;
+
+  const supabase = createAdminClient();
+  const { data: latestDraft, error: latestDraftError } = await supabase
+    .from('blog_drafts')
+    .select('id, slug, title, status')
+    .eq('source_chat_id', chatId)
+    .eq('status', 'pending')
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (latestDraftError || !latestDraft) {
+    await sendTelegramMessage(
+      token,
+      chatId,
+      'Recibí la imagen, pero no encontré un borrador pendiente en este chat. Envíame primero el texto del blog y luego la portada.'
+    );
+    return true;
+  }
+
+  let coverUrl: string | null = null;
+  try {
+    coverUrl = await uploadCoverFromTelegram(token, latestPhoto, latestDraft.slug);
+  } catch (error) {
+    if (error instanceof Error && error.message === 'IMAGE_TOO_LARGE') {
+      await sendTelegramMessage(
+        token,
+        chatId,
+        'La imagen es demasiado pesada. Usa una portada menor a 400 KB para mantener el plan gratis.'
+      );
+      return true;
+    }
+    throw error;
+  }
+
+  const { error } = await supabase
+    .from('blog_drafts')
+    .update({ cover_url: coverUrl })
+    .eq('id', latestDraft.id);
+
+  if (error) {
+    throw error;
+  }
+
+  await sendTelegramMessage(
+    token,
+    chatId,
+    `Portada actualizada para "${latestDraft.title}".\n\n¿Quieres publicarlo ahora?`,
+    {
+      replyMarkup: {
+        inline_keyboard: [
+          [
+            { text: 'Publicar ahora', callback_data: `publish:${latestDraft.id}` },
+            { text: 'Dejar pendiente', callback_data: `keep:${latestDraft.id}` },
+          ],
+        ],
+      },
+    }
+  );
+
+  return true;
 }
 
 export async function POST(request: Request) {
@@ -391,6 +690,11 @@ export async function POST(request: Request) {
     }
 
     const update = (await request.json()) as TelegramUpdate;
+    if (update.callback_query) {
+      await handleCallbackAction(token, update.callback_query);
+      return NextResponse.json({ ok: true });
+    }
+
     const message = update.message || update.edited_message;
     const chatId = message?.chat?.id;
 
@@ -403,8 +707,48 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: true });
     }
 
+    const incomingRaw = normalizeText(message.text || message.caption || '');
+    const incomingText = incomingRaw.toLowerCase();
+
+    if (!incomingRaw && message.photo?.length) {
+      const handled = await updateLatestPendingDraftCoverFromPhoto(token, chatId, message);
+      if (handled) {
+        return NextResponse.json({ ok: true });
+      }
+    }
+
+    if (incomingText === '/nuevo' || incomingText === '/blog' || incomingText === '/crear') {
+      await sendTelegramMessage(token, chatId, buildGuidedQuestionsMessage());
+      return NextResponse.json({ ok: true });
+    }
+
+    const seemsLikeQuestion =
+      incomingText.includes('?') ||
+      incomingText.startsWith('hola') ||
+      incomingText.includes('que imagen') ||
+      incomingText.includes('recomiendas') ||
+      incomingText.includes('idea');
+
+    if (incomingRaw.length < 120 || seemsLikeQuestion) {
+      if (!incomingRaw) {
+        await sendTelegramMessage(
+          token,
+          chatId,
+          '¿Qué quieres publicar hoy? Envíame el texto del blog y, si quieres, también la portada.'
+        );
+        return NextResponse.json({ ok: true });
+      }
+      const assistantReply = await getAssistantReply(incomingRaw);
+      await sendTelegramMessage(
+        token,
+        chatId,
+        assistantReply || 'Que quieres publicar hoy? Pásame el texto del blog y te lo dejo listo.'
+      );
+      return NextResponse.json({ ok: true });
+    }
+
     const parsedDraft = parseDraftContent(message);
-    const aiDraft = await improveDraftWithAi(parsedDraft.contentRaw, {
+    const aiDraft = await improveDraftWithAi(incomingRaw, {
       title: parsedDraft.title,
       excerpt: parsedDraft.excerpt,
       category: parsedDraft.category,
@@ -414,7 +758,10 @@ export async function POST(request: Request) {
     const excerpt = aiDraft?.excerpt || parsedDraft.excerpt;
     const category = aiDraft?.category || parsedDraft.category;
     const slug = slugify(title) || parsedDraft.slug;
-    const contentRaw = parsedDraft.contentRaw;
+    const contentRaw = aiDraft?.contentClean || parsedDraft.contentRaw;
+    const seoTitle = aiDraft?.seoTitle || `${title} | Tu Psico Ana`;
+    const seoDescription = aiDraft?.seoDescription || excerpt;
+    const inlineImageSide = aiDraft?.inlineImageSide || 'right';
     let coverUrl: string | null = null;
     try {
       coverUrl = await uploadCoverFromTelegram(token, getLatestPhoto(message), slug);
@@ -431,17 +778,24 @@ export async function POST(request: Request) {
     }
 
     const supabase = createAdminClient();
-    const { error } = await supabase.from('blog_drafts').insert({
-      title,
-      slug,
-      excerpt,
-      content_raw: contentRaw,
-      category,
-      cover_url: coverUrl,
-      status: 'pending',
-      source_chat_id: chatId,
-      source_message_id: message.message_id,
-    });
+    const { data: insertedDraft, error } = await supabase
+      .from('blog_drafts')
+      .insert({
+        title,
+        slug,
+        excerpt,
+        content_raw: contentRaw,
+        category,
+        cover_url: coverUrl,
+        seo_title: seoTitle,
+        seo_description: seoDescription,
+        inline_image_side: inlineImageSide,
+        status: 'pending',
+        source_chat_id: chatId,
+        source_message_id: message.message_id,
+      })
+      .select('id, slug')
+      .single();
 
     if (error) {
       const duplicate = error.message.toLowerCase().includes('duplicate');
@@ -457,7 +811,19 @@ export async function POST(request: Request) {
       chatId,
       `Borrador recibido.\n\nTitulo: ${title}\nCategoria: ${category}\nEstado: pending${
         aiDraft ? '\nMejora IA: activa' : '\nMejora IA: no configurada'
-      }`
+      }\n\nQuieres publicarlo ahora?`,
+      insertedDraft
+        ? {
+            replyMarkup: {
+              inline_keyboard: [
+                [
+                  { text: 'Publicar ahora', callback_data: `publish:${insertedDraft.id}` },
+                  { text: 'Dejar pendiente', callback_data: `keep:${insertedDraft.id}` },
+                ],
+              ],
+            },
+          }
+        : undefined
     );
 
     return NextResponse.json({ ok: true });

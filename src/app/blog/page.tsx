@@ -1,6 +1,9 @@
 import BlogCard from '@/components/BlogCard';
 import type { Metadata } from 'next';
 import { blogPosts } from '@/lib/blogData';
+import { getPublishedDraftCards } from '@/lib/blogDrafts';
+
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: "Blog de bienestar emocional | Tu Psico Ana",
@@ -16,10 +19,12 @@ const jsonLd = {
   url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com"}/blog`,
 };
 
-const postsToRender = [...blogPosts]
-  .sort((a, b) => (a.date < b.date ? 1 : -1));
+export default async function BlogPage() {
+  const publishedPosts = await getPublishedDraftCards();
+  const merged = [...publishedPosts, ...blogPosts];
+  const uniqueBySlug = Array.from(new Map(merged.map((post) => [post.slug, post])).values());
+  const postsToRender = uniqueBySlug.sort((a, b) => (a.date < b.date ? 1 : -1));
 
-export default function BlogPage() {
   return (
     <div className="min-h-screen pt-20 pb-16 px-4 bg-pastel-light">
       <script

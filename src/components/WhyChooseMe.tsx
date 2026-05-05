@@ -1,5 +1,7 @@
 "use client"
 
+import Link from 'next/link'
+
 export default function WhyChooseMe() {
   const features = [
     {
@@ -75,13 +77,13 @@ export default function WhyChooseMe() {
           <p className="text-lg text-gray-700 mb-6 max-w-2xl mx-auto">
             Gracias por hacer parte de esta comunidad. Aquí encontrarás contenido, reflexiones y recursos para seguir creciendo.
           </p>
-          <a
+          <Link
             href="/blog"
             className="inline-block text-white px-8 py-3 rounded-lg font-montserrat font-medium text-lg hover:opacity-90 transition-all duration-300 shadow-md hover:shadow-lg"
             style={{ backgroundColor: 'var(--color-secondary)' }}
           >
             Ver blog
-          </a>
+          </Link>
         </div>
       </div>
     </section>

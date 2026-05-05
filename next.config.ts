@@ -7,6 +7,12 @@ const nextConfig: NextConfig = {
   productionBrowserSourceMaps: false,
   images: {
     formats: ["image/avif", "image/webp"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**.supabase.co",
+      },
+    ],
   },
   redirects: async () => [
     // ─── MODO PAUSA (citas desactivadas hasta graduación) ────────────────────
