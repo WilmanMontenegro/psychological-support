@@ -19,12 +19,21 @@ type TelegramPhoto = {
   file_size?: number;
 };
 
+type TelegramDocument = {
+  file_id: string;
+  file_unique_id: string;
+  file_name?: string;
+  mime_type?: string;
+  file_size?: number;
+};
+
 type TelegramMessage = {
   message_id: number;
   chat?: { id?: number };
   text?: string;
   caption?: string;
   photo?: TelegramPhoto[];
+  document?: TelegramDocument;
 };
 
 type TelegramUpdate = {
@@ -551,7 +560,7 @@ async function insertDraftFromMessage(
 
   let coverUrl: string | null = null;
   try {
-    coverUrl = await uploadCoverFromTelegram(token, getLatestPhoto(message), slug);
+    coverUrl = await uploadCoverFromTelegram(token, getLatestCoverAsset(message), slug);
   } catch (error) {
     if (error instanceof Error && error.message === 'IMAGE_TOO_LARGE') {
       await sendTelegramMessage(
@@ -655,16 +664,16 @@ async function telegramRequest<T>(
 
 async function uploadCoverFromTelegram(
   token: string,
-  photo: TelegramPhoto | undefined,
+  asset: TelegramPhoto | TelegramDocument | undefined,
   slug: string
 ): Promise<string | null> {
-  if (!photo) return null;
-  if (photo.file_size && photo.file_size > MAX_COVER_FILE_SIZE_BYTES) {
+  if (!asset) return null;
+  if (asset.file_size && asset.file_size > MAX_COVER_FILE_SIZE_BYTES) {
     throw new Error('IMAGE_TOO_LARGE');
   }
 
   const fileResult = await telegramRequest<{ file_path: string }>(token, 'getFile', {
-    file_id: photo.file_id,
+    file_id: asset.file_id,
   });
 
   const filePath = fileResult.file_path;
@@ -685,7 +694,13 @@ async function uploadCoverFromTelegram(
     throw new Error('IMAGE_TOO_LARGE');
   }
   const contentType = fileResponse.headers.get('content-type') || 'image/jpeg';
-  const extension = contentType.includes('png') ? 'png' : 'jpg';
+  const lowerFilePath = filePath.toLowerCase();
+  const extension =
+    contentType.includes('png') || lowerFilePath.endsWith('.png')
+      ? 'png'
+      : contentType.includes('webp') || lowerFilePath.endsWith('.webp')
+        ? 'webp'
+        : 'jpg';
   const objectPath = `${slug}-${Date.now()}.${extension}`;
 
   const supabase = createAdminClient();
@@ -726,6 +741,21 @@ async function sendTelegramMessage(
 function getLatestPhoto(message: TelegramMessage): TelegramPhoto | undefined {
   if (!message.photo || message.photo.length === 0) return undefined;
   return message.photo[message.photo.length - 1];
+}
+
+function getImageDocument(message: TelegramMessage): TelegramDocument | undefined {
+  const document = message.document;
+  if (!document) return undefined;
+
+  const mimeType = document.mime_type?.toLowerCase() || '';
+  const fileName = document.file_name?.toLowerCase() || '';
+  if (mimeType.startsWith('image/')) return document;
+  if (/\.(jpg|jpeg|png|webp)$/i.test(fileName)) return document;
+  return undefined;
+}
+
+function getLatestCoverAsset(message: TelegramMessage): TelegramPhoto | TelegramDocument | undefined {
+  return getLatestPhoto(message) || getImageDocument(message);
 }
 
 async function answerCallbackQuery(token: string, callbackQueryId: string, text: string) {
@@ -813,8 +843,8 @@ async function updateLatestPendingDraftCoverFromPhoto(
   message: TelegramMessage,
   preferredDraftId: string | null = null
 ): Promise<boolean> {
-  const latestPhoto = getLatestPhoto(message);
-  if (!latestPhoto) return false;
+  const latestCoverAsset = getLatestCoverAsset(message);
+  if (!latestCoverAsset) return false;
 
   const supabase = createAdminClient();
   const latestDraft = await resolvePendingDraftForChat(chatId, preferredDraftId);
@@ -830,7 +860,7 @@ async function updateLatestPendingDraftCoverFromPhoto(
 
   let coverUrl: string | null = null;
   try {
-    coverUrl = await uploadCoverFromTelegram(token, latestPhoto, latestDraft.slug);
+    coverUrl = await uploadCoverFromTelegram(token, latestCoverAsset, latestDraft.slug);
   } catch (error) {
     if (error instanceof Error && error.message === 'IMAGE_TOO_LARGE') {
       await sendTelegramMessage(
@@ -910,7 +940,7 @@ export async function POST(request: Request) {
 
     const flow = await getFlow(chatId);
 
-    if (!incomingRaw && message.photo?.length) {
+    if (!incomingRaw && getLatestCoverAsset(message)) {
       if (flow.step !== 'awaiting_image') {
         await sendTelegramMessage(
           token,
