@@ -15,6 +15,11 @@ type Props = {
 };
 
 type CalloutKind = 'success' | 'warning' | 'note';
+type AutoCallout = {
+  index: number;
+  kind: CalloutKind;
+  title: string;
+};
 const IMAGE_PARAGRAPH_MIN = 220;
 
 function formatDate(dateInput: string) {
@@ -98,13 +103,39 @@ function calloutCandidateScore(paragraph: string): number {
   return hints.reduce((score, hint) => (lower.includes(hint) ? score + 1 : score), 0);
 }
 
-function findAutoCalloutIndexes(paragraphs: string[], imageIndex: number): number[] {
+function getAutoCalloutMeta(paragraph: string): Pick<AutoCallout, 'kind' | 'title'> {
+  const lower = paragraph.toLowerCase();
+
+  if (
+    lower.includes('redes') ||
+    lower.includes('alerta') ||
+    lower.includes('no tienes que poder') ||
+    lower.includes('sobrepas')
+  ) {
+    return { kind: 'warning', title: '⚠️ Ten presente' };
+  }
+
+  if (
+    lower.includes('autocuidado') ||
+    lower.includes('poner límites') ||
+    lower.includes('poner limites') ||
+    lower.includes('paso a paso') ||
+    lower.includes('pedir ayuda') ||
+    lower.includes('escucharte')
+  ) {
+    return { kind: 'success', title: '✅ Práctica de cuidado' };
+  }
+
+  return { kind: 'note', title: '✨ Recuerda' };
+}
+
+function findAutoCallouts(paragraphs: string[], imageIndex: number): AutoCallout[] {
   return paragraphs
     .map((paragraph, index) => ({ index, score: calloutCandidateScore(paragraph) }))
     .filter(({ index, score }) => score > 0 && index !== 0 && index !== imageIndex)
     .sort((a, b) => b.score - a.score || a.index - b.index)
     .slice(0, 2)
-    .map(({ index }) => index);
+    .map(({ index }) => ({ index, ...getAutoCalloutMeta(paragraphs[index]) }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -155,7 +186,7 @@ export default async function DynamicBlogPostPage({ params }: Props) {
     .map((item) => item.trim())
     .filter(Boolean);
   const imageParagraphIndex = findImageParagraphIndex(paragraphs);
-  const autoCalloutIndexes = findAutoCalloutIndexes(paragraphs, imageParagraphIndex);
+  const autoCallouts = findAutoCallouts(paragraphs, imageParagraphIndex);
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -212,36 +243,40 @@ export default async function DynamicBlogPostPage({ params }: Props) {
                 const callout = detectCallout(paragraph);
 
                 if (index === imageParagraphIndex && !callout) {
+                  const imageFloatClass =
+                    inlineSide === 'left'
+                      ? 'md:float-left md:mr-7'
+                      : 'md:float-right md:ml-7';
+
                   return (
-                    <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-5 items-start not-prose">
-                      <div className={inlineSide === 'left' ? 'md:order-1' : 'md:order-2'}>
-                        <div className="rounded-2xl overflow-hidden shadow-lg">
-                          <Image
-                            src={imageUrl}
-                            alt={post.title}
-                            width={1200}
-                            height={800}
-                            className="w-full h-auto"
-                            sizes="(max-width: 768px) 100vw, 50vw"
-                          />
-                        </div>
-                      </div>
-                      <p
-                        className={`text-gray-700 leading-relaxed m-0 ${inlineSide === 'left' ? 'md:order-2' : 'md:order-1'}`}
-                        style={{ textAlign: 'justify' }}
+                    <>
+                      <div
+                        className={`not-prose float-none mb-5 w-full md:mb-4 md:w-[42%] rounded-2xl overflow-hidden shadow-lg ${imageFloatClass}`}
                       >
+                        <Image
+                          src={imageUrl}
+                          alt={post.title}
+                          width={1200}
+                          height={800}
+                          className="w-full h-auto"
+                          sizes="(max-width: 768px) 100vw, 42vw"
+                        />
+                      </div>
+                      <p className="text-gray-700 leading-relaxed mb-6" style={{ textAlign: 'justify' }}>
                         {paragraph}
                       </p>
-                    </div>
+                    </>
                   );
                 }
 
                 if (!callout) {
-                  if (autoCalloutIndexes.includes(index)) {
+                  const autoCallout = autoCallouts.find((item) => item.index === index);
+                  if (autoCallout) {
                     return (
-                      <div className={`p-5 rounded-xl border-l-4 my-6 ${getCalloutStyles('note')}`}>
-                        <p className="text-gray-800 font-semibold" style={{ textAlign: 'justify' }}>
-                          💭 {paragraph}
+                      <div className={`p-5 rounded-xl border-l-4 my-6 ${getCalloutStyles(autoCallout.kind)}`}>
+                        <h3 className="text-lg font-semibold mb-2">{autoCallout.title}</h3>
+                        <p className="text-gray-700" style={{ textAlign: 'justify' }}>
+                          {paragraph}
                         </p>
                       </div>
                     );
@@ -272,7 +307,7 @@ export default async function DynamicBlogPostPage({ params }: Props) {
             </div>
           ))}
         </div>
-        <div className="my-12 py-8 border-t border-b border-gray-200">
+        <div className="clear-both my-12 py-8 border-t border-b border-gray-200">
           <p className="text-sm text-gray-600 mb-6 font-medium">¿Te gustó este artículo? Compártelo:</p>
           <ShareButtons title={post.title} />
         </div>
