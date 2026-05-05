@@ -469,6 +469,19 @@ function wantsNoImage(text: string): boolean {
   return phrases.some((p) => t === p || t.startsWith(`${p} `) || t === `${p}.`);
 }
 
+function wantsUnpublish(text: string): boolean {
+  const t = text.trim().toLowerCase();
+  if (!t || t.length > 60) return false;
+  return (
+    t === '/despublicar' ||
+    t.startsWith('/despublicar ') ||
+    t === 'despublicalo' ||
+    t === 'despublícalo' ||
+    t === 'despublicar' ||
+    t === 'despublica'
+  );
+}
+
 function isLikelyBlogBody(text: string): boolean {
   const trimmed = text.trim();
   if (trimmed.length >= 160) return true;
@@ -515,6 +528,56 @@ async function upsertFlow(chatId: number, step: FlowStep, draftId: string | null
 
 async function clearFlowAfterPublish(chatId: number) {
   await upsertFlow(chatId, 'awaiting_content', null);
+}
+
+async function unpublishDraftForChat(token: string, chatId: number, incomingRaw: string) {
+  const supabase = createAdminClient();
+  const commandArg = incomingRaw
+    .trim()
+    .split(/\s+/)
+    .slice(1)
+    .join(' ')
+    .trim()
+    .toLowerCase();
+  const slugArg = commandArg && !commandArg.startsWith('@') ? slugify(commandArg) : '';
+
+  let targetQuery = supabase
+    .from('blog_drafts')
+    .select('id, title, slug')
+    .eq('source_chat_id', chatId)
+    .eq('status', 'published');
+
+  if (slugArg) {
+    targetQuery = targetQuery.eq('slug', slugArg);
+  } else {
+    targetQuery = targetQuery.order('published_at', { ascending: false, nullsFirst: false }).limit(1);
+  }
+
+  const { data: target, error: targetError } = await targetQuery.maybeSingle();
+  if (targetError || !target) {
+    await sendTelegramMessage(
+      token,
+      chatId,
+      slugArg
+        ? `No encontré un post publicado con slug "${slugArg}" en este chat.`
+        : 'No encontré posts publicados para despublicar en este chat.'
+    );
+    return;
+  }
+
+  const { error: updateError } = await supabase
+    .from('blog_drafts')
+    .update({ status: 'pending', published_at: null })
+    .eq('id', target.id);
+
+  if (updateError) {
+    await sendTelegramMessage(token, chatId, 'No pude despublicar ese post. Intenta de nuevo.');
+    return;
+  }
+
+  await sendTelegramMessage(token, chatId, `Listo. "${target.title}" quedó despublicado y volvió a borrador.`, {
+    replyMarkup: publishKeyboard(target.id),
+  });
 }
 
 async function resolvePendingDraftForChat(
@@ -986,6 +1049,12 @@ export async function POST(request: Request) {
     ) {
       await upsertFlow(chatId, 'awaiting_content', null);
       await sendTelegramMessage(token, chatId, buildGuidedQuestionsMessage());
+      return NextResponse.json({ ok: true });
+    }
+
+    if (wantsUnpublish(incomingRaw)) {
+      await unpublishDraftForChat(token, chatId, incomingRaw);
+      await clearFlowAfterPublish(chatId);
       return NextResponse.json({ ok: true });
     }
 
