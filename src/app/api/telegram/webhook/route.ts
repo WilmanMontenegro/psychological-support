@@ -941,14 +941,6 @@ export async function POST(request: Request) {
     const flow = await getFlow(chatId);
 
     if (!incomingRaw && getLatestCoverAsset(message)) {
-      if (flow.step !== 'awaiting_image') {
-        await sendTelegramMessage(
-          token,
-          chatId,
-          'Primero mándame el texto del blog. Si quieres, en el mismo mensaje puedes poner la imagen y el texto como leyenda.'
-        );
-        return NextResponse.json({ ok: true });
-      }
       const handled = await updateLatestPendingDraftCoverFromPhoto(
         token,
         chatId,
