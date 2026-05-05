@@ -862,6 +862,17 @@ async function handleCallbackAction(
 
   if (publishError) {
     await answerCallbackQuery(token, callbackId, 'No se pudo publicar');
+    const publishErrorMessage = publishError.message?.toLowerCase() || '';
+    if (
+      publishErrorMessage.includes('blog_drafts_status_check') ||
+      (publishErrorMessage.includes('status') && publishErrorMessage.includes('check'))
+    ) {
+      await sendTelegramMessage(
+        token,
+        chatId,
+        'No pude publicar porque falta una migración en la base de datos (status=published). Aplica las migraciones nuevas y vuelve a intentarlo.'
+      );
+    }
     return;
   }
 
