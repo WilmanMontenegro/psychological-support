@@ -55,91 +55,6 @@ function getCalloutStyles(kind: CalloutKind): string {
   return 'bg-secondary/5 border-secondary text-gray-800';
 }
 
-function isLikelyHeading(paragraph: string): boolean {
-  const clean = paragraph.trim();
-  if (!clean) return false;
-  if (clean.length > 65) return false;
-  if (clean.includes(':')) return false;
-  if (/[.!?]$/.test(clean)) return false;
-  if (clean.startsWith('✅') || clean.startsWith('⚠') || clean.startsWith('💭')) return false;
-  if (/^recuerda:/i.test(clean)) return false;
-
-  const words = clean.split(/\s+/).filter(Boolean);
-  if (words.length < 3 || words.length > 8) return false;
-
-  const lower = clean.toLowerCase();
-  const headingHints = [
-    'mensaje final',
-    'aprender',
-    'estrategias',
-    'qué es',
-    'que es',
-    'cómo',
-    'como',
-    'por qué',
-    'porque',
-    'diferencia',
-    'señales',
-    'pasos',
-    'claves',
-  ];
-
-  return headingHints.some((hint) => lower.includes(hint));
-}
-
-function isLongParagraph(paragraph: string): boolean {
-  const clean = paragraph.trim();
-  if (!clean) return false;
-  const words = clean.split(/\s+/).filter(Boolean);
-  return clean.length >= 120 || words.length >= 18;
-}
-
-function shouldRenderAsHeading(paragraphs: string[], index: number): boolean {
-  const current = paragraphs[index] || '';
-  if (!isLikelyHeading(current)) return false;
-
-  const prev = paragraphs[index - 1];
-  const next = paragraphs[index + 1];
-  const prevIsLong = Boolean(prev && isLongParagraph(prev));
-  const nextIsLong = Boolean(next && isLongParagraph(next));
-  return prevIsLong && nextIsLong;
-}
-
-function isLikelyKeyPhrase(paragraph: string): boolean {
-  const clean = paragraph.trim();
-  if (!clean) return false;
-  if (clean.length < 110 || clean.length > 220) return false;
-  if (isLikelyHeading(clean)) return false;
-  if (detectCallout(clean)) return false;
-
-  const lower = clean.toLowerCase();
-  const keyHints = [
-    'tu bienestar no es un lujo',
-    'no estás sola',
-    'no estas sola',
-    'recuerda',
-    'la clave',
-    'es importante',
-    'empieza con',
-    'paso a paso',
-    'autocuidado',
-    'poner límites',
-    'poner limites',
-  ];
-
-  return keyHints.some((hint) => lower.includes(hint));
-}
-
-function getAutoCalloutIndex(paragraphs: string[]): number {
-  return paragraphs.findIndex((paragraph, index) => {
-    if (index < 3 || index >= paragraphs.length - 1) return false;
-    if (!isLikelyKeyPhrase(paragraph)) return false;
-    const prev = paragraphs[index - 1];
-    const next = paragraphs[index + 1];
-    return Boolean(prev && next && isLongParagraph(prev) && isLongParagraph(next));
-  });
-}
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPublishedDraftBySlug(slug);
@@ -187,7 +102,6 @@ export default async function DynamicBlogPostPage({ params }: Props) {
     .split('\n')
     .map((item) => item.trim())
     .filter(Boolean);
-  const autoCalloutIndex = getAutoCalloutIndex(paragraphs);
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -242,10 +156,9 @@ export default async function DynamicBlogPostPage({ params }: Props) {
             <div key={`${post.id}-${index}`}>
               {(() => {
                 const callout = detectCallout(paragraph);
-                const isHeading = shouldRenderAsHeading(paragraphs, index);
                 const isShortParagraph = paragraph.length <= SHORT_PARAGRAPH_MAX;
 
-                if (index === 1 && !callout && !isHeading) {
+                if (index === 1 && !callout) {
                   if (isShortParagraph) {
                     return (
                       <div className="mb-6 not-prose">
@@ -291,23 +204,6 @@ export default async function DynamicBlogPostPage({ params }: Props) {
                 }
 
                 if (!callout) {
-                  if (isHeading) {
-                    return (
-                      <h2 className="text-2xl md:text-[2rem] leading-tight font-libre-baskerville text-accent mt-10 mb-4">
-                        {paragraph}
-                      </h2>
-                    );
-                  }
-                  if (index === autoCalloutIndex) {
-                    return (
-                      <div className={`p-5 rounded-xl border-l-4 my-6 ${getCalloutStyles('note')}`}>
-                        <h3 className="text-lg font-semibold mb-2">💭 Idea clave</h3>
-                        <p className="text-gray-700" style={{ textAlign: 'justify' }}>
-                          {paragraph}
-                        </p>
-                      </div>
-                    );
-                  }
                   return (
                     <p className="text-gray-700 leading-relaxed mb-6" style={{ textAlign: 'justify' }}>
                       {paragraph}

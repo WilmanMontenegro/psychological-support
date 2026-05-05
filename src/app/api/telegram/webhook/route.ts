@@ -328,7 +328,7 @@ async function improveDraftWithOpenAI(
           {
             role: 'system',
             content:
-              'Eres editor de un blog de bienestar emocional. Recibes texto del autor. Conserva su voz, tono y mensaje: NO lo conviertas en marketing ni lo acortes demasiado. Solo quita saludos y meta-texto tipo "sube esto". Devuelve solo JSON con: title, excerpt, category, contentClean, seoTitle, seoDescription, inlineImageSide. contentClean debe ser el articulo fiel (parrafos claros, misma esencia y extension similar) y con formato editorial automatico: agrega subtitulos breves en lineas separadas (sin ":" al final) y al menos una frase destacada en una linea que empiece por "💭 Recuerda:". Si aplica, puedes incluir lineas que empiecen por "✅" o "⚠️" para comparativos clave. category: Salud Mental | Autoestima | Maternidad | Bienestar. inlineImageSide: left o right.',
+              'Eres editor de un blog de bienestar emocional. Recibes texto del autor. Conserva su voz, tono y mensaje: NO lo conviertas en marketing ni lo acortes demasiado. Solo quita saludos y meta-texto tipo "sube esto". Devuelve solo JSON con: title, excerpt, category, contentClean, seoTitle, seoDescription, inlineImageSide. contentClean debe respetar el texto original del autor (misma idea, orden y estructura), sin inventar secciones ni agregar listas que no existan. category: Salud Mental | Autoestima | Maternidad | Bienestar. inlineImageSide: left o right.',
           },
           {
             role: 'user',
@@ -379,7 +379,7 @@ async function improveDraftWithGemini(
           systemInstruction: {
             parts: [
               {
-                text: 'Eres editor de un blog de bienestar emocional. Conserva voz y mensaje del autor; no reescribas como anuncio. Quita solo saludos y meta-texto. Devuelve solo JSON: title, excerpt, category, contentClean, seoTitle, seoDescription, inlineImageSide. contentClean fiel al original y con formato editorial automatico: subtitulos breves en lineas separadas (sin ":" al final) y al menos una linea destacada que empiece por "💭 Recuerda:". Si aplica, agrega lineas "✅" y "⚠️" para contrastes utiles. category: Salud Mental | Autoestima | Maternidad | Bienestar. inlineImageSide: left o right.',
+                text: 'Eres editor de un blog de bienestar emocional. Conserva voz y mensaje del autor; no reescribas como anuncio. Quita solo saludos y meta-texto. Devuelve solo JSON: title, excerpt, category, contentClean, seoTitle, seoDescription, inlineImageSide. contentClean debe respetar el texto original (misma idea, orden y estructura), sin inventar secciones ni agregar listas. category: Salud Mental | Autoestima | Maternidad | Bienestar. inlineImageSide: left o right.',
               },
             ],
           },
@@ -714,6 +714,29 @@ async function clearFlowAfterPublish(chatId: number) {
   await upsertFlow(chatId, 'awaiting_content', null);
 }
 
+function extractStorageObjectPath(publicUrl: string, bucket: string): string | null {
+  try {
+    const parsed = new URL(publicUrl);
+    const marker = `/storage/v1/object/public/${bucket}/`;
+    const index = parsed.pathname.indexOf(marker);
+    if (index === -1) return null;
+    const rawObjectPath = parsed.pathname.slice(index + marker.length);
+    return rawObjectPath ? decodeURIComponent(rawObjectPath) : null;
+  } catch {
+    return null;
+  }
+}
+
+async function deleteCoverFromBucket(coverUrl: string | null): Promise<boolean> {
+  if (!coverUrl) return true;
+  const objectPath = extractStorageObjectPath(coverUrl, COVER_BUCKET);
+  if (!objectPath) return false;
+
+  const supabase = createAdminClient();
+  const { error } = await supabase.storage.from(COVER_BUCKET).remove([objectPath]);
+  return !error;
+}
+
 async function findPublishedDraftTarget(chatId: number, incomingRaw: string) {
   const supabase = createAdminClient();
   const commandArg = incomingRaw
@@ -727,7 +750,7 @@ async function findPublishedDraftTarget(chatId: number, incomingRaw: string) {
 
   let targetQuery = supabase
     .from('blog_drafts')
-    .select('id, title, slug')
+    .select('id, title, slug, cover_url')
     .eq('source_chat_id', chatId)
     .eq('status', 'published');
 
@@ -741,7 +764,10 @@ async function findPublishedDraftTarget(chatId: number, incomingRaw: string) {
 
   // Fallback: si no hay match por chat, intenta en todos los posts publicados.
   if (!target) {
-    let fallbackQuery = supabase.from('blog_drafts').select('id, title, slug').eq('status', 'published');
+    let fallbackQuery = supabase
+      .from('blog_drafts')
+      .select('id, title, slug, cover_url')
+      .eq('status', 'published');
     if (slugArg) {
       fallbackQuery = fallbackQuery.eq('slug', slugArg);
     } else {
@@ -814,9 +840,17 @@ async function unpublishAndDeleteDraftForChat(token: string, chatId: number, inc
     return;
   }
 
+  const coverDeleted = await deleteCoverFromBucket(target.cover_url ?? null);
+
   revalidatePath('/blog');
   revalidatePath(`/blog/${target.slug}`);
-  await sendTelegramMessage(token, chatId, `Listo. "${target.title}" fue despublicado y eliminado.`);
+  await sendTelegramMessage(
+    token,
+    chatId,
+    coverDeleted
+      ? `Listo. "${target.title}" fue despublicado y eliminado junto con su portada.`
+      : `Listo. "${target.title}" fue despublicado y eliminado. Nota: no pude borrar la portada del bucket automáticamente.`
+  );
 }
 
 async function resolvePendingDraftForChat(
@@ -861,7 +895,7 @@ async function insertDraftFromMessage(
   const excerpt = aiDraft?.excerpt || parsedDraft.excerpt;
   const category = aiDraft?.category || parsedDraft.category;
   const slug = slugify(title) || parsedDraft.slug;
-  const contentRaw = aiDraft?.contentClean || parsedDraft.contentRaw;
+  const contentRaw = parsedDraft.contentRaw;
   const seoTitle = aiDraft?.seoTitle || `${title} | Tu Psico Ana`;
   const seoDescription = aiDraft?.seoDescription || excerpt;
   const inlineImageSide = aiDraft?.inlineImageSide || 'right';
@@ -927,7 +961,7 @@ async function updateDraftBodyFromText(draftId: string, incomingRaw: string) {
 
   const excerpt = aiDraft?.excerpt || parsedDraft.excerpt;
   const category = aiDraft?.category || parsedDraft.category;
-  const contentRaw = aiDraft?.contentClean || parsedDraft.contentRaw;
+  const contentRaw = parsedDraft.contentRaw;
   const seoTitle = aiDraft?.seoTitle;
   const seoDescription = aiDraft?.seoDescription || excerpt;
   const inlineImageSide = aiDraft?.inlineImageSide || 'right';
