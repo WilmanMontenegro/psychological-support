@@ -80,7 +80,7 @@ function findImageParagraphIndex(paragraphs: string[]): number {
 function calloutCandidateScore(paragraph: string): number {
   const clean = paragraph.trim();
   const lower = clean.toLowerCase();
-  if (clean.length < 90 || clean.length > 260) return 0;
+  if (clean.length < 70 || clean.length > 280) return 0;
   if (isExplicitCallout(clean)) return 0;
 
   const hints = [
@@ -98,6 +98,15 @@ function calloutCandidateScore(paragraph: string): number {
     'no estás sola',
     'no estas sola',
     'escucharte',
+    'descanso',
+    'respirar',
+    'respiración',
+    'respiracion',
+    'presente',
+    'celular',
+    'redes sociales',
+    'no es tu enemigo',
+    'ayuda profesional',
   ];
 
   return hints.reduce((score, hint) => (lower.includes(hint) ? score + 1 : score), 0);
@@ -109,6 +118,8 @@ function getAutoCalloutMeta(paragraph: string): Pick<AutoCallout, 'kind' | 'titl
   if (
     lower.includes('redes') ||
     lower.includes('alerta') ||
+    lower.includes('celular') ||
+    lower.includes('agotad') ||
     lower.includes('no tienes que poder') ||
     lower.includes('sobrepas')
   ) {
@@ -121,7 +132,12 @@ function getAutoCalloutMeta(paragraph: string): Pick<AutoCallout, 'kind' | 'titl
     lower.includes('poner limites') ||
     lower.includes('paso a paso') ||
     lower.includes('pedir ayuda') ||
-    lower.includes('escucharte')
+    lower.includes('escucharte') ||
+    lower.includes('respirar') ||
+    lower.includes('respiración') ||
+    lower.includes('respiracion') ||
+    lower.includes('presente') ||
+    lower.includes('descanso')
   ) {
     return { kind: 'success', title: '✅ Práctica de cuidado' };
   }

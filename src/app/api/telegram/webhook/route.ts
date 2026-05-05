@@ -741,6 +741,20 @@ async function clearFlowAfterPublish(chatId: number) {
   await upsertFlow(chatId, 'awaiting_content', null);
 }
 
+function extractCommandSlug(inputText: string): string {
+  const normalized = inputText.trim().toLowerCase();
+  if (!normalized.startsWith('/')) return '';
+
+  const [command, ...args] = normalized.split(/\s+/);
+  const supportsSlug =
+    command === '/despublicar' ||
+    command.startsWith('/despublicar@') ||
+    command === '/despublicar-y-borrar';
+
+  if (!supportsSlug || args.length === 0) return '';
+  return slugify(args.join(' '));
+}
+
 function extractStorageObjectPath(publicUrl: string, bucket: string): string | null {
   try {
     const parsed = new URL(publicUrl);
@@ -766,14 +780,7 @@ async function deleteCoverFromBucket(coverUrl: string | null): Promise<boolean> 
 
 async function findPublishedDraftTarget(chatId: number, incomingRaw: string) {
   const supabase = createAdminClient();
-  const commandArg = incomingRaw
-    .trim()
-    .split(/\s+/)
-    .slice(1)
-    .join(' ')
-    .trim()
-    .toLowerCase();
-  const slugArg = commandArg && !commandArg.startsWith('@') ? slugify(commandArg) : '';
+  const slugArg = extractCommandSlug(incomingRaw);
 
   let targetQuery = supabase
     .from('blog_drafts')
