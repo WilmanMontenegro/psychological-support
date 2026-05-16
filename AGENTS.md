@@ -25,6 +25,23 @@ Plataforma web minimalista en Next.js para contenido de bienestar emocional, blo
 
 ## 4) Reglas para agentes
 
+### Alcance del sitio (psicóloga en formación)
+
+Ana Marcela es **psicóloga en formación**. Su profesora indicó que **no debe ofrecer acompañamiento ni práctica clínica**. El sitio es **solo contenido educativo** (blog, marca personal, eventos formativos).
+
+**Si piden implementar o reactivar el módulo de agendamiento de citas** (`/agendar-cita`, `mis-citas`, `AppointmentList`, flujo paciente–psicóloga):
+
+1. Recordar a la clienta esta restricción ética/académica.
+2. No implementar sin confirmación escrita de titulación, habilitación legal y visto bueno institucional.
+3. Mientras tanto: mantener redirects a `/blog` (ver `next.config.ts`) y no exponer CTAs de terapia o citas.
+
+Existe código legacy de citas en el repo; **no implica que el servicio esté ofrecido**.
+
+### Eventos
+
+- Ruta pública `/eventos`: placeholder «Muy pronto» hasta haber eventos reales.
+- La implementación completa (admin, galería «Mis eventos», Supabase) está planificada; no adelantar sin pedido explícito.
+
 - No inventar features fuera de lo solicitado.
 - No hardcodear secretos ni credenciales.
 - No introducir nuevos patrones visuales sin necesidad.
@@ -43,6 +60,7 @@ Plataforma web minimalista en Next.js para contenido de bienestar emocional, blo
 
 ```bash
 npm run lint
+npm run test
 ```
 
 Si el cambio toca rutas, layout, metadata o componentes principales:
@@ -50,6 +68,17 @@ Si el cambio toca rutas, layout, metadata o componentes principales:
 ```bash
 npm run build
 ```
+
+**Producción / humo E2E:** Tras `npm install`, Chromium se instala solo (mediante `postinstall`), salvo en Vercel (`VERCEL=1`) o si defines `SKIP_PLAYWRIGHT_INSTALL=1`. Para forzar la descarga: `npm run playwright:install`.
+
+En **Node.js 21+** (especialmente v26), Next y Playwright pueden mostrar `DEP0205 module.register()` hasta que migren a `registerHooks`; los scripts `dev`, `build`, `start`, `test` y `test:e2e` pasan `--disable-warning=DEP0205` para no ensuciar la consola.
+
+```bash
+npm run build
+npm run test:e2e
+```
+
+Suite completa (unit + build + E2E): `npm run test:all`
 
 ## 7) Convención de commits
 
