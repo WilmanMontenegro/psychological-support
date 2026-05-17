@@ -1,8 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
 /**
- * Ejecutar tras `npm run build`. Arranca `next start` en el puerto 3000 si no hay servidor.
- * Local: npm run build && npm run test:e2e
+ * Ejecutar tras `pnpm run build`. Arranca `next start` en el puerto 3000 si no hay servidor.
+ * Local: pnpm run build && pnpm run test:e2e
  * CI: establecer CI=true para no reutilizar un servidor huérfano.
  */
 export default defineConfig({

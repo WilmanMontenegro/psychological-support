@@ -59,26 +59,28 @@ Existe código legacy de citas en el repo; **no implica que el servicio esté of
 ## 6) Validación mínima antes de cerrar
 
 ```bash
-npm run lint
-npm run test
+pnpm run lint
+pnpm run test
 ```
 
 Si el cambio toca rutas, layout, metadata o componentes principales:
 
 ```bash
-npm run build
+pnpm run build
 ```
 
-**Producción / humo E2E:** Tras `npm install`, Chromium se instala solo (mediante `postinstall`), salvo en Vercel (`VERCEL=1`) o si defines `SKIP_PLAYWRIGHT_INSTALL=1`. Para forzar la descarga: `npm run playwright:install`.
+**Gestor de paquetes:** pnpm (`pnpm-lock.yaml`). No usar `npm install` en este repo.
+
+**Producción / humo E2E:** Tras `pnpm install`, Chromium se instala solo (mediante `postinstall`), salvo en Vercel (`VERCEL=1`) o si defines `SKIP_PLAYWRIGHT_INSTALL=1`. Para forzar la descarga: `pnpm run playwright:install`.
 
 En **Node.js 21+** (especialmente v26), Next y Playwright pueden mostrar `DEP0205 module.register()` hasta que migren a `registerHooks`; los scripts `dev`, `build`, `start`, `test` y `test:e2e` pasan `--disable-warning=DEP0205` para no ensuciar la consola.
 
 ```bash
-npm run build
-npm run test:e2e
+pnpm run build
+pnpm run test:e2e
 ```
 
-Suite completa (unit + build + E2E): `npm run test:all`
+Suite completa (unit + build + E2E): `pnpm run test:all`
 
 ## 7) Convención de commits
 

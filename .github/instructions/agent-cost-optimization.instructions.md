@@ -38,6 +38,6 @@ Reducir consumo de tokens/solicitudes manteniendo calidad en cambios de producto
 6. `/sdd-archive`
 
 ## Política de validación costo/beneficio
-- Cambios pequeños: solo validación específica + `npm run lint`.
-- Cambios de rutas/componentes clave: `npm run lint` + `npm run build`.
+- Cambios pequeños: solo validación específica + `pnpm run lint`.
+- Cambios de rutas/componentes clave: `pnpm run lint` + `pnpm run build`.
 - Evitar reruns completos innecesarios cuando no hubo cambios estructurales.

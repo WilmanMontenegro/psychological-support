@@ -2,6 +2,7 @@
   "name": "psychological-support",
   "version": "1.2.1",
   "private": true,
+  "packageManager": "pnpm@10.33.0",
   "scripts": {
     "dev": "NODE_OPTIONS=\"$NODE_OPTIONS --disable-warning=DEP0205\" next dev",
     "build": "NODE_OPTIONS=\"$NODE_OPTIONS --disable-warning=DEP0205\" next build",
@@ -11,8 +12,8 @@
     "test": "NODE_OPTIONS=\"$NODE_OPTIONS --disable-warning=DEP0205\" vitest run",
     "test:watch": "NODE_OPTIONS=\"$NODE_OPTIONS --disable-warning=DEP0205\" vitest",
     "test:e2e": "NODE_OPTIONS=\"$NODE_OPTIONS --disable-warning=DEP0205\" playwright test",
-    "test:all": "npm run test && npm run build && npm run test:e2e",
-    "playwright:install": "npx playwright install chromium"
+    "test:all": "pnpm run test && pnpm run build && pnpm run test:e2e",
+    "playwright:install": "pnpm exec playwright install chromium"
   },
   "dependencies": {
     "@supabase/ssr": "^0.7.0",

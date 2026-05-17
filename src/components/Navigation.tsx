@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 
 interface NavigationProps {
   className?: string
+  variant?: 'default' | 'footer'
   showCTA?: boolean
   isMobile?: boolean
   authItem?: {
@@ -13,7 +14,14 @@ interface NavigationProps {
   } | null
 }
 
-export default function Navigation({ className = '', showCTA = true, isMobile = false, authItem = null }: NavigationProps) {
+export default function Navigation({ className = '', variant = 'default', showCTA = true, isMobile = false, authItem = null }: NavigationProps) {
+  const isFooter = variant === 'footer'
+  const linkClassName = isFooter
+    ? 'hover:text-secondary transition-colors font-medium text-sm md:text-base whitespace-nowrap shrink-0'
+    : 'hover:text-secondary transition-colors font-medium text-base xl:text-lg whitespace-nowrap shrink-0'
+  const navClassName = isFooter
+    ? `flex flex-wrap justify-center gap-x-3 gap-y-2 sm:gap-x-4 md:gap-x-5 ${className}`
+    : `flex flex-nowrap gap-4 xl:gap-6 ${className}`
   const navItems = [
     {
       href: "/",
@@ -109,12 +117,12 @@ export default function Navigation({ className = '', showCTA = true, isMobile = 
   }
 
   return (
-    <nav className={`flex gap-6 ${className}`}>
+    <nav className={navClassName}>
       {navItems.map((item) => (
         <Link
           key={item.href}
           href={item.href}
-          className="hover:text-secondary transition-colors font-medium text-lg"
+          className={linkClassName}
         >
           {item.label}
         </Link>

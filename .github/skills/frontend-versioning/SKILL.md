@@ -15,8 +15,8 @@ description: "Usar cuando se pidan mejoras de frontend en Next.js/Tailwind junto
 2. Reutilizar componentes existentes antes de crear nuevos.
 3. Implementar con cambios pequeños y consistentes con el diseño actual.
 4. Ejecutar validación mínima:
-   - `npm run lint`
-   - `npm run build` (si el cambio toca rutas, componentes principales o layout)
+   - `pnpm run lint`
+   - `pnpm run build` (si el cambio toca rutas, componentes principales o layout)
 5. Sugerir mensaje de commit en formato convencional.
 
 ## Criterios de calidad
@@ -38,6 +38,6 @@ Ejemplos:
 ### Checklist de entrega
 - [ ] Alcance respetado
 - [ ] Reutilización de componentes existente
-- [ ] `npm run lint` OK
-- [ ] `npm run build` OK (cuando aplique)
+- [ ] `pnpm run lint` OK
+- [ ] `pnpm run build` OK (cuando aplique)
 - [ ] Sin secretos ni archivos sensibles en staging

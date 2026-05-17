@@ -11,8 +11,8 @@ description: "Usar cuando se preparen cambios para commit/push: aplicar versiona
 - Evitar mezclar cambios funcionales y refactors grandes en el mismo commit.
 
 ## Calidad previa a integración
-- Ejecutar `npm run lint` antes de cerrar una tarea.
-- Ejecutar `npm run build` antes de push a `main`.
+- Ejecutar `pnpm run lint` antes de cerrar una tarea.
+- Ejecutar `pnpm run build` antes de push a `main`.
 - Si hay errores no relacionados, reportarlos sin modificar alcance.
 
 ## Versionado

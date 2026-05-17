@@ -10,7 +10,7 @@ export default function Footer() {
     <footer className="w-full px-6 pt-8 pb-20 lg:py-8 text-white bg-accent">
       <div className="max-w-6xl mx-auto">
         {/* Contenido principal del footer */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_minmax(0,1.35fr)_1fr] gap-8 items-center">
 
           {/* Logo y descripción */}
           <div className="flex flex-col items-center lg:items-start">
@@ -23,12 +23,12 @@ export default function Footer() {
 
           {/* Navegación */}
           <div className="flex flex-col items-center justify-center">
-            <Navigation className="flex-wrap justify-center gap-6" showCTA={false} />
+            <Navigation variant="footer" showCTA={false} />
           </div>
 
           {/* Redes sociales */}
           <div className="flex flex-col items-center lg:items-end">
-            <div className="flex gap-4">
+            <div className="flex gap-2">
               <Link
                 href="https://www.facebook.com/tupsicoana"
                 target="_blank"

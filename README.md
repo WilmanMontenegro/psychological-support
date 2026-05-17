@@ -49,7 +49,8 @@ Objetivo: mantener cambios pequeños, frontend minimalista, commits limpios, mem
 ## Comandos Rápidos
 
 ```bash
-npm run dev   # Iniciar local
-npm run lint  # Verificar código
-npm run build # Construir producción
+pnpm install  # Primera vez o tras cambios de dependencias
+pnpm run dev  # Iniciar local
+pnpm run lint # Verificar código
+pnpm run build # Construir producción
 ```

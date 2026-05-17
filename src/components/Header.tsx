@@ -90,7 +90,7 @@ export default function Header() {
 
   return (
     <header className="w-full relative bg-background shadow-sm border-b border-secondary/10">
-      <div className="flex lg:grid lg:grid-cols-3 items-center justify-center sm:justify-between lg:justify-normal px-4 md:px-6 py-3 md:py-4">
+      <div className="flex lg:grid lg:grid-cols-[1fr_auto_1fr] items-center justify-center sm:justify-between lg:justify-normal px-4 md:px-6 py-3 md:py-4">
         {/* Logo/Título */}
         <Logo textAlign="center" />
 

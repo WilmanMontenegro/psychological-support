@@ -89,8 +89,8 @@ Mantiene contexto por chat:
 1. Validar local:
 
 ```bash
-npm run lint
-npm run build
+pnpm run lint
+pnpm run build
 ```
 
 2. Aplicar migraciones remotas:

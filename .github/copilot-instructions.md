@@ -30,6 +30,6 @@
 - Si aparece un archivo sensible en raíz, sugerir eliminación o moverlo a almacenamiento seguro local.
 
 ## Calidad mínima antes de cerrar tareas
-- Ejecutar `npm run lint` cuando haya cambios de código.
-- Ejecutar `npm run build` en cambios relevantes de rutas/componentes.
+- Ejecutar `pnpm run lint` cuando haya cambios de código.
+- Ejecutar `pnpm run build` en cambios relevantes de rutas/componentes.
 - Reportar de forma breve: qué cambió, dónde, y cómo validar.
