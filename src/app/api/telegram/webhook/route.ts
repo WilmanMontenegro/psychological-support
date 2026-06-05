@@ -11,6 +11,22 @@ const DEFAULT_AI_MODEL = 'gpt-4o-mini';
 const GEMINI_API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
 const DEFAULT_GEMINI_MODEL = 'gemini-3.1-flash-lite-preview';
 const AI_TIMEOUT_MS = 12000;
+const AI_EDITOR_TIMEOUT_MS = 45000;
+const EDITOR_MAX_OUTPUT_TOKENS = 8192;
+const TELEGRAM_LONG_MESSAGE_THRESHOLD = 3200;
+
+const EDITOR_SYSTEM_PROMPT =
+  'Eres editor de un blog de bienestar emocional (Tu Psico Ana). Recibes el texto de la autora. ' +
+  'Conserva su voz, tono, ideas y orden. NO acortes, NO inventes párrafos, NO conviertas en marketing. ' +
+  'Quita solo saludos y meta-texto tipo "sube esto" o "mira el blog". ' +
+  'En contentClean aplica formato sin cambiar el mensaje: **negrita** en 3-8 frases o conceptos clave que ya estén en su texto; ' +
+  'líneas ## Subtítulo donde el contenido pida sección; 1-3 callouts con prefijos exactos: ' +
+  '✅ Título breve: cuerpo, ⚠️ Título breve: cuerpo, 💭 Recuerda: cuerpo. ' +
+  'Ejemplo de estilo (solo formato): ## ¿Qué es la ansiedad? / La ansiedad es un **mecanismo de defensa**... / ' +
+  '✅ Ansiedad adaptativa: Es **eventual y específica**... ' +
+  'Devuelve SOLO JSON: title, excerpt, category, contentClean, seoTitle, seoDescription, inlineImageSide. ' +
+  'contentClean debe incluir TODO el contenido formateado. ' +
+  'category: Salud Mental | Autoestima | Maternidad | Bienestar. inlineImageSide: left o right.';
 
 type TelegramPhoto = {
   file_id: string;
@@ -310,7 +326,7 @@ async function improveDraftWithOpenAI(
 
   const model = process.env.OPENAI_MODEL || DEFAULT_AI_MODEL;
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), AI_TIMEOUT_MS);
+  const timeout = setTimeout(() => controller.abort(), AI_EDITOR_TIMEOUT_MS);
 
   try {
     const response = await fetch(OPENAI_API_URL, {
@@ -323,12 +339,12 @@ async function improveDraftWithOpenAI(
       body: JSON.stringify({
         model,
         temperature: 0.2,
+        max_tokens: EDITOR_MAX_OUTPUT_TOKENS,
         response_format: { type: 'json_object' },
         messages: [
           {
             role: 'system',
-            content:
-              'Eres editor de un blog de bienestar emocional. Recibes texto del autor. Conserva su voz, tono y mensaje: NO lo conviertas en marketing ni lo acortes demasiado. Solo quita saludos y meta-texto tipo "sube esto". Devuelve solo JSON con: title, excerpt, category, contentClean, seoTitle, seoDescription, inlineImageSide. contentClean debe respetar el texto original del autor (misma idea, orden y estructura), sin inventar secciones ni agregar listas que no existan. category: Salud Mental | Autoestima | Maternidad | Bienestar. inlineImageSide: left o right.',
+            content: EDITOR_SYSTEM_PROMPT,
           },
           {
             role: 'user',
@@ -366,7 +382,7 @@ async function improveDraftWithGemini(
 
   const model = process.env.GEMINI_MODEL || DEFAULT_GEMINI_MODEL;
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), AI_TIMEOUT_MS);
+  const timeout = setTimeout(() => controller.abort(), AI_EDITOR_TIMEOUT_MS);
 
   try {
     const response = await fetch(
@@ -379,12 +395,13 @@ async function improveDraftWithGemini(
           systemInstruction: {
             parts: [
               {
-                text: 'Eres editor de un blog de bienestar emocional. Conserva voz y mensaje del autor; no reescribas como anuncio. Quita solo saludos y meta-texto. Devuelve solo JSON: title, excerpt, category, contentClean, seoTitle, seoDescription, inlineImageSide. contentClean debe respetar el texto original (misma idea, orden y estructura), sin inventar secciones ni agregar listas. category: Salud Mental | Autoestima | Maternidad | Bienestar. inlineImageSide: left o right.',
+                text: EDITOR_SYSTEM_PROMPT,
               },
             ],
           },
           generationConfig: {
             temperature: 0.2,
+            maxOutputTokens: EDITOR_MAX_OUTPUT_TOKENS,
             responseMimeType: 'application/json',
           },
           contents: [
@@ -448,7 +465,69 @@ function parseDraftContent(message: TelegramMessage) {
   };
 }
 
-type FlowStep = 'awaiting_content' | 'awaiting_image';
+function parseDraftContentFromText(rawText: string) {
+  return parseDraftContent({ text: rawText } as TelegramMessage);
+}
+
+function resolveContentRaw(aiDraft: AiDraftResult | null, parsedContentRaw: string): string {
+  const cleaned = aiDraft?.contentClean?.trim();
+  return cleaned || parsedContentRaw;
+}
+
+type BuiltDraft = {
+  title: string;
+  excerpt: string;
+  category: string;
+  slug: string;
+  contentRaw: string;
+  seoTitle: string;
+  seoDescription: string;
+  inlineImageSide: 'left' | 'right';
+};
+
+async function buildDraftFromSourceText(sourceText: string): Promise<BuiltDraft> {
+  const parsedDraft = parseDraftContentFromText(sourceText);
+  const aiDraft = await improveDraftWithAi(sourceText, {
+    title: parsedDraft.title,
+    excerpt: parsedDraft.excerpt,
+    category: parsedDraft.category,
+  });
+
+  const title = aiDraft?.title || parsedDraft.title;
+  const excerpt = aiDraft?.excerpt || parsedDraft.excerpt;
+  const category = aiDraft?.category || parsedDraft.category;
+  const slug = slugify(title) || parsedDraft.slug;
+  const contentRaw = resolveContentRaw(aiDraft, parsedDraft.contentRaw);
+  const seoTitle = aiDraft?.seoTitle || `${title} | Tu Psico Ana`;
+  const seoDescription = aiDraft?.seoDescription || excerpt;
+  const inlineImageSide = aiDraft?.inlineImageSide || 'right';
+
+  return {
+    title,
+    excerpt,
+    category,
+    slug,
+    contentRaw,
+    seoTitle,
+    seoDescription,
+    inlineImageSide,
+  };
+}
+
+function appendBufferText(
+  current: string,
+  newText: string,
+  messageId: number,
+  ids: number[]
+): { text: string; ids: number[] } {
+  if (ids.includes(messageId)) {
+    return { text: current, ids };
+  }
+  const text = current ? `${current}\n\n${newText}` : newText;
+  return { text, ids: [...ids, messageId] };
+}
+
+type FlowStep = 'awaiting_content' | 'awaiting_image' | 'accumulating_content';
 type UserIntent =
   | 'reset'
   | 'unpublish'
@@ -711,34 +790,53 @@ function publishKeyboard(draftId: string) {
   };
 }
 
-async function getFlow(chatId: number): Promise<{ step: FlowStep; draft_id: string | null }> {
+async function getFlow(chatId: number): Promise<{
+  step: FlowStep;
+  draft_id: string | null;
+  content_buffer: string;
+  buffer_message_ids: number[];
+}> {
   const supabase = createAdminClient();
   const { data } = await supabase
     .from('telegram_blog_flow')
-    .select('step, draft_id')
+    .select('step, draft_id, content_buffer, buffer_message_ids')
     .eq('chat_id', chatId)
     .maybeSingle();
   return {
     step: (data?.step as FlowStep) || 'awaiting_content',
     draft_id: data?.draft_id ?? null,
+    content_buffer: data?.content_buffer ?? '',
+    buffer_message_ids: data?.buffer_message_ids ?? [],
   };
 }
 
-async function upsertFlow(chatId: number, step: FlowStep, draftId: string | null) {
+async function upsertFlow(
+  chatId: number,
+  step: FlowStep,
+  draftId: string | null,
+  buffer?: { content_buffer?: string; buffer_message_ids?: number[] }
+) {
   const supabase = createAdminClient();
-  await supabase.from('telegram_blog_flow').upsert(
-    {
-      chat_id: chatId,
-      step,
-      draft_id: draftId,
-      updated_at: new Date().toISOString(),
-    },
-    { onConflict: 'chat_id' }
-  );
+  const payload: Record<string, unknown> = {
+    chat_id: chatId,
+    step,
+    draft_id: draftId,
+    updated_at: new Date().toISOString(),
+  };
+  if (buffer) {
+    if (buffer.content_buffer !== undefined) payload.content_buffer = buffer.content_buffer;
+    if (buffer.buffer_message_ids !== undefined) {
+      payload.buffer_message_ids = buffer.buffer_message_ids;
+    }
+  }
+  await supabase.from('telegram_blog_flow').upsert(payload, { onConflict: 'chat_id' });
 }
 
 async function clearFlowAfterPublish(chatId: number) {
-  await upsertFlow(chatId, 'awaiting_content', null);
+  await upsertFlow(chatId, 'awaiting_content', null, {
+    content_buffer: '',
+    buffer_message_ids: [],
+  });
 }
 
 function extractCommandSlug(inputText: string): string {
@@ -918,25 +1016,11 @@ async function insertDraftFromMessage(
   message: TelegramMessage,
   incomingRaw: string
 ): Promise<{ id: string; title: string; hadCover: boolean } | null> {
-  const parsedDraft = parseDraftContent(message);
-  const aiDraft = await improveDraftWithAi(incomingRaw, {
-    title: parsedDraft.title,
-    excerpt: parsedDraft.excerpt,
-    category: parsedDraft.category,
-  });
-
-  const title = aiDraft?.title || parsedDraft.title;
-  const excerpt = aiDraft?.excerpt || parsedDraft.excerpt;
-  const category = aiDraft?.category || parsedDraft.category;
-  const slug = slugify(title) || parsedDraft.slug;
-  const contentRaw = parsedDraft.contentRaw;
-  const seoTitle = aiDraft?.seoTitle || `${title} | Tu Psico Ana`;
-  const seoDescription = aiDraft?.seoDescription || excerpt;
-  const inlineImageSide = aiDraft?.inlineImageSide || 'right';
+  const built = await buildDraftFromSourceText(incomingRaw);
 
   let coverUrl: string | null = null;
   try {
-    coverUrl = await uploadCoverFromTelegram(token, getLatestCoverAsset(message), slug);
+    coverUrl = await uploadCoverFromTelegram(token, getLatestCoverAsset(message), built.slug);
   } catch (error) {
     if (error instanceof Error && error.message === 'IMAGE_TOO_LARGE') {
       await sendTelegramMessage(
@@ -953,15 +1037,15 @@ async function insertDraftFromMessage(
   const { data: insertedDraft, error } = await supabase
     .from('blog_drafts')
     .insert({
-      title,
-      slug,
-      excerpt,
-      content_raw: contentRaw,
-      category,
+      title: built.title,
+      slug: built.slug,
+      excerpt: built.excerpt,
+      content_raw: built.contentRaw,
+      category: built.category,
       cover_url: coverUrl,
-      seo_title: seoTitle,
-      seo_description: seoDescription,
-      inline_image_side: inlineImageSide,
+      seo_title: built.seoTitle,
+      seo_description: built.seoDescription,
+      inline_image_side: built.inlineImageSide,
       status: 'pending',
       source_chat_id: chatId,
       source_message_id: message.message_id,
@@ -982,37 +1066,85 @@ async function insertDraftFromMessage(
     throw error;
   }
 
-  return { id: insertedDraft.id, title, hadCover: Boolean(coverUrl) };
+  return { id: insertedDraft.id, title: built.title, hadCover: Boolean(coverUrl) };
 }
 
-async function updateDraftBodyFromText(draftId: string, incomingRaw: string) {
-  const parsedDraft = parseDraftContent({ ...({} as TelegramMessage), text: incomingRaw });
-  const aiDraft = await improveDraftWithAi(incomingRaw, {
-    title: parsedDraft.title,
-    excerpt: parsedDraft.excerpt,
-    category: parsedDraft.category,
-  });
-
-  const excerpt = aiDraft?.excerpt || parsedDraft.excerpt;
-  const category = aiDraft?.category || parsedDraft.category;
-  const contentRaw = parsedDraft.contentRaw;
-  const seoTitle = aiDraft?.seoTitle;
-  const seoDescription = aiDraft?.seoDescription || excerpt;
-  const inlineImageSide = aiDraft?.inlineImageSide || 'right';
-
+async function updateDraftBodyFromText(draftId: string, incomingRaw: string, append = false) {
+  let sourceText = incomingRaw;
   const supabase = createAdminClient();
+
+  if (append) {
+    const { data } = await supabase
+      .from('blog_drafts')
+      .select('content_raw')
+      .eq('id', draftId)
+      .eq('status', 'pending')
+      .maybeSingle();
+    if (data?.content_raw) {
+      sourceText = `${data.content_raw}\n\n${incomingRaw}`;
+    }
+  }
+
+  const built = await buildDraftFromSourceText(sourceText);
+
   await supabase
     .from('blog_drafts')
     .update({
-      content_raw: contentRaw,
-      excerpt,
-      category,
-      seo_description: seoDescription,
-      inline_image_side: inlineImageSide,
-      ...(seoTitle ? { seo_title: seoTitle } : {}),
+      title: built.title,
+      content_raw: built.contentRaw,
+      excerpt: built.excerpt,
+      category: built.category,
+      seo_title: built.seoTitle,
+      seo_description: built.seoDescription,
+      inline_image_side: built.inlineImageSide,
     })
     .eq('id', draftId)
     .eq('status', 'pending');
+}
+
+async function createDraftFromTextAndAdvance(
+  token: string,
+  chatId: number,
+  message: TelegramMessage,
+  sourceText: string
+): Promise<{ id: string; title: string; hadCover: boolean } | null> {
+  await sendTelegramMessage(token, chatId, 'Texto recibido, procesando…');
+  const inserted = await insertDraftFromMessage(token, chatId, message, sourceText);
+  if (!inserted) {
+    return null;
+  }
+
+  if (inserted.hadCover) {
+    await sendTelegramMessage(token, chatId, `Guardado: "${inserted.title}". ¿Publicamos?`, {
+      replyMarkup: publishKeyboard(inserted.id),
+    });
+    await clearFlowAfterPublish(chatId);
+  } else {
+    await upsertFlow(chatId, 'awaiting_image', inserted.id, {
+      content_buffer: '',
+      buffer_message_ids: [],
+    });
+    await sendTelegramMessage(
+      token,
+      chatId,
+      `Guardado: "${inserted.title}". ¿Tienes imagen de portada? Envía la foto o escribe no.`
+    );
+  }
+
+  return inserted;
+}
+
+async function finalizeAccumulatedBuffer(
+  token: string,
+  chatId: number,
+  message: TelegramMessage,
+  flow: { content_buffer: string; buffer_message_ids: number[] }
+): Promise<{ id: string; title: string; hadCover: boolean } | null> {
+  if (!flow.content_buffer.trim()) {
+    return null;
+  }
+
+  return createDraftFromTextAndAdvance(token, chatId, message, flow.content_buffer);
 }
 
 async function telegramRequest<T>(
@@ -1350,7 +1482,7 @@ export async function POST(request: Request) {
     const intent = await inferUserIntent(incomingRaw);
 
     if (intent === 'reset') {
-      await upsertFlow(chatId, 'awaiting_content', null);
+      await clearFlowAfterPublish(chatId);
       await sendTelegramMessage(token, chatId, buildGuidedQuestionsMessage());
       return NextResponse.json({ ok: true });
     }
@@ -1369,6 +1501,16 @@ export async function POST(request: Request) {
 
     const flow = await getFlow(chatId);
 
+    if (
+      !incomingRaw &&
+      getLatestCoverAsset(message) &&
+      flow.step === 'accumulating_content' &&
+      flow.content_buffer
+    ) {
+      await finalizeAccumulatedBuffer(token, chatId, message, flow);
+      return NextResponse.json({ ok: true });
+    }
+
     if (!incomingRaw && getLatestCoverAsset(message)) {
       const handled = await updateLatestPendingDraftCoverFromPhoto(
         token,
@@ -1377,6 +1519,21 @@ export async function POST(request: Request) {
         flow.draft_id
       );
       if (handled) {
+        await clearFlowAfterPublish(chatId);
+      }
+      return NextResponse.json({ ok: true });
+    }
+
+    if (flow.step === 'accumulating_content' && flow.content_buffer && intent === 'no_image') {
+      const inserted = await finalizeAccumulatedBuffer(token, chatId, message, flow);
+      if (inserted && !inserted.hadCover) {
+        const hint =
+          (await getAssistantReply(
+            `Sin foto. Máximo 220 caracteres, sin saludo: una línea tipo "Busca en Unsplash o Pexels" y 3 palabras clave breves separadas por comas, relacionadas con: "${inserted.title}".`
+          )) || 'Unsplash/Pexels: calma, pausa, naturaleza suave.';
+        await sendTelegramMessage(token, chatId, `${hint}\n\n¿Publicamos?`, {
+          replyMarkup: publishKeyboard(inserted.id),
+        });
         await clearFlowAfterPublish(chatId);
       }
       return NextResponse.json({ ok: true });
@@ -1405,12 +1562,23 @@ export async function POST(request: Request) {
       flow.draft_id &&
       intent === 'blog_content'
     ) {
-      await updateDraftBodyFromText(flow.draft_id, incomingRaw);
+      await updateDraftBodyFromText(flow.draft_id, incomingRaw, true);
       await sendTelegramMessage(
         token,
         chatId,
-        'Texto actualizado. ¿Tienes imagen de portada? Envíala o escribe no.'
+        'Texto completo recibido. ¿Tienes imagen de portada? Envíala o escribe no.'
       );
+      return NextResponse.json({ ok: true });
+    }
+
+    if (flow.step === 'accumulating_content' && intent === 'blog_content') {
+      const merged = appendBufferText(
+        flow.content_buffer,
+        incomingRaw,
+        message.message_id,
+        flow.buffer_message_ids
+      );
+      await createDraftFromTextAndAdvance(token, chatId, message, merged.text);
       return NextResponse.json({ ok: true });
     }
 
@@ -1430,27 +1598,16 @@ export async function POST(request: Request) {
         return NextResponse.json({ ok: true });
       }
 
-      const inserted = await insertDraftFromMessage(token, chatId, message, incomingRaw);
-      if (!inserted) {
+      if (incomingRaw.length >= TELEGRAM_LONG_MESSAGE_THRESHOLD) {
+        const merged = appendBufferText('', incomingRaw, message.message_id, []);
+        await upsertFlow(chatId, 'accumulating_content', null, {
+          content_buffer: merged.text,
+          buffer_message_ids: merged.ids,
+        });
         return NextResponse.json({ ok: true });
       }
 
-      if (inserted.hadCover) {
-        await sendTelegramMessage(
-          token,
-          chatId,
-          `Guardado: "${inserted.title}". ¿Publicamos?`,
-          { replyMarkup: publishKeyboard(inserted.id) }
-        );
-        await clearFlowAfterPublish(chatId);
-      } else {
-        await upsertFlow(chatId, 'awaiting_image', inserted.id);
-        await sendTelegramMessage(
-          token,
-          chatId,
-          `Guardado: "${inserted.title}". ¿Tienes imagen de portada? Envía la foto o escribe no.`
-        );
-      }
+      await createDraftFromTextAndAdvance(token, chatId, message, incomingRaw);
       return NextResponse.json({ ok: true });
     }
 

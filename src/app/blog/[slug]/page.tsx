@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import type { ReactNode } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -27,6 +28,24 @@ function formatDate(dateInput: string) {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
+  });
+}
+
+function isSectionHeading(paragraph: string): boolean {
+  return paragraph.startsWith('## ');
+}
+
+function getSectionHeadingTitle(paragraph: string): string {
+  return paragraph.replace(/^##\s+/, '').trim();
+}
+
+function renderInlineEmphasis(text: string): ReactNode[] {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  return parts.map((part, index) => {
+    if (part.startsWith('**') && part.endsWith('**') && part.length > 4) {
+      return <strong key={index}>{part.slice(2, -2)}</strong>;
+    }
+    return part;
   });
 }
 
@@ -70,6 +89,7 @@ function isExplicitCallout(paragraph: string): boolean {
 
 function findImageParagraphIndex(paragraphs: string[]): number {
   const preferredIndex = paragraphs.findIndex((paragraph) => {
+    if (isSectionHeading(paragraph)) return false;
     if (isExplicitCallout(paragraph)) return false;
     return paragraph.length >= IMAGE_PARAGRAPH_MIN || countWords(paragraph) >= 34;
   });
@@ -80,6 +100,7 @@ function findImageParagraphIndex(paragraphs: string[]): number {
 function calloutCandidateScore(paragraph: string): number {
   const clean = paragraph.trim();
   const lower = clean.toLowerCase();
+  if (isSectionHeading(clean)) return 0;
   if (clean.length < 70 || clean.length > 280) return 0;
   if (isExplicitCallout(clean)) return 0;
 
@@ -258,6 +279,14 @@ export default async function DynamicBlogPostPage({ params }: Props) {
               {(() => {
                 const callout = detectCallout(paragraph);
 
+                if (isSectionHeading(paragraph)) {
+                  return (
+                    <h2 className="text-2xl font-libre-baskerville text-accent mt-8 mb-4">
+                      {getSectionHeadingTitle(paragraph)}
+                    </h2>
+                  );
+                }
+
                 if (index === imageParagraphIndex && !callout) {
                   const imageFloatClass =
                     inlineSide === 'left'
@@ -279,7 +308,7 @@ export default async function DynamicBlogPostPage({ params }: Props) {
                         />
                       </div>
                       <p className="text-gray-700 leading-relaxed mb-6" style={{ textAlign: 'justify' }}>
-                        {paragraph}
+                        {renderInlineEmphasis(paragraph)}
                       </p>
                     </>
                   );
@@ -292,7 +321,7 @@ export default async function DynamicBlogPostPage({ params }: Props) {
                       <div className={`p-5 rounded-xl border-l-4 my-6 ${getCalloutStyles(autoCallout.kind)}`}>
                         <h3 className="text-lg font-semibold mb-2">{autoCallout.title}</h3>
                         <p className="text-gray-700" style={{ textAlign: 'justify' }}>
-                          {paragraph}
+                          {renderInlineEmphasis(paragraph)}
                         </p>
                       </div>
                     );
@@ -300,7 +329,7 @@ export default async function DynamicBlogPostPage({ params }: Props) {
 
                   return (
                     <p className="text-gray-700 leading-relaxed mb-6" style={{ textAlign: 'justify' }}>
-                      {paragraph}
+                      {renderInlineEmphasis(paragraph)}
                     </p>
                   );
                 }
@@ -310,11 +339,11 @@ export default async function DynamicBlogPostPage({ params }: Props) {
                   <div className={`p-5 rounded-xl border-l-4 my-6 ${getCalloutStyles(callout.kind)}`}>
                     <h3 className="text-lg font-semibold mb-2">
                       {callout.kind === 'success' ? '✅ ' : callout.kind === 'warning' ? '⚠️ ' : '💭 '}
-                      {callout.title}
+                      {renderInlineEmphasis(callout.title)}
                     </h3>
                     {hasBody ? (
                       <p className="text-gray-700" style={{ textAlign: 'justify' }}>
-                        {callout.body}
+                        {renderInlineEmphasis(callout.body)}
                       </p>
                     ) : null}
                   </div>
