@@ -1,0 +1,4 @@
+# Solo identidad del proyecto en git; chunks/sync locales quedan fuera
+*
+!config.json
+!.gitignore

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "engram": {
+      "command": "/home/wilmanm/.local/bin/engram",
+      "args": ["mcp", "--tools=agent"],
+      "env": {
+        "ENGRAM_PROJECT": "psychological-support"
+      }
+    }
+  }
+}
