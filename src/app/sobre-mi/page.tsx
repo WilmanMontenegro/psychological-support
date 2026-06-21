@@ -8,7 +8,7 @@ const galleryPhotos = [
     alt: "Ana Marcela Polo Bastidas"
   },
   {
-    src: "/images/gallery/marcela2.jpg",
+    src: "/images/gallery/ana-marcela.webp",
     alt: "Ana Marcela Polo Bastidas"
   },
   {
