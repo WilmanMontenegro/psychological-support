@@ -90,12 +90,12 @@ export default function ContactForm({ showImage = true, variant = 'section' }: C
         <div
           className={
             showImage
-              ? 'grid items-start gap-10 md:grid-cols-2 lg:gap-16'
+              ? 'grid items-center gap-10 md:grid-cols-2 lg:gap-16'
               : 'mx-auto max-w-2xl'
           }
         >
           {showImage && (
-            <div className="flex flex-col items-center md:mt-10 lg:mt-14">
+            <div className="flex flex-col items-center">
               <div
                 className="relative aspect-square w-[min(100vw-1.5rem,400px)] overflow-hidden rounded-full border-[3px] border-secondary/60 shadow-lg md:w-[500px]"
                 style={{ backgroundColor: 'color-mix(in srgb, var(--color-secondary) 22%, white)' }}
