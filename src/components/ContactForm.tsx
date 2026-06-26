@@ -83,7 +83,7 @@ export default function ContactForm({ showImage = true, variant = 'section' }: C
           <h2 className="mb-4 font-libre-baskerville text-3xl text-accent md:text-4xl">Contáctame</h2>
           <div className="mx-auto mb-6 h-1 w-16 rounded-full bg-secondary" />
           <p className="mx-auto max-w-2xl text-gray-600">
-            Este canal es para consultas sobre contenido del blog, colaboraciones y proyectos.
+            ¿Tienes una idea, una propuesta o te gustaría colaborar con tupsicoana? Este espacio es para ti. Escríbeme y conversemos.
           </p>
         </div>
 
