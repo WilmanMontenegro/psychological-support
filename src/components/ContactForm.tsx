@@ -111,7 +111,7 @@ export default function ContactForm({ showImage = true, variant = 'section' }: C
               </div>
 
               <p className="mt-5 max-w-xs text-center font-libre-baskerville text-sm leading-relaxed text-gray-600 md:max-w-sm">
-                Escríbeme con confianza. Me encanta conectar con personas que buscan aprender y crecer.
+                Creo en el poder de compartir conocimientos, sumar perspectivas y construir bienestar a través de la colaboración.
               </p>
             </div>
           )}
