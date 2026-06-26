@@ -18,6 +18,7 @@ export default function Footer() {
               size="large"
               textColor="text-white"
               textAlign="center"
+              singleLineName
             />
           </div>
 

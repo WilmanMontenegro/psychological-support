@@ -9,6 +9,14 @@ export interface BlogPost {
 
 export const blogPosts: BlogPost[] = [
     {
+        slug: 'el-miedo-al-cambio',
+        title: 'El miedo al cambio: por qué nos cuesta evolucionar y cómo aprender a avanzar',
+        excerpt: 'Muchas veces preferimos lo conocido aunque ya no nos haga felices. Entiende el miedo al cambio, cuándo te limita y cómo avanzar con pasos pequeños.',
+        image: '/images/blog/el-miedo-al-cambio.jpg',
+        category: 'Crecimiento Personal',
+        date: '2026-06-26'
+    },
+    {
         slug: 'pensamientos-intrusivos',
         title: 'Pensamientos intrusivos: cuando tu mente te juega en contra',
         excerpt: 'Los pensamientos intrusivos son más comunes de lo que crees. Aprende a identificarlos, entenderlos y dejarlos pasar sin juzgarte.',

@@ -2,12 +2,24 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
-import { FaPaperPlane } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 
 interface ContactFormProps {
   showImage?: boolean;
   variant?: 'section' | 'page';
+}
+
+const inputClassName =
+  'w-full px-4 py-3 bg-white border border-gray-200 rounded-lg shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition';
+
+function ContactDecorations() {
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="absolute -left-10 top-6 h-28 w-28 rounded-full bg-secondary/20" />
+      <div className="absolute -right-8 top-[18%] h-20 w-20 rounded-full bg-tertiary/20" />
+      <div className="absolute -bottom-12 left-[10%] h-32 w-32 rounded-full bg-primary/15" />
+    </div>
+  );
 }
 
 export default function ContactForm({ showImage = true, variant = 'section' }: ContactFormProps) {
@@ -16,20 +28,19 @@ export default function ContactForm({ showImage = true, variant = 'section' }: C
     name: '',
     email: '',
     phone: '',
-    message: ''
+    message: '',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     let value = e.target.value;
 
-    // Solo permitir números en el campo de teléfono
     if (e.target.name === 'phone') {
       value = value.replace(/[^0-9+\-\s]/g, '');
     }
 
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [e.target.name]: value
+      [e.target.name]: value,
     }));
   };
 
@@ -47,7 +58,7 @@ export default function ContactForm({ showImage = true, variant = 'section' }: C
       const response = await fetch('/api/send-contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
 
       if (!response.ok) throw new Error('Error al enviar el mensaje');
@@ -61,128 +72,119 @@ export default function ContactForm({ showImage = true, variant = 'section' }: C
     }
   };
 
-  const sectionPadding = variant === 'section'
-    ? 'pt-8 pb-16 md:pt-12 md:pb-20'
-    : 'pt-4 pb-16 md:pt-8 md:pb-24'
-  const containerClasses = variant === 'section'
-    ? 'relative max-w-6xl md:max-w-7xl mx-auto bg-white/95 rounded-[32px] shadow-xl border border-white/60 px-6 py-10 md:px-12 md:py-12 overflow-hidden'
-    : 'max-w-7xl mx-auto'
+  const sectionPadding = variant === 'section' ? 'py-16' : 'pt-4 pb-16 md:pt-8 md:pb-24';
 
   return (
-    <div className={`relative z-10 ${sectionPadding} px-4`}>
-      <div className={containerClasses}>
-        {variant === 'section' && (
-          <>
-            <div className="pointer-events-none absolute -top-12 -left-12 hidden md:block h-32 w-32 rounded-full bg-pastel opacity-50 blur-2xl" />
-            <div className="pointer-events-none absolute -bottom-16 -right-16 hidden md:block h-40 w-40 rounded-full bg-tertiary-light opacity-70 blur-3xl" />
-          </>
-        )}
-        <div className="relative z-10">
-          {/* Título centrado (siempre visible) */}
-          <div className="mb-6 text-center">
-            <h2 className="text-3xl md:text-4xl font-libre-baskerville text-accent mb-2.5">
-              Contáctame
-            </h2>
-            <div className="w-20 h-1 bg-secondary rounded-full mx-auto mb-4" />
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Este canal es para consultas sobre contenido del blog, colaboraciones y proyectos.
-            </p>
-          </div>
+    <div className={`relative w-full ${sectionPadding} px-4 md:px-6`}>
+      <ContactDecorations />
 
-          <div className={showImage ? 'grid md:grid-cols-2 gap-10 lg:gap-16 items-center' : 'max-w-2xl mx-auto'}>
+      <div className="relative z-10 mx-auto max-w-6xl">
+        <div className="mb-10 text-center">
+          <h2 className="mb-4 font-libre-baskerville text-3xl text-accent md:text-4xl">Contáctame</h2>
+          <div className="mx-auto mb-6 h-1 w-16 rounded-full bg-secondary" />
+          <p className="mx-auto max-w-2xl text-gray-600">
+            Este canal es para consultas sobre contenido del blog, colaboraciones y proyectos.
+          </p>
+        </div>
 
-          {/* Imagen */}
-            {showImage && (
-              <div className="relative h-[400px] md:h-[500px] rounded-3xl overflow-hidden shadow-lg">
+        <div
+          className={
+            showImage
+              ? 'grid items-start gap-10 md:grid-cols-2 lg:gap-16'
+              : 'mx-auto max-w-2xl'
+          }
+        >
+          {showImage && (
+            <div className="flex flex-col items-center md:mt-10 lg:mt-14">
+              <div
+                className="relative aspect-square w-[min(100vw-1.5rem,400px)] overflow-hidden rounded-full border-[3px] border-secondary/60 shadow-lg md:w-[500px]"
+                style={{ backgroundColor: 'color-mix(in srgb, var(--color-secondary) 22%, white)' }}
+              >
                 <Image
-                  src="/images/contacto.jpg"
-                  alt="Contáctame - Apoyo emocional"
+                  src="/images/contacto.png"
+                  alt="Ana Marcela - Tu Psico Ana"
                   fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover"
+                  className="object-contain object-[48%_92%] scale-[1.06]"
+                  sizes="(max-width: 768px) 400px, 500px"
                   priority={variant === 'page'}
                 />
-                {/* Bolitas decorativas */}
-                <div className="absolute top-10 left-10 w-20 h-20 bg-primary opacity-20 rounded-full" />
-                <div className="absolute bottom-10 right-10 w-32 h-32 bg-tertiary opacity-15 rounded-full" />
               </div>
-            )}
 
-          {/* Formulario */}
-            <div>
-
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2">
-                    Nombre completo *
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
-                    Correo electrónico *
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 mb-2">
-                    Celular (opcional)
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="message" className="block text-sm font-semibold text-gray-700 mb-2">
-                    Mensaje *
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    rows={5}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg shadow-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition resize-none"
-                    required
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full py-4 text-white rounded-lg font-semibold transition hover:opacity-95 active:scale-[0.99] disabled:opacity-50 flex items-center justify-center gap-2 shadow-md"
-                  style={{ backgroundColor: 'var(--color-accent)' }}
-                >
-                  {loading ? 'Enviando...' : 'Enviar mensaje'}
-                  <FaPaperPlane className="text-sm" />
-                </button>
-              </form>
+              <p className="mt-5 max-w-xs text-center font-libre-baskerville text-sm leading-relaxed text-gray-600 md:max-w-sm">
+                Escríbeme con confianza. Me encanta conectar con personas que buscan aprender y crecer.
+              </p>
             </div>
-          </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="w-full space-y-6">
+            <div>
+              <label htmlFor="name" className="mb-2 block text-sm font-semibold text-gray-700">
+                Nombre completo *
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className={inputClassName}
+                required
+              />
+            </div>
+
+            <div>
+              <label htmlFor="email" className="mb-2 block text-sm font-semibold text-gray-700">
+                Correo electrónico *
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className={inputClassName}
+                required
+              />
+            </div>
+
+            <div>
+              <label htmlFor="phone" className="mb-2 block text-sm font-semibold text-gray-700">
+                Celular (opcional)
+              </label>
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                className={inputClassName}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="message" className="mb-2 block text-sm font-semibold text-gray-700">
+                Mensaje *
+              </label>
+              <textarea
+                id="message"
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
+                rows={5}
+                className={`${inputClassName} resize-none`}
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full rounded-lg py-4 font-semibold text-white shadow-md transition hover:opacity-95 active:scale-[0.99] disabled:opacity-50"
+              style={{ backgroundColor: 'var(--color-secondary)' }}
+            >
+              {loading ? 'Enviando...' : 'Enviar mensaje'}
+            </button>
+          </form>
         </div>
       </div>
     </div>

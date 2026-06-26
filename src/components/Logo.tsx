@@ -4,12 +4,14 @@ interface LogoProps {
   size?: 'small' | 'medium' | 'large'
   textColor?: string
   textAlign?: 'left' | 'center' | 'responsive'
+  singleLineName?: boolean
 }
 
 export default function Logo({
   size = 'medium',
   textColor = 'text-foreground',
-  textAlign = 'left'
+  textAlign = 'left',
+  singleLineName = false,
 }: LogoProps) {
   const sizeClasses = {
     small: {
@@ -24,7 +26,7 @@ export default function Logo({
     },
     large: {
       image: 'w-16',
-      title: 'text-lg font-semibold',
+      title: 'text-base lg:text-lg font-semibold',
       subtitle: 'text-sm'
     }
   }
@@ -46,8 +48,10 @@ export default function Logo({
         sizes="(max-width: 768px) 48px, 80px"
         priority
       />
-      <div className="min-w-0">
-        <h1 className={`${sizeClasses[size].title} font-libre-baskerville leading-tight ${getTextAlignClass()} ${textColor}`}>
+      <div className={singleLineName ? 'shrink-0' : 'min-w-0'}>
+        <h1
+          className={`${sizeClasses[size].title} font-libre-baskerville leading-tight ${getTextAlignClass()} ${textColor} ${singleLineName ? 'whitespace-nowrap' : ''}`}
+        >
           Ana Marcela Polo Bastidas
         </h1>
         <p className={`${sizeClasses[size].subtitle} font-montserrat leading-tight ${getTextAlignClass()} ${textColor}`}>
