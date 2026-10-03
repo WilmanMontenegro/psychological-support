@@ -15,6 +15,10 @@ const galleryPhotos = [
     src: "/images/gallery/marcela4-Photoroom.png",
     alt: "Ana Marcela Polo Bastidas"
   },
+  {
+    src: "/images/gallery/ana-marcela-libros-cerebro.jpg",
+    alt: "Ana Marcela con libros de psicología y modelo de cerebro"
+  },
 ]
 
 export default function SobreMiPage() {
