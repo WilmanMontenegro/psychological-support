@@ -23,6 +23,10 @@ const galleryPhotos = [
     src: "/images/gallery/ana-marcela-cerebro.jpg",
     alt: "Ana Marcela con modelo anatómico de cerebro"
   },
+  {
+    src: "/images/gallery/ana-marcela-alegria.jpg",
+    alt: "Ana Marcela con peluche de Alegría de Intensamente"
+  },
 ]
 
 export default function SobreMiPage() {
