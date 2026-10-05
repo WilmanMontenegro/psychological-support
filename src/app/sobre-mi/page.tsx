@@ -19,6 +19,10 @@ const galleryPhotos = [
     src: "/images/gallery/ana-marcela-libros-cerebro.jpg",
     alt: "Ana Marcela con libros de psicología y modelo de cerebro"
   },
+  {
+    src: "/images/gallery/ana-marcela-cerebro.jpg",
+    alt: "Ana Marcela con modelo anatómico de cerebro"
+  },
 ]
 
 export default function SobreMiPage() {
