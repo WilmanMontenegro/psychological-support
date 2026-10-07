@@ -93,7 +93,7 @@ export default function Header() {
       data-site-header
       className="w-full relative bg-background shadow-sm border-b border-secondary/10"
     >
-      <div className="flex items-center gap-3 md:gap-6 px-3 md:px-4 py-3 md:py-4">
+      <div className="flex items-center gap-3 md:gap-5 px-3 md:px-4 py-2 md:py-2.5">
         {/* Marca: inset óptico = borde derecho de Ingresar */}
         <div className="min-w-0 shrink lg:max-w-[min(100%,28rem)]">
           <Logo textAlign="left" />
@@ -154,7 +154,7 @@ export default function Header() {
           ) : (
             <Link
               href="/login"
-              className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-montserrat font-medium border shadow-sm hover:shadow-md transition-all"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-montserrat font-medium border shadow-sm hover:shadow-md transition-all"
               style={{
                 backgroundColor: '#fff',
                 color: 'var(--color-secondary)',

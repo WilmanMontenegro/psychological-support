@@ -95,7 +95,7 @@ export default function HeroVideo() {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full min-h-[280px] overflow-hidden h-[calc(100dvh-7rem-4rem)] lg:h-[calc(100dvh-7rem)]"
+      className="relative w-full min-h-[280px] overflow-hidden h-[calc(100dvh-5.5rem-4rem)] lg:h-[calc(100dvh-5.5rem)]"
       aria-label="Reflexión"
     >
       <video

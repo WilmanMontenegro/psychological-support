@@ -18,19 +18,19 @@ export default function Logo({
 }: LogoProps) {
   const sizeClasses = {
     small: {
-      image: 'w-14',
+      image: 'w-12',
       title: 'text-sm font-semibold',
       subtitle: 'text-xs'
     },
     medium: {
-      image: 'w-20 md:w-28',
-      title: 'text-sm md:text-xl font-semibold',
-      subtitle: 'text-xs md:text-sm'
+      image: 'w-12 md:w-16',
+      title: 'text-sm md:text-base font-semibold',
+      subtitle: 'text-xs'
     },
     large: {
-      image: 'w-24',
-      title: 'text-base lg:text-lg font-semibold',
-      subtitle: 'text-sm'
+      image: 'w-20',
+      title: 'text-sm lg:text-base font-semibold',
+      subtitle: 'text-xs lg:text-sm'
     }
   }
 
@@ -48,7 +48,7 @@ export default function Logo({
         width={200}
         height={200}
         className={`${sizeClasses[size].image} h-auto shrink-0`}
-        sizes="(max-width: 768px) 80px, 112px"
+        sizes="(max-width: 768px) 48px, 64px"
         priority
       />
       <div className={singleLineName ? 'shrink-0' : 'min-w-0'}>
