@@ -73,46 +73,62 @@ export default function Navigation({ className = '', variant = 'default', showCT
   ]
 
   if (isMobile) {
+    // notranslate: Google Translate alarga etiquetas y estira el tab bar.
+    const itemClassName =
+      'flex min-h-11 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 px-0.5 py-1 text-center'
+    const labelClassName =
+      'max-w-full truncate text-[10px] font-medium leading-tight tracking-tight'
+
     return (
-      <div className={`flex justify-around items-center py-1 px-2 ${className}`}>
+      <nav
+        className={`notranslate flex w-full items-stretch justify-between gap-0 px-1 py-1 ${className}`}
+        translate="no"
+        aria-label="Navegación principal"
+      >
         {navItems.map((item) => (
-          <Link key={item.href} href={item.href} className="flex flex-col items-center py-1 px-1 min-w-0">
-            {item.icon}
-            <span className="text-xs font-medium">{item.label}</span>
+          <Link key={item.href} href={item.href} className={itemClassName}>
+            <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center" aria-hidden="true">
+              {item.icon}
+            </span>
+            <span className={labelClassName}>{item.label}</span>
           </Link>
         ))}
         {authItem && (
           authItem.onClick ? (
             <button
+              type="button"
               onClick={authItem.onClick}
-              className="flex flex-col items-center py-1 px-1 min-w-0"
+              className={itemClassName}
             >
-              {authItem.icon}
-              <span className="text-xs font-medium">{authItem.label}</span>
+              <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center" aria-hidden="true">
+                {authItem.icon}
+              </span>
+              <span className={labelClassName}>{authItem.label}</span>
             </button>
           ) : (
-            <Link
-              href={authItem.href!}
-              className="flex flex-col items-center py-1 px-1 min-w-0"
-            >
-              {authItem.icon}
-              <span className="text-xs font-medium">{authItem.label}</span>
+            <Link href={authItem.href!} className={itemClassName}>
+              <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center" aria-hidden="true">
+                {authItem.icon}
+              </span>
+              <span className={labelClassName}>{authItem.label}</span>
             </Link>
           )
         )}
         {showCTA && (
           <Link
             href="/contactame"
-            className="flex flex-col items-center text-white px-2 py-1 rounded"
+            className={`${itemClassName} rounded text-white`}
             style={{ backgroundColor: 'var(--color-secondary)' }}
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-            <span className="text-xs font-medium">Contacto</span>
+            <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center" aria-hidden="true">
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </span>
+            <span className={labelClassName}>Contacto</span>
           </Link>
         )}
-      </div>
+      </nav>
     )
   }
 

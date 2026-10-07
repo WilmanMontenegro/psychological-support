@@ -1,0 +1,27 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-label="Tu Psico Ana">
+  <title>Tu Psico Ana</title>
+  <!-- Psi + arbol · paleta fija: stroke #3F7394 · hojas #F2A2B1 #BF88AC · acento #4982A6 -->
+  <g fill="none" stroke="#3F7394" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <!-- tronco -->
+    <path d="M120 188 V78"/>
+    <!-- brazos Psi -->
+    <path d="M120 118 C88 118 68 98 68 72"/>
+    <path d="M120 118 C152 118 172 98 172 72"/>
+    <!-- raices -->
+    <path stroke-width="6" d="M96 198 H144"/>
+    <path stroke-width="5" d="M84 208 H156"/>
+    <path stroke-width="4" d="M104 216 H136"/>
+  </g>
+  <!-- hojas -->
+  <g stroke="#3F7394" stroke-width="2.5" stroke-linejoin="round">
+    <ellipse cx="68" cy="58" rx="10" ry="14" fill="#F2A2B1" transform="rotate(-25 68 58)"/>
+    <ellipse cx="54" cy="70" rx="9" ry="12" fill="#BF88AC" transform="rotate(-45 54 70)"/>
+    <ellipse cx="78" cy="70" rx="8" ry="11" fill="#F2A2B1" transform="rotate(10 78 70)"/>
+    <ellipse cx="120" cy="48" rx="10" ry="14" fill="#4982A6" transform="rotate(0 120 48)"/>
+    <ellipse cx="108" cy="60" rx="8" ry="11" fill="#BF88AC" transform="rotate(-20 108 60)"/>
+    <ellipse cx="132" cy="60" rx="8" ry="11" fill="#F2A2B1" transform="rotate(20 132 60)"/>
+    <ellipse cx="172" cy="58" rx="10" ry="14" fill="#BF88AC" transform="rotate(25 172 58)"/>
+    <ellipse cx="186" cy="70" rx="9" ry="12" fill="#F2A2B1" transform="rotate(45 186 70)"/>
+    <ellipse cx="162" cy="70" rx="8" ry="11" fill="#BF88AC" transform="rotate(-10 162 70)"/>
+  </g>
+</svg>

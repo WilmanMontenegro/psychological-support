@@ -19,6 +19,7 @@ export default function Footer() {
               textColor="text-white"
               textAlign="center"
               singleLineName
+              onDark
             />
           </div>
 

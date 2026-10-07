@@ -25,13 +25,15 @@ const libreBaskerville = Libre_Baskerville({
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://tupsicoana.com";
-const ogImage = `${siteUrl}/images/logo-grande-1000x1000.png`;
+const ogImage = `${siteUrl}/images/og-default.png`;
+const brandImage = `${siteUrl}/images/logo-grande-1000x1000.png`;
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Person",
   name: "Tu Psico Ana",
   url: siteUrl,
-  image: ogImage,
+  image: brandImage,
+  logo: brandImage,
   description: "Marca personal y contenido educativo sobre bienestar emocional.",
   jobTitle: "Psicóloga en formación",
 };
@@ -47,6 +49,15 @@ export const metadata: Metadata = {
 
   category: "personal-brand",
   applicationName: "Tu Psico Ana",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "48x48" },
+      { url: "/images/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/images/favicon-16.png", sizes: "16x16", type: "image/png" },
+      { url: "/images/logo.svg", type: "image/svg+xml" },
+    ],
+    apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
+  },
   openGraph: {
     type: "website",
     siteName: "Tu Psico Ana",

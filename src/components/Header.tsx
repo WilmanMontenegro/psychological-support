@@ -93,17 +93,19 @@ export default function Header() {
       data-site-header
       className="w-full relative bg-background shadow-sm border-b border-secondary/10"
     >
-      <div className="flex lg:grid lg:grid-cols-[1fr_auto_1fr] items-center justify-center sm:justify-between lg:justify-normal px-4 md:px-6 py-3 md:py-4">
-        {/* Logo/Título */}
-        <Logo textAlign="center" />
+      <div className="flex items-center gap-3 md:gap-6 px-3 md:px-4 py-3 md:py-4">
+        {/* Marca: inset óptico = borde derecho de Ingresar */}
+        <div className="min-w-0 shrink lg:max-w-[min(100%,28rem)]">
+          <Logo textAlign="left" />
+        </div>
 
-        {/* Navegación Desktop - Centrada */}
-        <div className="hidden lg:flex justify-center">
+        {/* Navegación Desktop - Centrada, separada de la marca */}
+        <div className="hidden lg:flex flex-1 justify-center px-4">
           <Navigation className="" showCTA={false} />
         </div>
 
         {/* Selector de idioma, Botón CTA y Usuario */}
-        <div className="flex items-center justify-end gap-1 sm:gap-3">
+        <div className="ml-auto flex items-center justify-end gap-1 sm:gap-3 shrink-0">
           {/* Selector de idioma */}
           <LanguageSelector />
 
@@ -170,9 +172,10 @@ export default function Header() {
       {/* Navegación móvil fija abajo */}
       <div
         data-mobile-nav
-        className="lg:hidden fixed bottom-0 left-0 right-0 bg-background border-t shadow-lg z-50 pb-safe"
+        className="notranslate lg:hidden fixed bottom-0 left-0 right-0 z-50 border-t bg-background shadow-lg pb-safe"
+        translate="no"
       >
-        <Navigation className="" showCTA={false} isMobile={true} authItem={mobileAuthItem} />
+        <Navigation showCTA={false} isMobile authItem={mobileAuthItem} />
       </div>
 
       {/* Menú móvil */}

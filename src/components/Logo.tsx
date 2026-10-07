@@ -5,6 +5,8 @@ interface LogoProps {
   textColor?: string
   textAlign?: 'left' | 'center' | 'responsive'
   singleLineName?: boolean
+  /** Versión clara para fondos oscuros (footer accent) */
+  onDark?: boolean
 }
 
 export default function Logo({
@@ -12,20 +14,21 @@ export default function Logo({
   textColor = 'text-foreground',
   textAlign = 'left',
   singleLineName = false,
+  onDark = false,
 }: LogoProps) {
   const sizeClasses = {
     small: {
-      image: 'w-12',
+      image: 'w-14',
       title: 'text-sm font-semibold',
       subtitle: 'text-xs'
     },
     medium: {
-      image: 'w-12 md:w-20',
+      image: 'w-20 md:w-28',
       title: 'text-sm md:text-xl font-semibold',
       subtitle: 'text-xs md:text-sm'
     },
     large: {
-      image: 'w-16',
+      image: 'w-24',
       title: 'text-base lg:text-lg font-semibold',
       subtitle: 'text-sm'
     }
@@ -38,14 +41,14 @@ export default function Logo({
   }
 
   return (
-    <div className='flex items-center gap-2 md:gap-3 flex-shrink-0'>
+    <div className='flex items-center gap-1 md:gap-1.5 flex-shrink-0'>
       <Image
-        src="/images/logo.png"
-        alt="Logo"
+        src={onDark ? '/images/logo-on-dark.png' : '/images/logo.png'}
+        alt="Tu Psico Ana"
         width={200}
         height={200}
-        className={`${sizeClasses[size].image} h-auto`}
-        sizes="(max-width: 768px) 48px, 80px"
+        className={`${sizeClasses[size].image} h-auto shrink-0`}
+        sizes="(max-width: 768px) 80px, 112px"
         priority
       />
       <div className={singleLineName ? 'shrink-0' : 'min-w-0'}>

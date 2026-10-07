@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 @theme {
+  /* Paleta de marca fija (UI + logo) — no improvisar hex fuera de aquí */
   --color-primary: #F2A2B1;
   --color-secondary: #BF88AC;
   --color-tertiary: #9B9DBF;
@@ -13,6 +14,15 @@
   --color-foreground: #171717;
   --color-error: #ef4444;
   --color-success: #10b981;
+
+  /* Logo mark: trazos = accent-dark; puntos = pastel-light → accent */
+  --color-logo-stroke: #3F7394;
+  --color-logo-dot-1: #FAF0F0;
+  --color-logo-dot-2: #F2DCDC;
+  --color-logo-dot-3: #F2A2B1;
+  --color-logo-dot-4: #BF88AC;
+  --color-logo-dot-5: #9B9DBF;
+  --color-logo-dot-6: #4982A6;
 
   --font-family-montserrat: var(--font-montserrat), sans-serif;
   --font-family-lato: var(--font-lato), sans-serif;
@@ -112,14 +122,20 @@ body {
   display: none !important;
 }
 
-/* Ocultar el widget visible de Google Translate */
+/* No usar display:none en el host: en móvil a veces no crea .goog-te-combo */
 #google_translate_element {
-  display: none !important;
+  position: absolute !important;
+  left: -9999px !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 /* Estilos para el iframe de Google Translate cuando esté activo */
 .goog-te-gadget {
-  display: none !important;
+  font-size: 0 !important;
 }
 
 iframe.skiptranslate {
@@ -130,4 +146,10 @@ iframe.skiptranslate {
 body.translated-ltr {
   top: 0 !important;
   margin-top: 0 !important;
+}
+
+/* GT envuelve texto en <font>; en el tab bar móvil eso rompe el alto */
+[data-mobile-nav] font {
+  vertical-align: baseline !important;
+  line-height: inherit !important;
 }
