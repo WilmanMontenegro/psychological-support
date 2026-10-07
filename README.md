@@ -32,6 +32,10 @@ Para la operación del flujo de blogs por Telegram (comandos, estados, migracion
 
 - [docs/telegram-blog-flow.md](./docs/telegram-blog-flow.md)
 
+## Notas de trabajo
+
+Decisiones UX/técnicas al día (hero, local, pendientes): [docs/notas.md](./docs/notas.md)
+
 ## Configuración para agentes IA
 
 El proyecto incluye personalización para mejorar el trabajo con agentes:

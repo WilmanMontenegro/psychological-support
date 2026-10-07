@@ -103,8 +103,10 @@ export default function ContactForm({ showImage = true, variant = 'section' }: C
                 <Image
                   src="/images/contacto.png"
                   alt="Ana Marcela - Tu Psico Ana"
-                  fill
+                  width={500}
+                  height={500}
                   className="object-contain object-[48%_92%] scale-[1.06]"
+                  style={{ width: '100%', height: 'auto', aspectRatio: '1 / 1' }}
                   sizes="(max-width: 768px) 400px, 500px"
                   priority={variant === 'page'}
                 />
@@ -125,6 +127,7 @@ export default function ContactForm({ showImage = true, variant = 'section' }: C
                 type="text"
                 id="name"
                 name="name"
+                autoComplete="name"
                 value={formData.name}
                 onChange={handleChange}
                 className={inputClassName}
@@ -140,6 +143,7 @@ export default function ContactForm({ showImage = true, variant = 'section' }: C
                 type="email"
                 id="email"
                 name="email"
+                autoComplete="email"
                 value={formData.email}
                 onChange={handleChange}
                 className={inputClassName}
@@ -155,6 +159,7 @@ export default function ContactForm({ showImage = true, variant = 'section' }: C
                 type="tel"
                 id="phone"
                 name="phone"
+                autoComplete="tel"
                 value={formData.phone}
                 onChange={handleChange}
                 className={inputClassName}
@@ -168,6 +173,7 @@ export default function ContactForm({ showImage = true, variant = 'section' }: C
               <textarea
                 id="message"
                 name="message"
+                autoComplete="off"
                 value={formData.message}
                 onChange={handleChange}
                 rows={5}

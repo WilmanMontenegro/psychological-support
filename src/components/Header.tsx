@@ -89,7 +89,10 @@ export default function Header() {
     }
 
   return (
-    <header className="w-full relative bg-background shadow-sm border-b border-secondary/10">
+    <header
+      data-site-header
+      className="w-full relative bg-background shadow-sm border-b border-secondary/10"
+    >
       <div className="flex lg:grid lg:grid-cols-[1fr_auto_1fr] items-center justify-center sm:justify-between lg:justify-normal px-4 md:px-6 py-3 md:py-4">
         {/* Logo/Título */}
         <Logo textAlign="center" />
@@ -165,7 +168,10 @@ export default function Header() {
       </div>
 
       {/* Navegación móvil fija abajo */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-background border-t shadow-lg z-50 pb-safe">
+      <div
+        data-mobile-nav
+        className="lg:hidden fixed bottom-0 left-0 right-0 bg-background border-t shadow-lg z-50 pb-safe"
+      >
         <Navigation className="" showCTA={false} isMobile={true} authItem={mobileAuthItem} />
       </div>
 

@@ -47,13 +47,14 @@ export default function AboutMe({ showButton = true, bgColor = 'bg-white' }: Abo
 
           {/* Imagen - móvil second */}
           <div className="flex justify-center order-2 md:order-2">
-            <div className="relative">
+            <div className="relative w-full max-w-[26rem]">
               <Image
                 src="/images/ana_1.png"
                 alt="Ana Marcela Polo Bastidas - Psicóloga en formación"
                 width={416}
                 height={520}
-                className="rounded-lg shadow-lg w-[26rem] h-auto"
+                className="rounded-lg shadow-lg"
+                style={{ width: "100%", height: "auto" }}
                 sizes="(max-width: 768px) 100vw, 26rem"
                 priority
               />

@@ -36,6 +36,17 @@ export default function LanguageSelector() {
       document.body.appendChild(script);
     };
 
+    const labelGoogleSelect = () => {
+      const select = document.querySelector<HTMLSelectElement>('.goog-te-combo');
+      if (!select) return false;
+      if (!select.id) select.id = 'google-translate-lang';
+      if (!select.name) select.name = 'google-translate-lang';
+      if (!select.getAttribute('autocomplete')) {
+        select.setAttribute('autocomplete', 'off');
+      }
+      return true;
+    };
+
     window.googleTranslateElementInit = () => {
       new window.google.translate.TranslateElement(
         {
@@ -45,6 +56,15 @@ export default function LanguageSelector() {
         },
         'google_translate_element'
       );
+      // El <select> lo inyecta Google sin id/name; Lighthouse lo marca.
+      labelGoogleSelect();
+      const root = document.getElementById('google_translate_element');
+      if (root) {
+        const mo = new MutationObserver(() => {
+          if (labelGoogleSelect()) mo.disconnect();
+        });
+        mo.observe(root, { childList: true, subtree: true });
+      }
     };
 
     addScript();

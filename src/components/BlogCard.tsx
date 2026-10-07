@@ -23,13 +23,15 @@ export default function BlogCard({ slug, title, excerpt, image, category, date }
     <Link href={`/blog/${slug}`}>
       <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 border-2 border-secondary h-full flex flex-col">
         {/* Imagen */}
-        <div className="relative h-48 overflow-hidden">
+        <div className="relative aspect-[16/10] overflow-hidden">
           <Image
             src={image}
             alt={title}
-            fill
+            width={640}
+            height={400}
             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover"
+            style={{ width: "100%", height: "auto", aspectRatio: "16 / 10" }}
             priority={false}
           />
           {/* Categoría */}
